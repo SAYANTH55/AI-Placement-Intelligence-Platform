@@ -1,0 +1,44 @@
+.skill-gap-card .card-content {
+  margin-top: 16px;
+}
+
+.skill-section h4 {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+.mt-4 {
+  margin-top: 24px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.tag-success {
+  background: rgba(46, 160, 67, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(46, 160, 67, 0.3);
+}
+
+.tag-danger {
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--danger);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+}
+
+.empty-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}

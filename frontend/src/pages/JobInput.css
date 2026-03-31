@@ -1,0 +1,60 @@
+.job-input-card {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.input-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.input-icon {
+  color: var(--primary);
+}
+
+.input-header h3 {
+  font-size: 1.25rem;
+  color: #fff;
+  margin: 0;
+}
+
+.job-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 200px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.job-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.input-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.analyze-btn {
+  background: linear-gradient(135deg, var(--primary), #8a2be2); /* Tech gradient */
+  border: none;
+  font-weight: 600;
+  padding: 12px 24px;
+}
+
+.analyze-btn:hover {
+  background: linear-gradient(135deg, var(--primary-hover), #6a1b9a);
+  box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--surface-hover);
+  box-shadow: none;
+}
