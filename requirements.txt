@@ -1,0 +1,14 @@
+# Core dependencies
+fastapi
+uvicorn
+sqlalchemy
+mysql-connector-python
+pymongo
+pandas
+scikit-learn
+spacy
+nltk
+pydantic
+python-multipart
+python-dotenv
+pytest
