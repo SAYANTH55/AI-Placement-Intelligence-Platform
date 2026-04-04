@@ -1,39 +1,65 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
-import Sidebar from './components/common/Sidebar';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Features from './pages/Features';
+import HowItWorks from './pages/HowItWorks';
+import Contact from './pages/Contact';
 import LandingPage from './pages/LandingPage';
-import UploadResume from './pages/UploadResume';
-import JobInput from './pages/JobInput';
-import Results from './pages/Results';
+import NotFound from './pages/NotFound';
 import EdgeGlow from './components/common/EdgeGlow';
 import { useAppContext } from './context/AppContext';
-import './App.css';
 
-function App() {
+const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
+function AppContent() {
+  const { user } = useAppContext();
+  const location = useLocation();
+
+  const isDashboard = location.pathname.startsWith('/dashboard');
+  const isLanding = location.pathname === '/';
+  const showGlobalNavbar = !isLanding && !isDashboard;
 
   return (
-    <Router>
-      <div className="app-container relative">
-        <EdgeGlow />
-        {user && <Navbar />}
-        <div className="main-layout">
-          {user && <Sidebar />}
-          <main className="content-area">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={!user ? <Login /> : <Navigate to="/upload" />} />
-              <Route path="/upload" element={user ? <UploadResume /> : <Navigate to="/login" />} />
-              <Route path="/job-input" element={user ? <JobInput /> : <Navigate to="/login" />} />
-              <Route path="/results" element={user ? <Results /> : <Navigate to="/login" />} />
-              
-              {/* Default fallback */}
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </main>
-        </div>
+    <div className="relative min-h-screen bg-[#F9FAFB] flex flex-col" style={{ fontFamily: 'Inter, sans-serif' }}>
+      {!isDashboard && <EdgeGlow />}
+      {showGlobalNavbar && <Navbar />}
+
+      <div className={isDashboard ? 'flex-1' : 'flex-1 flex flex-col'}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Protected Dashboard Routes - all handled inside Dashboard */}
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UploadCloud, File, CheckCircle } from 'lucide-react';
+import { UploadCloud, CheckCircle } from 'lucide-react';
 import Card from '../components/common/Card';
 import './UploadResume.css';
 
@@ -11,15 +11,11 @@ export default function UploadResume() {
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile?.type === 'application/pdf') {
-      setFile(droppedFile);
-    }
+    if (droppedFile) setFile(droppedFile);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-  
+  const handleDragOver = (e) => e.preventDefault();
+
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -28,8 +24,8 @@ export default function UploadResume() {
 
   const handleSubmit = () => {
     if (file) {
-      // API integration will go here
-      navigate('/job-input');
+      // Navigate to dashboard where UploadBox handles analysis
+      navigate('/dashboard');
     }
   };
 
@@ -41,7 +37,7 @@ export default function UploadResume() {
       </div>
 
       <Card className="upload-card">
-        <div 
+        <div
           className={`upload-zone ${file ? 'has-file' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -56,31 +52,31 @@ export default function UploadResume() {
           ) : (
             <div className="file-prompt">
               <UploadCloud size={64} className="upload-icon" />
-              <h3>Drag & Drop your resume</h3>
-              <p>Supports .PDF formats up to 5MB</p>
+              <h3>Drag &amp; Drop your resume</h3>
+              <p>Supports PDF, DOCX formats up to 5MB</p>
               <div className="divider"><span>OR</span></div>
-              <input 
-                type="file" 
-                id="resume-upload" 
-                accept=".pdf" 
-                hidden 
+              <input
+                type="file"
+                id="resume-upload"
+                accept=".pdf,.doc,.docx"
+                hidden
                 onChange={handleFileSelect}
               />
-              <label htmlFor="resume-upload" className="btn-secondary" style={{display: 'inline-flex', cursor: 'pointer'}}>
-                 Browse Files
+              <label htmlFor="resume-upload" className="btn-secondary" style={{ display: 'inline-flex', cursor: 'pointer' }}>
+                Browse Files
               </label>
             </div>
           )}
         </div>
 
         <div className="upload-actions">
-          <button 
-            className="btn-primary" 
-            disabled={!file} 
+          <button
+            className="btn-primary"
+            disabled={!file}
             onClick={handleSubmit}
             style={{ opacity: !file ? 0.5 : 1 }}
           >
-             Continue to Job Analysis
+            Continue to Dashboard
           </button>
         </div>
       </Card>
