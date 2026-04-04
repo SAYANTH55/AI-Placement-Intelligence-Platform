@@ -6,7 +6,7 @@ import LandingPage from './pages/LandingPage';
 import UploadResume from './pages/UploadResume';
 import JobInput from './pages/JobInput';
 import Results from './pages/Results';
-import CornerGlow from './components/common/CornerGlow';
+import EdgeGlow from './components/common/EdgeGlow';
 import { useAppContext } from './context/AppContext';
 import './App.css';
 
@@ -16,7 +16,7 @@ function App() {
   return (
     <Router>
       <div className="app-container relative">
-        <CornerGlow />
+        <EdgeGlow />
         {user && <Navbar />}
         <div className="main-layout">
           {user && <Sidebar />}
