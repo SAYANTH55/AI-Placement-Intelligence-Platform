@@ -25,3 +25,4 @@ dataset/*.json
 !dataset/sample.csv
 models/*.h5
 models/*.pkl
+*.db

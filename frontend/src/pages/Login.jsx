@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, Zap } from 'lucide-react';
@@ -14,6 +14,15 @@ export default function Login() {
   const [error, setError] = useState('');
   const { setUser } = useAppContext();
   const navigate = useNavigate();
+
+  // Ensure fields are blank on initial load, counteracting aggressive browser auto-fill
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEmail('');
+      setPassword('');
+    }, 500); // Increased timeout to ensure browser auto-fill is overridden
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,12 +43,6 @@ export default function Login() {
       setError('Invalid credentials. Use the demo credentials below.');
     }
     setLoading(false);
-  };
-
-  const handleAutoFill = () => {
-    setEmail(DEMO_EMAIL);
-    setPassword(DEMO_PASSWORD);
-    setError('');
   };
 
   return (
@@ -92,7 +95,8 @@ export default function Login() {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="student@university.edu"
+                placeholder="Enter your email"
+                autoComplete="off"
                 className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
               />
             </div>
@@ -110,7 +114,8 @@ export default function Login() {
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Enter your password"
+                autoComplete="new-password"
                 className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
               />
             </div>
@@ -122,7 +127,13 @@ export default function Login() {
               <input type="checkbox" className="rounded border-gray-300 text-orange-500 focus:ring-orange-400" />
               Remember me
             </label>
-            <a href="#" className="text-sm text-orange-500 font-semibold hover:underline">Forgot password?</a>
+            <button 
+              type="button" 
+              onClick={() => navigate('/forgot-password')}
+              className="text-sm text-orange-500 font-semibold hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
 
           {/* Submit */}
@@ -136,20 +147,26 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Demo credentials with auto-fill button */}
+        {/* Demo credentials (no auto-fill button) */}
         <div className="mt-5 bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-1.5">
-            <p className="text-xs font-bold text-blue-700 uppercase tracking-wider">Demo Credentials</p>
-            <button
-              onClick={handleAutoFill}
-              className="flex items-center gap-1 text-[10px] font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-full hover:bg-orange-100 transition-colors"
-            >
-              <Zap size={10} />
-              Auto-Fill
-            </button>
+          <p className="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1.5">Demo Access Credentials</p>
+          <div className="flex items-center justify-between text-xs text-blue-600 font-mono bg-white/50 p-2 rounded-lg border border-blue-100">
+            <span>{DEMO_EMAIL}</span>
+            <span className="text-blue-300 mx-2">|</span>
+            <span>{DEMO_PASSWORD}</span>
           </div>
-          <p className="text-xs text-blue-600 font-mono">{DEMO_EMAIL} / {DEMO_PASSWORD}</p>
         </div>
+        {/* Register Link */}
+        <p className="mt-8 text-center text-sm font-medium text-gray-500">
+          Don't have an account?{' '}
+          <button
+            type="button"
+            onClick={() => navigate('/register')}
+            className="text-[#F97316] font-bold hover:underline underline-offset-4"
+          >
+            Create one now
+          </button>
+        </p>
       </div>
     </div>
   );

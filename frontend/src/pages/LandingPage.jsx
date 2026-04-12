@@ -19,33 +19,7 @@ const LandingPage = () => {
     show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
   };
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setUser } = useAppContext();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!email.includes('@') || password.length < 6) {
-      setError('Please enter a valid email and password.');
-      return;
-    }
-
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    if (email === 'student@university.edu' && password === '12345678') {
-      setUser({ email, role: 'student', name: 'Deon' });
-      navigate('/dashboard');
-    } else {
-      setError('Invalid credentials');
-    }
-    setLoading(false);
-  };
 
   return (
     <div className="bg-[#F8F9FB] flex flex-col overflow-x-hidden relative font-inter selection:bg-orange-500/20 selection:text-orange-900">
@@ -181,7 +155,7 @@ const LandingPage = () => {
           </div>
         </motion.div>
 
-        {/* Right Section */}
+        {/* Right Section: Visual Hero */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -191,94 +165,70 @@ const LandingPage = () => {
           {/* Static Warm Orange Gradient Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-orange-400 via-orange-500 to-[#D64B0F]" />
 
-          {/* SINGLE Floating Logic Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: [-5, 5, -5] }}
-            transition={{
-              opacity: { duration: 0.3, ease: "easeOut" },
-              y: { duration: 6, ease: "easeInOut", repeat: Infinity }
-            }}
-            className="relative z-10 w-full max-w-[420px] hardware-accelerated"
-          >
-            <div className="bg-[#FFFFFF] rounded-3xl p-10 shadow-sm hover:-translate-y-[5px] hover:shadow-lg transition-all duration-200 ease-in-out relative hardware-accelerated group/card">
-
-              <div className="text-center mb-8">
-                <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#F97316]">
-                  <Lock className="w-7 h-7" />
+          {/* Premium UI Mockup Presentation */}
+          <div className="relative z-10 w-full max-w-[500px] hardware-accelerated">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative"
+            >
+              {/* Main Dashboard Card */}
+              <div className="bg-white/95 backdrop-blur-xl rounded-[40px] p-8 shadow-2xl border border-white/20 hardware-accelerated">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400" />
+                    <div className="w-3 h-3 rounded-full bg-amber-400" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                  </div>
+                  <div className="px-4 py-1.5 bg-orange-50 rounded-full text-[#F97316] text-[10px] font-bold uppercase tracking-wider">
+                    AI Analysis Live
+                  </div>
                 </div>
-                <h3 className="text-[28px] font-bold text-[#0F172A] mb-2 tracking-tight">Welcome Back</h3>
-                <p className="text-[#64748B] font-medium">Secure your career path</p>
+
+                <div className="space-y-6">
+                  <div className="h-4 w-3/4 bg-slate-100 rounded-full" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="h-32 bg-orange-50 rounded-3xl p-5 flex flex-col justify-end gap-2 border border-orange-100">
+                      <div className="w-10 h-10 bg-[#F97316] rounded-xl flex items-center justify-center text-white text-xs font-bold">94%</div>
+                      <div className="text-[10px] font-bold text-[#F97316] uppercase tracking-tighter">Readiness Score</div>
+                    </div>
+                    <div className="h-32 bg-slate-50 rounded-3xl p-5 flex flex-col justify-end gap-2 border border-slate-100">
+                      <div className="w-10 h-10 bg-[#0F172A] rounded-xl flex items-center justify-center text-white text-xs font-bold">2.4k</div>
+                      <div className="text-[10px] font-bold text-[#64748B] uppercase tracking-tighter">Growth Insights</div>
+                    </div>
+                  </div>
+                  <div className="h-20 bg-slate-900 rounded-3xl p-5 flex items-center gap-4 border border-slate-800">
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-orange-400" />
+                    </div>
+                    <div>
+                      <div className="h-3 w-28 bg-white/20 rounded-full mb-2" />
+                      <div className="h-2 w-16 bg-white/10 rounded-full" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <form className="space-y-5" onSubmit={handleLogin}>
-                {error && (
-                  <div className="flex items-center text-red-600 text-sm bg-red-50 p-3 rounded-lg">
-                    <AlertCircle size={16} className="mr-2" />
-                    {error}
-                  </div>
-                )}
-                <div className="space-y-1.5">
-                  <label className="text-slate-700 text-sm font-semibold ml-1 block">Email</label>
-                  <div className="relative group/input">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="w-5 h-5 text-[#64748B] group-focus-within/input:text-[#F97316] transition-colors duration-200" />
-                    </div>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="student@university.edu"
-                      className="w-full bg-[#F8F9FB] border border-slate-200 text-[#0F172A] placeholder:text-slate-400 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#F97316] transition-colors duration-200 font-medium"
-                    />
-                  </div>
-                </div>
+              {/* Decorative Floating Elements */}
+              <motion.div
+                animate={{ y: [-10, 10, -10] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-xl flex items-center justify-center"
+              >
+                 <Zap className="w-10 h-10 text-white" />
+              </motion.div>
 
-                <div className="space-y-1.5">
-                  <label className="text-slate-700 text-sm font-semibold ml-1 block">Password</label>
-                  <div className="relative group/input">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className="w-5 h-5 text-[#64748B] group-focus-within/input:text-[#F97316] transition-colors duration-200" />
-                    </div>
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full bg-[#F8F9FB] border border-slate-200 text-[#0F172A] placeholder:text-slate-400 rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#F97316] transition-colors duration-200 font-medium"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between py-2">
-                  <label className="flex items-center gap-2 cursor-pointer group/check">
-                    <input type="checkbox" className="w-4 h-4 text-[#F97316] rounded border-slate-300 focus:ring-[#F97316] cursor-pointer transition-colors duration-200 group-hover/check:border-orange-400" />
-                    <span className="text-[#64748B] text-sm font-medium transition-colors duration-200 group-hover/check:text-[#0F172A]">Remember me</span>
-                  </label>
-                  <a href="#" className="text-[#F97316] text-sm font-semibold hover:text-orange-600 hover:underline transition-all duration-200 underline-offset-4">Reset password?</a>
-                </div>
-
-                <div className="pt-4 flex flex-col gap-3">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex justify-center items-center bg-[#F97316] text-white py-4 rounded-xl font-bold text-base shadow-sm hover:scale-[1.03] hover:-translate-y-[2px] transition-all duration-200 ease-in-out hover:shadow-md hover:bg-orange-600 hardware-accelerated disabled:opacity-70 disabled:cursor-not-allowed"
-                  >
-                    {loading ? <Loader2 className="animate-spin mr-2" size={20} /> : null}
-                    {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full bg-slate-50 text-slate-700 border border-slate-200 py-3.5 rounded-xl font-bold text-base hover:scale-[1.03] hover:-translate-y-[2px] hover:shadow-sm hover:bg-slate-100 transition-all duration-200 ease-in-out hardware-accelerated"
-                  >
-                    Request Access
-                  </button>
-                </div>
-              </form>
-            </div>
-          </motion.div>
+              <motion.div
+                animate={{ y: [10, -10, 10] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-10 -left-10 bg-slate-900 text-white px-6 py-4 rounded-3xl shadow-2xl flex items-center gap-3 border border-slate-800"
+              >
+                 <div className="w-8 h-8 rounded-full bg-[#F97316] flex items-center justify-center text-[10px] font-bold">12</div>
+                 <div className="text-xs font-bold whitespace-nowrap">Career Matches Found</div>
+              </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       </div>
 

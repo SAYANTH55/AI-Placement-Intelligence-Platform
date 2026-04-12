@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import endpoints
+from api import endpoints, auth
+from database.db import engine
+from database import models
+
+# Create database tables
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="AI Placement Intelligence Platform API")
 
@@ -15,6 +20,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(endpoints.router)
+app.include_router(auth.router)
 
 @app.get("/")
 async def root():

@@ -12,3 +12,4 @@ pydantic
 python-multipart
 python-dotenv
 pytest
+sib-api-v3-sdk
