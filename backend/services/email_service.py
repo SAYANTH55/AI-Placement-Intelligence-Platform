@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "no-reply@aiplacement.com")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "sayanthir@gmail.com")
 
 def send_otp_email(recipient_email: str, otp_code: str):
     """
@@ -16,7 +16,7 @@ def send_otp_email(recipient_email: str, otp_code: str):
     """
     # Dynamically fetch so if .env changes while running, we catch it
     BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
-    FROM_EMAIL = os.getenv("FROM_EMAIL", "no-reply@aiplacement.com")
+    FROM_EMAIL = os.getenv("FROM_EMAIL", "sayanthir@gmail.com")
 
     # Print API key to confirm loading (masking mostly for security)
     masked_key = f"{BREVO_API_KEY[:10]}...{BREVO_API_KEY[-4:]}" if len(BREVO_API_KEY) > 15 else "INVALID_LENGTH"
