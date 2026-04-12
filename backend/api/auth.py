@@ -2,12 +2,14 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, timedelta
 import random
+import re
 import string
 from passlib.context import CryptContext
 from typing import Dict, Optional
 import os
 import sys
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 # Ensure services module is visible
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -47,6 +49,10 @@ class ResetPasswordRequest(BaseModel):
 def generate_otp(length=6):
     return ''.join(random.choices(string.digits, k=length))
 
+def normalize_phone(phone: str) -> str:
+    """Strip all non-digit characters from a phone number."""
+    return re.sub(r'\D', '', phone)
+
 # --- Endpoints ---
 
 @router.post("/register")
@@ -83,45 +89,58 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
 async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     identifier = request.identifier.strip()
     
-    # Check if identifier is email (contains @)
+    # Detect whether input is email or phone (email contains "@")
     is_email = "@" in identifier
     
-    # Check if user exists (by email or phone) in Database
     user = None
     if is_email:
+        # --- Email lookup (exact, case-insensitive) ---
         identifier = identifier.lower()
-        user = db.query(User).filter(User.email == identifier).first()
+        user = db.query(User).filter(func.lower(User.email) == identifier).first()
         if user:
-            print(f"[DEBUG] User found in database by email: {user.email}")
+            print(f"[DEBUG] User found by email: {user.email}")
     else:
-        user = db.query(User).filter(User.phone == identifier).first()
+        # --- Phone lookup (flexible: match any stored phone that ends with input digits) ---
+        # This handles country code differences:
+        #   stored: "+91 9876543210"  →  digits: "919876543210"
+        #   input:  "9876543210"      →  digits: "9876543210"
+        #   "919876543210".endswith("9876543210") → True ✅
+        input_digits = normalize_phone(identifier)
+        if not input_digits:
+            raise HTTPException(status_code=400, detail="Invalid phone number format")
+        
+        # Fetch all users and do suffix match on digits (SQLite doesn't support regex natively)
+        all_users = db.query(User).filter(User.phone.isnot(None)).all()
+        for candidate in all_users:
+            stored_digits = normalize_phone(candidate.phone or "")
+            if stored_digits.endswith(input_digits):
+                user = candidate
+                break
+        
         if user:
-            print(f"[DEBUG] User found in database by phone: {user.phone}")
+            print(f"[DEBUG] User found by phone suffix match: stored='{user.phone}', input='{identifier}'")
             
     if not user:
-        print(f"[DEBUG] Forgot password failed: User with identifier '{identifier}' not found in database.")
+        print(f"[DEBUG] Forgot password failed: No user found for identifier '{identifier}'")
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Generate OTP
+    # Generate OTP and store it keyed by the identifier the user provided
     otp = generate_otp()
     expiry = datetime.now() + timedelta(minutes=5)
-    
-    # Store OTP using the original identifier so subsequent verifications match
     otp_store[identifier] = {
         "otp": otp,
         "expires": expiry,
         "attempts": 0
     }
     
-    # Send actual email to the user's registered email address
+    # Always send OTP via email to the user's registered address
     try:
         send_otp_email(user.email, otp)
-        print(f"[DEBUG] Sent OTP email to {user.email} for identifier {identifier}")
+        print(f"[DEBUG] OTP emailed to {user.email} for identifier '{identifier}'")
     except ValueError as e:
         del otp_store[identifier]
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        # Revert OTP store if email completely failed
         del otp_store[identifier]
         raise HTTPException(status_code=500, detail=f"Failed to send OTP email: {str(e)}")
     
@@ -166,12 +185,20 @@ async def reset_password(request: ResetPasswordRequest, db: Session = Depends(ge
     is_email = "@" in identifier
     if is_email:
         identifier = identifier.lower()
-        user = db.query(User).filter(User.email == identifier).first()
+        user = db.query(User).filter(func.lower(User.email) == identifier).first()
     else:
-        user = db.query(User).filter(User.phone == identifier).first()
+        # Same flexible phone suffix match as forgot-password
+        input_digits = normalize_phone(identifier)
+        user = None
+        all_users = db.query(User).filter(User.phone.isnot(None)).all()
+        for candidate in all_users:
+            stored_digits = normalize_phone(candidate.phone or "")
+            if stored_digits.endswith(input_digits):
+                user = candidate
+                break
         
     if not user:
-         raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User not found")
     
     # Update password
     user.password = pwd_context.hash(request.new_password)

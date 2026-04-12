@@ -55,7 +55,7 @@ export default function ForgotPassword() {
             <Mail size={26} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Forgot Password?</h1>
-          <p className="text-gray-500 text-sm mt-1">Enter your email or phone to receive a security code</p>
+          <p className="text-gray-500 text-sm mt-1">Enter your email or phone number to receive a security code</p>
         </div>
 
         {success ? (
@@ -86,10 +86,15 @@ export default function ForgotPassword() {
                   required
                   value={identifier}
                   onChange={e => setIdentifier(e.target.value)}
-                  placeholder="name@email.com or 1234567890"
+                  placeholder="name@email.com or 9876543210"
                   className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
                 />
               </div>
+              <p className="text-xs text-gray-400 mt-1.5 ml-1">
+                {identifier.includes('@') 
+                  ? 'OTP will be sent to this email address.' 
+                  : 'Enter your phone number (with or without country code). OTP will be sent to your registered email.'}
+              </p>
             </div>
 
             <button
@@ -102,7 +107,7 @@ export default function ForgotPassword() {
             </button>
 
             <p className="text-center text-xs text-gray-400">
-              Check your spam folder if you don't receive the email within 1 minute.
+              OTP is always delivered to your registered email. Check spam if it doesn't arrive within 1 minute.
             </p>
           </form>
         )}
