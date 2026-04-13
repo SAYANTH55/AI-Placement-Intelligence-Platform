@@ -1,361 +1,488 @@
-import { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { Routes, Route, useNavigate, NavLink } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { aiResult } from '../utils/mockData';
 import Sidebar from '../components/common/Sidebar';
 import MobileNav from '../components/dashboard/MobileNav';
 import UploadBox from '../components/dashboard/UploadBox';
 import InsightCards from '../components/dashboard/InsightCards';
-import Tabs from '../components/dashboard/Tabs';
 import SkillBadge from '../components/dashboard/SkillBadge';
 import ScoreRing from '../components/dashboard/ScoreRing';
-import { RefreshCw, Menu, TrendingUp, Target, Briefcase } from 'lucide-react';
+import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
-// Sub-page: Resume Analysis
+/* ── Shared dark card ── */
+function DarkCard({ children, className = '', delay = 0, glow = false }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-10% 0px' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`relative bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-6 overflow-hidden ${glow ? 'shadow-[0_0_40px_rgba(249,115,22,0.07)]' : ''} ${className}`}
+    >
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/30 to-transparent" />
+      {children}
+    </motion.div>
+  );
+}
+
+/* ── Empty state ── */
+function EmptyState({ icon: Icon, title, message }) {
+  return (
+    <DarkCard className="p-16 text-center" glow>
+      <motion.div
+        animate={{ y: [-6, 6, -6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#F97316]/10 border border-[#F97316]/20 text-[#F97316] mb-6 mx-auto shadow-[0_0_30px_rgba(249,115,22,0.15)]"
+      >
+        <Icon size={28} />
+      </motion.div>
+      <h3 className="text-white font-black text-lg mb-2">{title}</h3>
+      <p className="text-[#555] text-sm">{message}</p>
+    </DarkCard>
+  );
+}
+
+/* ── Page header ── */
+function PageHeader({ title, subtitle }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mb-8"
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-1 h-6 rounded-full bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+        <h2 className="text-2xl font-black text-white tracking-tight">{title}</h2>
+      </div>
+      <p className="text-[#555] text-sm ml-3">{subtitle}</p>
+    </motion.div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Sub-page: Analysis
+══════════════════════════════════════════════════════════════════ */
 function AnalysisPage({ data, onAnalyzeComplete }) {
   return (
-    <div className="animate-fade-in space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Resume Analysis</h2>
-        <p className="text-sm text-gray-400">Deep extraction of your skills and career signals.</p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Resume Analysis" subtitle="Deep extraction of your skills and career signals." />
       {!data ? (
         <UploadBox onAnalyzeComplete={onAnalyzeComplete} />
       ) : (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h4 className="text-base font-bold text-gray-900 mb-3">Parsed Resume Text</h4>
-            <div className="text-gray-600 text-sm leading-relaxed bg-gray-50 border border-gray-100 p-4 rounded-xl font-mono">
+          <DarkCard delay={0}>
+            <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Parsed Resume Text</h4>
+            <div className="text-[#888] text-sm leading-relaxed bg-[#050505] border border-[#1A1A1A] p-4 rounded-xl font-mono">
               {data.extractedText}
             </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h4 className="text-base font-bold text-gray-900 mb-3">Detected Skills</h4>
+          </DarkCard>
+          <DarkCard delay={0.1}>
+            <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
             <div className="flex flex-wrap gap-2">
               {data.allDetected.map((skill, i) => (
-                <SkillBadge key={i} skill={skill} type="detected" />
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
+                >
+                  {skill}
+                </motion.span>
               ))}
             </div>
-          </div>
+          </DarkCard>
         </div>
       )}
     </div>
   );
 }
 
-// Sub-page: Skill Gap
+/* ══════════════════════════════════════════════════════════════════
+   Sub-page: Skill Gap
+══════════════════════════════════════════════════════════════════ */
 function SkillsPage({ data }) {
   if (!data) return (
-    <div className="animate-fade-in">
-      <h2 className="text-xl font-bold text-gray-900 mb-1">Skill Gap Analysis</h2>
-      <p className="text-sm text-gray-400 mb-6">Upload your resume on Overview to unlock skill gap details.</p>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400">
-        <Target size={40} className="mx-auto mb-3 text-gray-200" />
-        <p className="text-sm font-medium">No analysis yet. Go to Overview and upload your resume.</p>
-      </div>
+    <div>
+      <PageHeader title="Skill Gap Analysis" subtitle="Upload your resume on Overview to unlock skill gap details." />
+      <EmptyState icon={Target} title="No Analysis Yet" message="Go to Overview and upload your resume first." />
     </div>
   );
   return (
-    <div className="animate-fade-in space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Skill Gap Analysis</h2>
-        <p className="text-sm text-gray-400">AI mapped your resume against industry requirements.</p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Skill Gap Analysis" subtitle="AI mapped your resume against industry requirements." />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <h5 className="font-bold text-sm text-gray-700">Strong Match ({data.skills.length})</h5>
+        <DarkCard delay={0}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+            <h5 className="font-black text-sm text-white">Strong Match ({data.skills.length})</h5>
           </div>
           <div className="space-y-2">
             {data.skills.map((s, i) => (
-              <div key={i} className="flex items-center justify-between bg-green-50 border border-green-100 px-4 py-2.5 rounded-xl">
-                <span className="text-sm font-semibold text-green-800">{s}</span>
-                <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ Present</span>
-              </div>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl"
+              >
+                <span className="text-sm font-semibold text-green-300">{s}</span>
+                <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
+              </motion.div>
             ))}
           </div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-2 h-2 rounded-full bg-red-500" />
-            <h5 className="font-bold text-sm text-gray-700">Critical Gaps ({data.missing.length})</h5>
+        </DarkCard>
+        <DarkCard delay={0.1}>
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
+            <h5 className="font-black text-sm text-white">Critical Gaps ({data.missing.length})</h5>
           </div>
           <div className="space-y-2">
             {data.missing.map((s, i) => (
-              <div key={i} className="flex items-center justify-between bg-red-50 border border-red-100 px-4 py-2.5 rounded-xl">
-                <span className="text-sm font-semibold text-red-800">{s}</span>
-                <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">Missing</span>
-              </div>
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl"
+              >
+                <span className="text-sm font-semibold text-red-300">{s}</span>
+                <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </DarkCard>
       </div>
     </div>
   );
 }
 
-// Sub-page: Placement Score
+/* ══════════════════════════════════════════════════════════════════
+   Sub-page: Score
+══════════════════════════════════════════════════════════════════ */
 function ScorePage({ data }) {
   if (!data) return (
-    <div className="animate-fade-in">
-      <h2 className="text-xl font-bold text-gray-900 mb-1">Placement Score</h2>
-      <p className="text-sm text-gray-400 mb-6">Upload your resume to get your personalized readiness score.</p>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400">
-        <TrendingUp size={40} className="mx-auto mb-3 text-gray-200" />
-        <p className="text-sm font-medium">No data yet. Upload your resume on Overview first.</p>
-      </div>
+    <div>
+      <PageHeader title="Placement Score" subtitle="Upload your resume to get your personalized readiness score." />
+      <EmptyState icon={TrendingUp} title="No Score Yet" message="Upload your resume on Overview first." />
     </div>
   );
   return (
-    <div className="animate-fade-in space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Placement Score</h2>
-        <p className="text-sm text-gray-400">Your career readiness metrics across multiple dimensions.</p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div className="space-y-6">
+      <PageHeader title="Placement Score" subtitle="Your career readiness metrics across multiple dimensions." />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {[
-          { label: 'Overall Readiness', value: data.score, description: 'Composite score across all dimensions' },
-          { label: 'Interview Confidence', value: data.interview_confidence, description: 'Based on communication & tech depth' },
-          { label: 'Technical Depth', value: data.technical_depth, description: 'Core engineering & algorithm strength' },
+          { label: 'Overall Readiness', value: data.score, desc: 'Composite score across all dimensions', color: '#F97316' },
+          { label: 'Interview Confidence', value: data.interview_confidence, desc: 'Communication & tech depth', color: '#818CF8' },
+          { label: 'Technical Depth', value: data.technical_depth, desc: 'Core engineering & algorithm strength', color: '#34D399' },
         ].map((item, i) => (
-          <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center gap-3">
-            <ScoreRing score={item.value} size={110} strokeWidth={10} />
-            <div className="text-center">
-              <h4 className="font-bold text-sm text-gray-800">{item.label}</h4>
-              <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>
+          <DarkCard key={i} delay={i * 0.1} glow className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <ScoreRing score={item.value} size={110} strokeWidth={10} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  animate={{ boxShadow: [`0 0 0px ${item.color}40`, `0 0 20px ${item.color}40`, `0 0 0px ${item.color}40`] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-12 h-12 rounded-full"
+                />
+              </div>
             </div>
-          </div>
+            <div className="text-center">
+              <h4 className="font-black text-sm text-white">{item.label}</h4>
+              <p className="text-xs text-[#555] mt-0.5">{item.desc}</p>
+            </div>
+          </DarkCard>
         ))}
       </div>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 className="font-bold text-sm text-gray-800 mb-4">Target Companies</h4>
+      <DarkCard delay={0.3}>
+        <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Companies</h4>
         <div className="flex flex-wrap gap-2">
           {data.companies.map((c, i) => (
-            <span key={i} className="bg-gray-900 text-white text-xs font-bold px-4 py-1.5 rounded-full">{c}</span>
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 + i * 0.04 }}
+              whileHover={{ scale: 1.05, borderColor: 'rgba(249,115,22,0.5)' }}
+              className="bg-[#F97316]/5 border border-[#F97316]/20 text-[#F97316] text-xs font-black px-4 py-2 rounded-full cursor-default"
+            >
+              {c}
+            </motion.span>
           ))}
         </div>
-      </div>
+      </DarkCard>
     </div>
   );
 }
 
-// Sub-page: Recommendations
+/* ══════════════════════════════════════════════════════════════════
+   Sub-page: Recommendations
+══════════════════════════════════════════════════════════════════ */
 function RecommendationsPage({ data }) {
   if (!data) return (
-    <div className="animate-fade-in">
-      <h2 className="text-xl font-bold text-gray-900 mb-1">Career Recommendations</h2>
-      <p className="text-sm text-gray-400 mb-6">Upload your resume to unlock your personalized learning path.</p>
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center text-gray-400">
-        <Briefcase size={40} className="mx-auto mb-3 text-gray-200" />
-        <p className="text-sm font-medium">No recommendations yet. Upload your resume on Overview first.</p>
-      </div>
+    <div>
+      <PageHeader title="Career Recommendations" subtitle="Upload your resume to unlock your personalized learning path." />
+      <EmptyState icon={Briefcase} title="No Recommendations Yet" message="Upload your resume on Overview first." />
     </div>
   );
   return (
-    <div className="animate-fade-in space-y-6">
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-1">Career Recommendations</h2>
-        <p className="text-sm text-gray-400">AI-powered learning path and role matching.</p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Career Recommendations" subtitle="AI-powered learning path and role matching." />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Target Roles */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-          <h4 className="text-base font-bold text-gray-900 mb-4">Target Roles</h4>
+        <DarkCard delay={0}>
+          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Target Roles</h4>
           <div className="space-y-3">
             {data.jobRoles.map((role, i) => (
-              <div key={i} className="p-4 border border-gray-100 rounded-xl hover:border-orange-200 hover:bg-orange-50/30 transition-all cursor-pointer group">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.07 }}
+                whileHover={{ borderColor: 'rgba(249,115,22,0.3)', backgroundColor: 'rgba(249,115,22,0.03)' }}
+                className="p-4 border border-[#1A1A1A] rounded-xl cursor-pointer transition-all duration-200 group"
+              >
                 <div className="flex items-center justify-between">
-                  <h5 className="font-bold text-sm text-gray-800 group-hover:text-orange-600 transition-colors">
+                  <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
                     {typeof role === 'string' ? role : role.title}
                   </h5>
-                  <span className="text-xs text-orange-500 font-semibold bg-orange-50 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
                     {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
                   </span>
                 </div>
                 {typeof role === 'object' && role.salary && (
-                  <p className="text-xs text-gray-400 mt-1">{role.salary}</p>
+                  <p className="text-xs text-[#555] mt-1">{role.salary}</p>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </DarkCard>
 
         {/* Learning Path */}
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl shadow-sm p-6 border border-orange-100">
-          <h4 className="text-base font-bold text-orange-700 mb-4">Your Learning Path</h4>
+        <DarkCard delay={0.1} glow>
+          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Learning Path</h4>
           <div className="space-y-3 relative">
-            <div className="absolute left-3.5 top-3 bottom-3 w-px bg-orange-200" />
+            {/* connector line */}
+            <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
             {data.recommendations.map((rec, i) => (
-              <div key={i} className="relative flex items-start gap-4 pl-3">
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 shadow-sm z-10">
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="relative flex items-start gap-4 pl-1"
+              >
+                <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10 relative">
                   {i + 1}
                 </div>
-                <div className="bg-white border border-orange-100 rounded-xl p-3 shadow-sm text-xs text-gray-700 leading-relaxed flex-1">
+                <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">
                   {rec}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </DarkCard>
       </div>
     </div>
   );
 }
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════════════════════════════
+   Main Dashboard
+══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
   const { user } = useAppContext();
   const [analyzedData, setAnalyzedData] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
-  const handleAnalyzeComplete = () => {
-    setAnalyzedData(aiResult);
-  };
-
-  const handleReset = () => {
-    setAnalyzedData(null);
-    setActiveTab('overview');
-  };
+  const handleAnalyzeComplete = () => setAnalyzedData(aiResult);
+  const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
 
+  const tabs = [
+    { id: 'overview', label: 'Analysis Overview' },
+    { id: 'analysis', label: 'Skill Gap Breakdown' },
+    { id: 'recommendations', label: 'Career Recommendations' }
+  ];
+
   const overviewTabContent = {
     overview: (
-      <div className="animate-fade-in bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 className="text-base font-bold text-gray-900 mb-3">Resume Parsing Output</h4>
-        <div className="text-gray-600 text-sm leading-relaxed mb-6 bg-gray-50 border border-gray-100 p-4 rounded-xl font-mono">
+      <DarkCard>
+        <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Resume Parsing Output</h4>
+        <div className="text-[#888] text-sm leading-relaxed mb-6 bg-[#050505] border border-[#1A1A1A] p-4 rounded-xl font-mono">
           {analyzedData?.extractedText}
         </div>
-        <h4 className="text-base font-bold text-gray-900 mb-3">Detected Skills</h4>
+        <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
         <div className="flex flex-wrap gap-2">
           {analyzedData?.allDetected.map((skill, i) => (
-            <SkillBadge key={i} skill={skill} type="detected" />
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.03 }}
+              className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
+            >
+              {skill}
+            </motion.span>
           ))}
         </div>
-      </div>
+      </DarkCard>
     ),
     analysis: (
-      <div className="animate-fade-in bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h4 className="text-base font-bold text-gray-900 mb-1">Detailed Skill Breakdown</h4>
-        <p className="text-sm text-gray-400 mb-6">AI engine mapped your capabilities against industry requirements.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
-              <h5 className="font-bold text-sm text-gray-700">Strong Match</h5>
-            </div>
-            <div className="space-y-2">
-              {analyzedData?.skills.map((s, i) => (
-                <div key={i} className="flex items-center justify-between bg-green-50 border border-green-100 px-4 py-2.5 rounded-xl">
-                  <span className="text-sm font-semibold text-green-800">{s}</span>
-                  <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ Present</span>
-                </div>
-              ))}
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <DarkCard>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+            <h5 className="font-black text-sm text-white">Strong Match</h5>
           </div>
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-red-500" />
-              <h5 className="font-bold text-sm text-gray-700">Critical Gaps</h5>
-            </div>
-            <div className="space-y-2">
-              {analyzedData?.missing.map((s, i) => (
-                <div key={i} className="flex items-center justify-between bg-red-50 border border-red-100 px-4 py-2.5 rounded-xl">
-                  <span className="text-sm font-semibold text-red-800">{s}</span>
-                  <span className="text-xs font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">Missing</span>
-                </div>
-              ))}
-            </div>
+          <div className="space-y-2">
+            {analyzedData?.skills.map((s, i) => (
+              <div key={i} className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl">
+                <span className="text-sm font-semibold text-green-300">{s}</span>
+                <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
+              </div>
+            ))}
           </div>
-        </div>
+        </DarkCard>
+        <DarkCard>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-2 bg-red-400 rounded-full shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
+            <h5 className="font-black text-sm text-white">Critical Gaps</h5>
+          </div>
+          <div className="space-y-2">
+            {analyzedData?.missing.map((s, i) => (
+              <div key={i} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl">
+                <span className="text-sm font-semibold text-red-300">{s}</span>
+                <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
+              </div>
+            ))}
+          </div>
+        </DarkCard>
       </div>
     ),
     recommendations: (
-      <div className="animate-fade-in grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-          <h4 className="text-base font-bold text-gray-900 mb-4">Target Roles</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <DarkCard>
+          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Roles</h4>
           <div className="space-y-3">
             {analyzedData?.jobRoles.map((role, i) => (
-              <div key={i} className="p-4 border border-gray-100 rounded-xl hover:border-orange-200 hover:bg-orange-50/30 transition-all cursor-pointer group">
+              <motion.div key={i} whileHover={{ borderColor: 'rgba(249,115,22,0.3)' }} className="p-4 border border-[#1A1A1A] rounded-xl group cursor-pointer transition-all">
                 <div className="flex items-center justify-between">
-                  <h5 className="font-bold text-sm text-gray-800 group-hover:text-orange-600 transition-colors">
+                  <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
                     {typeof role === 'string' ? role : role.title}
                   </h5>
-                  <span className="text-xs text-orange-500 font-semibold bg-orange-50 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
                     {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
                   </span>
                 </div>
-                {typeof role === 'object' && role.salary && (
-                  <p className="text-xs text-gray-400 mt-1">{role.salary}</p>
-                )}
-              </div>
+                {typeof role === 'object' && role.salary && <p className="text-xs text-[#555] mt-1">{role.salary}</p>}
+              </motion.div>
             ))}
           </div>
-        </div>
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl shadow-sm p-6 border border-orange-100">
-          <h4 className="text-base font-bold text-orange-700 mb-4">Your Learning Path</h4>
+        </DarkCard>
+        <DarkCard glow>
+          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Learning Path</h4>
           <div className="space-y-3 relative">
-            <div className="absolute left-3.5 top-3 bottom-3 w-px bg-orange-200" />
+            <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
             {analyzedData?.recommendations.map((rec, i) => (
-              <div key={i} className="relative flex items-start gap-4 pl-3">
-                <div className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 shadow-sm z-10">
+              <div key={i} className="relative flex items-start gap-4 pl-1">
+                <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10">
                   {i + 1}
                 </div>
-                <div className="bg-white border border-orange-100 rounded-xl p-3 shadow-sm text-xs text-gray-700 leading-relaxed flex-1">
-                  {rec}
-                </div>
+                <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">{rec}</div>
               </div>
             ))}
           </div>
-        </div>
+        </DarkCard>
       </div>
     )
   };
 
-  // Overview Page (sub-route: /dashboard)
   const OverviewPage = () => (
     <div className="space-y-8">
       {!analyzedData ? (
-        <div className="max-w-2xl">
+        <div className="max-w-2xl space-y-6">
           <UploadBox onAnalyzeComplete={handleAnalyzeComplete} />
-          <div className="mt-6 bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-start gap-3 text-sm text-blue-800">
-            <div className="text-lg flex-shrink-0">ℹ️</div>
-            <p className="leading-relaxed">
-              Our intelligence layer cross-references your resume against{' '}
-              <strong>50,000+ placement records</strong> to generate accurate career trajectories and skill gap analysis.
-            </p>
-          </div>
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { icon: '🎯', title: 'Skill Gap Analysis', desc: 'Instantly identify missing skills' },
-              { icon: '📊', title: 'Placement Score', desc: 'Know your readiness percentile' },
-              { icon: '🗺️', title: 'Career Roadmap', desc: 'Get a personalized learning path' },
-            ].map((tip, i) => (
-              <div key={i} className="bg-white border border-gray-100 rounded-2xl p-4 text-center shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                <div className="text-2xl mb-2">{tip.icon}</div>
-                <h4 className="text-sm font-bold text-gray-800 mb-1">{tip.title}</h4>
-                <p className="text-xs text-gray-400">{tip.desc}</p>
+
+          {/* Info banner */}
+          <DarkCard delay={0.15} glow>
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0">
+                <Zap size={18} />
               </div>
+              <p className="text-sm text-[#888] leading-relaxed">
+                Our intelligence layer cross-references your resume against{' '}
+                <span className="text-[#F97316] font-bold">50,000+ placement records</span> to generate accurate career trajectories and skill gap analysis.
+              </p>
+            </div>
+          </DarkCard>
+
+          {/* Feature preview chips */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { icon: <Target size={20} />, title: 'Skill Gap Analysis', desc: 'Instantly identify missing skills', color: '#F97316' },
+              { icon: <TrendingUp size={20} />, title: 'Placement Score', desc: 'Know your readiness percentile', color: '#818CF8' },
+              { icon: <Sparkles size={20} />, title: 'Career Roadmap', desc: 'Get a personalized learning path', color: '#34D399' },
+            ].map((tip, i) => (
+              <DarkCard key={i} delay={0.2 + i * 0.08}>
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  className="flex flex-col items-center text-center cursor-default gap-3"
+                >
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `${tip.color}15`, border: `1px solid ${tip.color}25`, color: tip.color }}>
+                    {tip.icon}
+                  </div>
+                  <h4 className="text-xs font-black text-white">{tip.title}</h4>
+                  <p className="text-[11px] text-[#555]">{tip.desc}</p>
+                </motion.div>
+              </DarkCard>
             ))}
           </div>
         </div>
       ) : (
-        <div className="space-y-8 animate-fade-in">
+        <div className="space-y-8">
           <InsightCards data={analyzedData} />
+          {/* Dark tab bar */}
           <div>
-            <Tabs
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              tabs={[
-                { id: 'overview', label: 'Analysis Overview' },
-                { id: 'analysis', label: 'Skill Gap Breakdown' },
-                { id: 'recommendations', label: 'Career Recommendations' }
-              ]}
-            />
-            <div className="mt-4">{overviewTabContent[activeTab]}</div>
+            <div className="flex gap-1 bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-1 mb-6 w-fit">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+                    activeTab === tab.id ? 'text-white' : 'text-[#444] hover:text-[#888]'
+                  }`}
+                >
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="tab-pill"
+                      className="absolute inset-0 bg-[#F97316] rounded-xl shadow-[0_0_15px_rgba(249,115,22,0.4)]"
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
+              >
+                {overviewTabContent[activeTab]}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       )}
@@ -363,77 +490,101 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="flex bg-[#F9FAFB] min-h-screen">
+    <div className="flex bg-[#060606] min-h-screen">
       <Sidebar />
       <MobileNav isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl w-full overflow-y-auto">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl w-full overflow-y-auto relative">
+        {/* Background grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
-        {/* Mobile header bar */}
-        <div className="flex items-center justify-between mb-6 md:hidden">
+        {/* Mobile menu button */}
+        <div className="flex items-center justify-between mb-6 md:hidden relative z-10">
           <button
             onClick={() => setMobileNavOpen(true)}
-            className="flex items-center gap-2 bg-white border border-gray-200 px-3 py-2 rounded-xl shadow-sm text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 bg-[#0A0A0A] border border-[#1A1A1A] px-3 py-2 rounded-xl text-[#888] hover:text-white transition-colors"
           >
             <Menu size={18} />
             <span className="text-sm font-semibold">Menu</span>
           </button>
-          <div className="text-sm font-bold text-gray-700">
-            {greeting}, <span className="text-orange-500">{user?.name || 'User'}</span>
+          <div className="text-sm font-black text-[#888]">
+            {greeting}, <span className="text-[#F97316]">{user?.name || 'User'}</span>
           </div>
         </div>
 
         {/* Desktop Header */}
-        <div className="mb-8 hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-10 hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10"
+        >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-              {greeting}, <span className="text-orange-500">{user?.name || 'User'}</span> 👋
+            <h1 className="text-3xl font-black text-white tracking-tight">
+              {greeting},{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#FF8C3A]">
+                {user?.name || 'User'}
+              </span>{' '}
+              <span className="text-2xl">👋</span>
             </h1>
-            <p className="mt-1 text-sm text-gray-500">Career Intelligence Dashboard — AI-powered insights at a glance.</p>
+            <p className="mt-1 text-sm text-[#555]">Career Intelligence Dashboard — AI-powered insights at a glance.</p>
           </div>
 
           <div className="flex items-center gap-3">
             {analyzedData && (
-              <>
-                <div className="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100 text-sm font-semibold flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                  Profile Score: <span className="text-orange-500">{analyzedData.score}%</span>
-                </div>
-                <button
-                  onClick={handleReset}
-                  className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 bg-white border border-gray-200 px-4 py-2 rounded-full transition-colors hover:border-gray-300"
-                  title="Upload new resume"
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center gap-3"
                 >
-                  <RefreshCw size={14} />
-                  New Analysis
-                </button>
-              </>
+                  <div className="bg-[#0A0A0A] px-4 py-2 rounded-full border border-[#F97316]/30 text-sm font-black flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+                    <motion.span
+                      animate={{ opacity: [1, 0.3, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="w-2 h-2 rounded-full bg-green-400 inline-block"
+                    />
+                    <span className="text-[#888]">Score:</span>
+                    <span className="text-[#F97316]">{analyzedData.score}%</span>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handleReset}
+                    className="flex items-center gap-2 text-sm text-[#555] hover:text-white bg-[#0A0A0A] border border-[#1A1A1A] px-4 py-2 rounded-full transition-all hover:border-[#333]"
+                  >
+                    <RefreshCw size={14} />
+                    New Analysis
+                  </motion.button>
+                </motion.div>
+              </AnimatePresence>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Mobile: show analyzed score banner if analyzed */}
+        {/* Mobile: score banner */}
         {analyzedData && (
-          <div className="md:hidden flex items-center justify-between mb-4 bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-gray-100">
-            <div className="text-sm font-semibold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Profile Score: <span className="text-orange-500">{analyzedData.score}%</span>
+          <div className="md:hidden flex items-center justify-between mb-4 bg-[#0A0A0A] px-4 py-2.5 rounded-2xl border border-[#F97316]/20">
+            <div className="text-sm font-black flex items-center gap-2 text-[#888]">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
+              Score: <span className="text-[#F97316]">{analyzedData.score}%</span>
             </div>
-            <button onClick={handleReset} className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1">
+            <button onClick={handleReset} className="text-xs text-[#555] hover:text-red-400 flex items-center gap-1">
               <RefreshCw size={12} /> Reset
             </button>
           </div>
         )}
 
-        {/* Sub-routes for sidebar links */}
-        <Routes>
-          <Route path="/" element={<OverviewPage />} />
-          <Route path="/analysis" element={<AnalysisPage data={analyzedData} onAnalyzeComplete={handleAnalyzeComplete} />} />
-          <Route path="/skills" element={<SkillsPage data={analyzedData} />} />
-          <Route path="/score" element={<ScorePage data={analyzedData} />} />
-          <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
-        </Routes>
-
+        {/* Routes */}
+        <div className="relative z-10">
+          <Routes>
+            <Route path="/" element={<OverviewPage />} />
+            <Route path="/analysis" element={<AnalysisPage data={analyzedData} onAnalyzeComplete={handleAnalyzeComplete} />} />
+            <Route path="/skills" element={<SkillsPage data={analyzedData} />} />
+            <Route path="/score" element={<ScorePage data={analyzedData} />} />
+            <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
