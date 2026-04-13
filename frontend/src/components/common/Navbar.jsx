@@ -2,6 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 import { Zap, LogOut, User } from 'lucide-react';
 import Logo from '../Logo';
+import { motion } from 'framer-motion';
 
 export default function Navbar() {
   const { user, setUser } = useAppContext();
@@ -20,7 +21,15 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <motion.header
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="sticky top-0 z-50 bg-[#060606]/90 backdrop-blur-xl border-b border-[#1A1A1A] shadow-[0_4px_30px_rgba(249,115,22,0.08)]"
+    >
+      {/* Neon orange line under navbar */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -36,14 +45,25 @@ export default function Navbar() {
                 to={to}
                 end={end}
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                  `relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'text-orange-500 bg-orange-50'
-                      : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+                      ? 'text-[#F97316]'
+                      : 'text-[#888] hover:text-white'
                   }`
                 }
               >
-                {label}
+                {({ isActive }) => (
+                  <>
+                    {label}
+                    {isActive && (
+                      <motion.div
+                        layoutId="navbar-active-pill"
+                        className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]"
+                        transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -52,38 +72,40 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
-                  <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                <div className="hidden sm:flex items-center gap-2 text-sm text-[#888]">
+                  <div className="w-7 h-7 rounded-full bg-[#F97316]/10 border border-[#F97316]/30 flex items-center justify-center text-[#F97316]">
                     <User size={14} />
                   </div>
-                  <span className="font-medium">{user.name}</span>
+                  <span className="font-medium text-white">{user.name}</span>
                 </div>
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="text-sm font-semibold text-white bg-gray-900 px-4 py-2 rounded-full hover:bg-orange-500 transition-colors"
+                  className="text-sm font-semibold text-white bg-[#F97316] px-4 py-2 rounded-full hover:bg-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all duration-200"
                 >
                   Dashboard
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                  className="p-2 text-[#555] hover:text-red-500 transition-colors"
                   title="Logout"
                 >
                   <LogOut size={18} />
                 </button>
               </>
             ) : (
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(249,115,22,0.4)' }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => navigate('/login')}
-                className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-[#F97316] transition-all duration-200 shadow-sm hover:shadow"
+                className="flex items-center gap-2 bg-[#F97316] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-[0_0_0px_rgba(249,115,22,0)]"
               >
                 Start Hub
-                <Zap size={14} className="text-orange-400" />
-              </button>
+                <Zap size={14} className="fill-white" />
+              </motion.button>
             )}
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

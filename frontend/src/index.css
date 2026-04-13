@@ -29,8 +29,8 @@
   }
 
   body {
-    background-color: #F9FAFB;
-    color: #1a1a1a;
+    background-color: #060606;
+    color: #e5e5e5;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -122,7 +122,7 @@
   .siri-halo-mask {
     position: absolute;
     inset: 10vw;
-    background: #F9FAFB;
+    background: #060606;
     filter: blur(50px);
     border-radius: 40px;
   }
@@ -160,9 +160,9 @@
 :root {
   --primary: #F97316;
   --primary-hover: #FFA559;
-  --surface-color: #ffffff;
-  --surface-hover: #F9FAFB;
-  --bg-color: #F9FAFB;
+  --surface-color: #0A0A0A;
+  --surface-hover: #111111;
+  --bg-color: #060606;
   --border-color: #E5E7EB;
   --text-main: #1F2937;
   --text-muted: #6B7280;

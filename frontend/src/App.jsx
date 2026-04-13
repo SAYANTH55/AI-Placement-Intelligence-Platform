@@ -29,7 +29,7 @@ function AppContent() {
   const showGlobalNavbar = !isLanding && !isDashboard;
 
   return (
-    <div className="relative min-h-screen bg-[#F9FAFB] flex flex-col" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="relative min-h-screen bg-[#060606] flex flex-col" style={{ fontFamily: 'Inter, sans-serif' }}>
       {!isDashboard && <EdgeGlow />}
       {showGlobalNavbar && <Navbar />}
 
