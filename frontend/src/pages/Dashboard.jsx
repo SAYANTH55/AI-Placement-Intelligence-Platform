@@ -106,24 +106,46 @@ function AnalysisPage({ data, onAnalyzeComplete }) {
 /* ══════════════════════════════════════════════════════════════════
    Sub-page: Skill Gap
 ══════════════════════════════════════════════════════════════════ */
-function SkillsPage({ data }) {
+function SkillsPage({ data, selectedRoleIndex, setSelectedRoleIndex }) {
   if (!data) return (
     <div>
       <PageHeader title="Skill Gap Analysis" subtitle="Upload your resume on Overview to unlock skill gap details." />
       <EmptyState icon={Target} title="No Analysis Yet" message="Go to Overview and upload your resume first." />
     </div>
   );
+
+  const roles = data.jobRoles || [];
+  const currentRole = roles[selectedRoleIndex] || roles[0];
+
   return (
     <div className="space-y-6">
-      <PageHeader title="Skill Gap Analysis" subtitle="AI mapped your resume against industry requirements." />
+      <PageHeader title="Skill Gap Analysis" subtitle="Deep dive into specific role requirements and gaps." />
+      
+      {/* Role Selector */}
+      <div className="flex flex-wrap gap-2 pb-2">
+        {roles.map((role, idx) => (
+          <button
+            key={idx}
+            onClick={() => setSelectedRoleIndex(idx)}
+            className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all duration-200 border ${
+              selectedRoleIndex === idx 
+                ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]' 
+                : 'bg-[#0A0A0A] border-[#1A1A1A] text-[#555] hover:text-[#888] hover:border-[#333]'
+            }`}
+          >
+            {role.title} <span className="ml-1 opacity-60">({role.match}%)</span>
+          </button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DarkCard delay={0}>
           <div className="flex items-center gap-3 mb-5">
             <div className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
-            <h5 className="font-black text-sm text-white">Strong Match ({data.skills.length})</h5>
+            <h5 className="font-black text-sm text-white">Strong Match ({currentRole?.present?.length || 0})</h5>
           </div>
           <div className="space-y-2">
-            {data.skills.map((s, i) => (
+            {currentRole?.present?.map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -10 }}
@@ -135,15 +157,19 @@ function SkillsPage({ data }) {
                 <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
               </motion.div>
             ))}
+            {(!currentRole?.present || currentRole.present.length === 0) && (
+              <p className="text-xs text-[#444] text-center py-4 italic">No matching skills found for this role yet.</p>
+            )}
           </div>
         </DarkCard>
+
         <DarkCard delay={0.1}>
           <div className="flex items-center gap-3 mb-5">
             <div className="w-2.5 h-2.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
-            <h5 className="font-black text-sm text-white">Critical Gaps ({data.missing.length})</h5>
+            <h5 className="font-black text-sm text-white">Critical Gaps ({currentRole?.missing?.length || 0})</h5>
           </div>
           <div className="space-y-2">
-            {data.missing.map((s, i) => (
+            {currentRole?.missing?.map((s, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: 10 }}
@@ -155,6 +181,9 @@ function SkillsPage({ data }) {
                 <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
               </motion.div>
             ))}
+            {currentRole?.missing?.length === 0 && (
+              <p className="text-xs text-green-400/60 text-center py-4 italic font-bold">Perfect match! You have all the core skills.</p>
+            )}
           </div>
         </DarkCard>
       </div>
@@ -300,9 +329,13 @@ export default function Dashboard() {
   const [analyzedData, setAnalyzedData] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedRoleIndex, setSelectedRoleIndex] = useState(0);
 
-  const handleAnalyzeComplete = () => setAnalyzedData(aiResult);
-  const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); };
+  const handleAnalyzeComplete = (data) => {
+    setAnalyzedData(data);
+    setSelectedRoleIndex(0); // Reset to top match
+  };
+  const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); setSelectedRoleIndex(0); };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
@@ -322,7 +355,7 @@ export default function Dashboard() {
         </div>
         <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
         <div className="flex flex-wrap gap-2">
-          {analyzedData?.allDetected.map((skill, i) => (
+          {analyzedData?.allDetected?.map((skill, i) => (
             <motion.span
               key={i}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -337,35 +370,52 @@ export default function Dashboard() {
       </DarkCard>
     ),
     analysis: (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <DarkCard>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
-            <h5 className="font-black text-sm text-white">Strong Match</h5>
-          </div>
-          <div className="space-y-2">
-            {analyzedData?.skills.map((s, i) => (
-              <div key={i} className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl">
-                <span className="text-sm font-semibold text-green-300">{s}</span>
-                <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
-              </div>
-            ))}
-          </div>
-        </DarkCard>
-        <DarkCard>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-2 bg-red-400 rounded-full shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
-            <h5 className="font-black text-sm text-white">Critical Gaps</h5>
-          </div>
-          <div className="space-y-2">
-            {analyzedData?.missing.map((s, i) => (
-              <div key={i} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl">
-                <span className="text-sm font-semibold text-red-300">{s}</span>
-                <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
-              </div>
-            ))}
-          </div>
-        </DarkCard>
+      <div className="space-y-6">
+        <div className="flex flex-wrap gap-2">
+          {analyzedData?.jobRoles?.map((role, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelectedRoleIndex(idx)}
+              className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
+                selectedRoleIndex === idx 
+                  ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]' 
+                  : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+              }`}
+            >
+              {role.title}
+            </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <DarkCard>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+              <h5 className="font-black text-sm text-white">Strong Match</h5>
+            </div>
+            <div className="space-y-2">
+              {analyzedData?.jobRoles?.[selectedRoleIndex]?.present?.map((s, i) => (
+                <div key={i} className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl">
+                  <span className="text-sm font-semibold text-green-300">{s}</span>
+                  <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
+                </div>
+              ))}
+            </div>
+          </DarkCard>
+          <DarkCard>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 bg-red-400 rounded-full shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
+              <h5 className="font-black text-sm text-white">Critical Gaps</h5>
+            </div>
+            <div className="space-y-2">
+              {analyzedData?.jobRoles?.[selectedRoleIndex]?.missing?.map((s, i) => (
+                <div key={i} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl">
+                  <span className="text-sm font-semibold text-red-300">{s}</span>
+                  <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
+                </div>
+              ))}
+            </div>
+          </DarkCard>
+        </div>
       </div>
     ),
     recommendations: (
@@ -373,7 +423,7 @@ export default function Dashboard() {
         <DarkCard>
           <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Roles</h4>
           <div className="space-y-3">
-            {analyzedData?.jobRoles.map((role, i) => (
+            {analyzedData?.jobRoles?.map((role, i) => (
               <motion.div key={i} whileHover={{ borderColor: 'rgba(249,115,22,0.3)' }} className="p-4 border border-[#1A1A1A] rounded-xl group cursor-pointer transition-all">
                 <div className="flex items-center justify-between">
                   <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
@@ -392,7 +442,7 @@ export default function Dashboard() {
           <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Learning Path</h4>
           <div className="space-y-3 relative">
             <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
-            {analyzedData?.recommendations.map((rec, i) => (
+            {analyzedData?.recommendations?.map((rec, i) => (
               <div key={i} className="relative flex items-start gap-4 pl-1">
                 <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10">
                   {i + 1}
@@ -580,7 +630,7 @@ export default function Dashboard() {
           <Routes>
             <Route path="/" element={<OverviewPage />} />
             <Route path="/analysis" element={<AnalysisPage data={analyzedData} onAnalyzeComplete={handleAnalyzeComplete} />} />
-            <Route path="/skills" element={<SkillsPage data={analyzedData} />} />
+            <Route path="/skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
             <Route path="/score" element={<ScorePage data={analyzedData} />} />
             <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
           </Routes>

@@ -1,12 +1,20 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, CheckCircle, FileText, Zap, X } from 'lucide-react';
+import { UploadCloud, CheckCircle, FileText, Zap, X, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import API from '../../services/api';
+
+const COMMON_ROLES = [
+  "Full Stack Developer", "Backend Developer", "Frontend Developer",
+  "Data Scientist", "AI/ML Engineer", "DevOps Engineer",
+  "Cyber Security Analyst", "UI/UX Designer"
+];
 
 export default function UploadBox({ onAnalyzeComplete }) {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('idle');
   const [progress, setProgress] = useState(0);
+  const [selectedRole, setSelectedRole] = useState('');
 
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length > 0) {
@@ -31,27 +39,71 @@ export default function UploadBox({ onAnalyzeComplete }) {
     setStatus('analyzing');
     setProgress(0);
 
-    const interval = setInterval(() => {
-      setProgress(old => {
-        if (old >= 90) return old;
-        return old + 10;
+    const formData = new FormData();
+    formData.append('file', file);
+    if (selectedRole) {
+      formData.append('target_role', selectedRole);
+    }
+
+    try {
+      // Simulate progress bar while uploading/processing
+      const interval = setInterval(() => {
+        setProgress(old => (old >= 90 ? old : old + 5));
+      }, 200);
+
+      const response = await API.post('/upload_resume', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-    }, 180);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    clearInterval(interval);
-    setProgress(100);
-    setStatus('complete');
+      clearInterval(interval);
+      setProgress(100);
+      setStatus('complete');
 
-    setTimeout(() => {
-      if (onAnalyzeComplete) onAnalyzeComplete();
-    }, 600);
+      // The backend returns { status: 'success', data: { extractedText, skills, experience, prediction, roleMatches } }
+      const raw = response.data.data;
+      
+      // Calculate missing skills dynamically from the top role
+      const topRole = raw.roleMatches[0];
+      const dynamicMissing = topRole ? topRole.missing : [];
+      
+      const formattedResult = {
+        score: Math.round(raw.prediction.placement_probability * 100),
+        status: raw.prediction.readiness,
+        skills: raw.skills.slice(0, 8), // Show up to 8 strong matches
+        missing: dynamicMissing.slice(0, 5), // Show top 5 gaps from the best matched role
+        allDetected: raw.skills,
+        extractedText: raw.extractedText,
+        prediction: raw.prediction,
+        // Map the real role matches from the backend
+        jobRoles: raw.roleMatches.map(m => ({
+          title: m.role,
+          match: m.match,
+          salary: m.salary,
+          missing: m.missing
+        })),
+        recommendations: dynamicMissing.length > 0 && topRole
+          ? dynamicMissing.map(s => `Master ${s} to improve your ${topRole.role || 'targeted'} readiness`)
+          : ['Continue building projects', 'Prepare for system design interviews', 'Focus on open source contributions'],
+        companies: ['Google', 'Meta', 'Amazon', 'Netflix', 'Microsoft', 'OpenAI'],
+        interview_confidence: Math.round(raw.prediction.placement_probability * 100 * 0.9),
+        technical_depth: Math.round(raw.prediction.placement_probability * 100 * 1.1)
+      };
+
+      setTimeout(() => {
+        if (onAnalyzeComplete) onAnalyzeComplete(formattedResult);
+      }, 600);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      setStatus('idle');
+      alert('Analysis failed. Please ensure the backend is running.');
+    }
   };
 
   const handleRemove = () => {
     setFile(null);
     setStatus('idle');
     setProgress(0);
+    setSelectedRole('');
   };
 
   return (
@@ -162,23 +214,47 @@ export default function UploadBox({ onAnalyzeComplete }) {
               )}
             </div>
 
-            {/* Idle: analyze button */}
+            {/* Idle: Target Role Selection & analyze button */}
             {status === 'idle' && (
-              <motion.button
-                whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(249,115,22,0.4)' }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleAnalyze}
-                className="relative w-full overflow-hidden flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-black text-sm text-white bg-[#F97316] transition-all duration-200 shadow-[0_0_20px_rgba(249,115,22,0.2)]"
-              >
-                {/* Button shimmer */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-                  animate={{ left: ['-100%', '200%'] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: 'linear', repeatDelay: 1.5 }}
-                />
-                <Zap size={16} className="fill-white relative z-10" />
-                <span className="relative z-10">Analyze Resume</span>
-              </motion.button>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target size={14} className="text-[#F97316]" />
+                    <h4 className="text-xs font-black text-white uppercase tracking-widest">Select Target Role (Optional)</h4>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {COMMON_ROLES.map((role) => (
+                      <button
+                        key={role}
+                        onClick={() => setSelectedRole(role === selectedRole ? '' : role)}
+                        className={`text-[10px] sm:text-xs font-bold px-2 py-2 rounded-lg border transition-all ${
+                          selectedRole === role
+                            ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_10px_rgba(249,115,22,0.3)]'
+                            : 'bg-[#111] border-[#222] text-[#666] hover:text-[#888] hover:border-[#444]'
+                        }`}
+                      >
+                        {role}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(249,115,22,0.4)' }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleAnalyze}
+                  className="relative w-full overflow-hidden flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-black text-sm text-white bg-[#F97316] transition-all duration-200 shadow-[0_0_20px_rgba(249,115,22,0.2)]"
+                >
+                  {/* Button shimmer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                    animate={{ left: ['-100%', '200%'] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: 'linear', repeatDelay: 1.5 }}
+                  />
+                  <Zap size={16} className="fill-white relative z-10" />
+                  <span className="relative z-10">{selectedRole ? `Analyze for ${selectedRole}` : 'Analyze Resume'}</span>
+                </motion.button>
+              </motion.div>
             )}
 
             {/* Analyzing */}
