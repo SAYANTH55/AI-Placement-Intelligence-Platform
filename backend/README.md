@@ -17,4 +17,8 @@ Built with FastAPI for high performance and scalability. Handles data storage, u
 
 ## Getting Started
 1. Install requirements: `pip install -r ../requirements.txt`.
-2. Run server: `uvicorn main:app --reload`.
+2. Set up your environment variables:
+   - Make a copy of `.env.example` and rename it to `.env`.
+   - Fill in `.env` with your own database and SMTP/API credentials.
+   - Do not commit your real `.env` file to version control.
+3. Run server: `uvicorn main:app --reload`.

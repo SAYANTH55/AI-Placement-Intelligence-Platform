@@ -1,6 +1,11 @@
 import sys
 import os
 
+from dotenv import load_dotenv
+load_dotenv(override=True)
+
+# Add parent directory to sys.path to allow importing from ai_model
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
