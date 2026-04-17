@@ -51,6 +51,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
         setProgress(old => (old >= 90 ? old : old + 5));
       }, 200);
 
+      console.log('🚀 Starting resume upload to /upload_resume endpoint...');
       const response = await API.post('/upload_resume', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -59,9 +60,24 @@ export default function UploadBox({ onAnalyzeComplete }) {
       setProgress(100);
       setStatus('complete');
 
+      console.log('✅ API Response:', response.data);
+
       // The backend returns { status: 'success', data: { extractedText, skills, experience, prediction, roleMatches } }
+      if (!response.data || !response.data.data) {
+        throw new Error('Invalid response format from server');
+      }
+
       const raw = response.data.data;
       
+      // Validate essential data
+      if (!raw.skills) {
+        throw new Error('No skills extracted from resume');
+      }
+
+      if (!raw.roleMatches || !Array.isArray(raw.roleMatches)) {
+        throw new Error('No role matches found');
+      }
+
       // Calculate missing skills dynamically from the top role
       const topRole = raw.roleMatches[0];
       const dynamicMissing = topRole ? topRole.missing : [];
@@ -74,28 +90,51 @@ export default function UploadBox({ onAnalyzeComplete }) {
         allDetected: raw.skills,
         extractedText: raw.extractedText,
         prediction: raw.prediction,
-        // Map the real role matches from the backend
+        // Map the real role matches from the backend (includes present & missing skills)
         jobRoles: raw.roleMatches.map(m => ({
           title: m.role,
           match: m.match,
           salary: m.salary,
-          missing: m.missing
+          present: m.present || [],
+          missing: m.missing || []
         })),
         recommendations: dynamicMissing.length > 0 && topRole
           ? dynamicMissing.map(s => `Master ${s} to improve your ${topRole.role || 'targeted'} readiness`)
-          : ['Continue building projects', 'Prepare for system design interviews', 'Focus on open source contributions'],
+          : ['Continue building projects'],
         companies: ['Google', 'Meta', 'Amazon', 'Netflix', 'Microsoft', 'OpenAI'],
-        interview_confidence: Math.round(raw.prediction.placement_probability * 100 * 0.9),
-        technical_depth: Math.round(raw.prediction.placement_probability * 100 * 1.1)
+        interview_confidence: Math.max(0, Math.min(100, Math.round(raw.prediction.placement_probability * 100 * 0.9))),
+        technical_depth: Math.max(0, Math.min(100, Math.round(raw.prediction.placement_probability * 100))),
+        // Hybrid AI extensions
+        llm_enhancement: raw.llm_enhancement || null,
+        llm_insights: raw.llm_insights || null,
+        experience_advantage_roles: raw.experience_advantage_roles || []
       };
 
+      console.log('✅ Analysis complete:', formattedResult);
+
       setTimeout(() => {
-        if (onAnalyzeComplete) onAnalyzeComplete(formattedResult);
+        if (onAnalyzeComplete) {
+          onAnalyzeComplete(formattedResult);
+          console.log('✅ Data passed to Dashboard component');
+        }
       }, 600);
     } catch (error) {
-      console.error('Analysis failed:', error);
+      console.error('❌ Analysis failed:', error);
       setStatus('idle');
-      alert('Analysis failed. Please ensure the backend is running.');
+      
+      // Better error messages
+      let errorMsg = 'Analysis failed. ';
+      if (error.response?.status === 500) {
+        errorMsg += `Server error: ${error.response.data?.detail || 'Please check the backend logs'}`;
+      } else if (error.response?.status === 422) {
+        errorMsg += 'Invalid file format. Please upload a PDF, DOC, or DOCX file.';
+      } else if (error.message === 'Network Error') {
+        errorMsg += 'Backend server is not running. Please start it first.';
+      } else {
+        errorMsg += error.message || 'Unknown error occurred';
+      }
+      
+      alert('❌ ' + errorMsg);
     }
   };
 

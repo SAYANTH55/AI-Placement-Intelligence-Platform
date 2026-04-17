@@ -1,19 +1,21 @@
 import sys
 import os
 
-# Add parent directory to sys.path to allow importing from ai_model
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import endpoints, auth
+from fastapi.responses import JSONResponse
+from api import endpoints, auth, resume_routes
 from database.db import engine
 from database import models
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="AI Placement Intelligence Platform API")
+app = FastAPI(
+    title="AI Placement Intelligence Platform API",
+    description="AI-powered placement prediction and skill matching",
+    version="2.0.0"
+)
 
 # Allow all origins for development (restrict in production)
 app.add_middleware(
@@ -25,12 +27,32 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(endpoints.router)
-app.include_router(auth.router)
+app.include_router(endpoints.router, tags=["resume-analysis"])
+app.include_router(auth.router, tags=["authentication"])
+app.include_router(resume_routes.router, tags=["resume-history"])
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to AI Placement Intelligence Platform API"}
+    return {
+        "message": "Welcome to AI Placement Intelligence Platform API v2",
+        "features": [
+            "Resume analysis with improved AI/ML scoring",
+            "Resume history tracking",
+            "Job description comparison",
+            "PDF export reports",
+            "Rate limiting for abuse prevention"
+        ],
+        "docs": "/docs"
+    }
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "api_version": "2.0.0",
+        "features": "All systems operational"
+    }
 
 if __name__ == "__main__":
     import uvicorn

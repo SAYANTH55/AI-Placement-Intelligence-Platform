@@ -59,7 +59,7 @@ export default function InsightCards({ data }) {
             className="text-3xl font-black"
             style={{ color: '#F97316', textShadow: '0 0 20px rgba(249,115,22,0.4)' }}
           >
-            {data.placement_probability ?? data.score + 13}%
+            {data.score}%
           </motion.span>
           <p className="text-[10px] text-[#444] mt-0.5">Based on 50k+ records</p>
         </div>

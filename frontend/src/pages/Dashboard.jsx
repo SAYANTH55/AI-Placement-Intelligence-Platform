@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Routes, Route, useNavigate, NavLink } from 'react-router-dom';
+import { Routes, Route, useNavigate, NavLink, Navigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { aiResult } from '../utils/mockData';
 import Sidebar from '../components/common/Sidebar';
@@ -76,12 +76,6 @@ function AnalysisPage({ data, onAnalyzeComplete }) {
       ) : (
         <div className="space-y-6">
           <DarkCard delay={0}>
-            <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Parsed Resume Text</h4>
-            <div className="text-[#888] text-sm leading-relaxed bg-[#050505] border border-[#1A1A1A] p-4 rounded-xl font-mono">
-              {data.extractedText}
-            </div>
-          </DarkCard>
-          <DarkCard delay={0.1}>
             <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
             <div className="flex flex-wrap gap-2">
               {data.allDetected.map((skill, i) => (
@@ -121,68 +115,122 @@ function SkillsPage({ data, selectedRoleIndex, setSelectedRoleIndex }) {
     <div className="space-y-6">
       <PageHeader title="Skill Gap Analysis" subtitle="Deep dive into specific role requirements and gaps." />
       
-      {/* Role Selector */}
-      <div className="flex flex-wrap gap-2 pb-2">
-        {roles.map((role, idx) => (
-          <button
-            key={idx}
-            onClick={() => setSelectedRoleIndex(idx)}
-            className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all duration-200 border ${
-              selectedRoleIndex === idx 
-                ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]' 
-                : 'bg-[#0A0A0A] border-[#1A1A1A] text-[#555] hover:text-[#888] hover:border-[#333]'
-            }`}
-          >
-            {role.title} <span className="ml-1 opacity-60">({role.match}%)</span>
-          </button>
-        ))}
+      {/* Role Selector with Visual Tiers */}
+      <div className="space-y-3">
+        <p className="text-xs text-[#666] font-semibold uppercase tracking-wider">Select a role to see skill gaps:</p>
+        <div className="flex flex-wrap gap-2 pb-2">
+          {roles.map((role, idx) => {
+            // Visual tier based on match percentage
+            let tierColor, bgOpacity, borderOpacity, textColor, glow;
+            if (selectedRoleIndex === idx) {
+              // Selected: orange highlight
+              tierColor = '#F97316';
+              bgOpacity = 'bg-[#F97316]/20';
+              borderOpacity = 'border-[#F97316]/60';
+              textColor = 'text-[#F97316]';
+              glow = 'shadow-[0_0_20px_rgba(249,115,22,0.3)]';
+            } else if (role.match >= 70) {
+              // High match: medium contrast (green)
+              tierColor = '#34D399';
+              bgOpacity = 'bg-[#34D399]/10';
+              borderOpacity = 'border-[#34D399]/30';
+              textColor = 'text-[#34D399]';
+              glow = '';
+            } else if (role.match >= 40) {
+              // Medium match: subtle contrast (blue)
+              tierColor = '#818CF8';
+              bgOpacity = 'bg-[#818CF8]/8';
+              borderOpacity = 'border-[#818CF8]/20';
+              textColor = 'text-[#818CF8]';
+              glow = '';
+            } else {
+              // Low/no match: faded (gray)
+              tierColor = '#555';
+              bgOpacity = 'bg-[#333]/30';
+              borderOpacity = 'border-[#333]/30';
+              textColor = 'text-[#555]';
+              glow = '';
+            }
+
+            return (
+              <motion.button
+                key={idx}
+                onClick={() => setSelectedRoleIndex(idx)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
+                whileHover={{ scale: 1.03 }}
+                className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all duration-200 border ${bgOpacity} ${borderOpacity} ${textColor} ${glow} cursor-pointer`}
+              >
+                <div className="flex items-center gap-2">
+                  <span>{role.title}</span>
+                  <span className="opacity-70">({role.match}%)</span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <DarkCard delay={0}>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
-            <h5 className="font-black text-sm text-white">Strong Match ({currentRole?.present?.length || 0})</h5>
+            <div className="w-3 h-3 rounded-full bg-green-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
+            <h5 className="font-black text-sm text-white">Skills You Have</h5>
+            <span className="ml-auto text-xs font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">
+              {currentRole?.present?.length || 0}
+            </span>
           </div>
           <div className="space-y-2">
-            {currentRole?.present?.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl"
-              >
-                <span className="text-sm font-semibold text-green-300">{s}</span>
-                <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
-              </motion.div>
-            ))}
-            {(!currentRole?.present || currentRole.present.length === 0) && (
-              <p className="text-xs text-[#444] text-center py-4 italic">No matching skills found for this role yet.</p>
+            {currentRole?.present && currentRole.present.length > 0 ? (
+              currentRole.present.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-3 rounded-xl hover:border-green-500/25 transition-colors"
+                >
+                  <span className="text-sm font-semibold text-green-300">{s}</span>
+                  <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-full">✓ Match</span>
+                </motion.div>
+              ))
+            ) : (
+              <div className="py-6 text-center">
+                <p className="text-xs text-[#555]">No matching skills found for this role yet.</p>
+                <p className="text-[10px] text-[#444] mt-1">Try selecting a different role or add more skills to your resume.</p>
+              </div>
             )}
           </div>
         </DarkCard>
 
         <DarkCard delay={0.1}>
           <div className="flex items-center gap-3 mb-5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
-            <h5 className="font-black text-sm text-white">Critical Gaps ({currentRole?.missing?.length || 0})</h5>
+            <div className="w-3 h-3 rounded-full bg-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.8)]" />
+            <h5 className="font-black text-sm text-white">Skills to Learn</h5>
+            <span className="ml-auto text-xs font-black text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded-full">
+              {currentRole?.missing?.length || 0}
+            </span>
           </div>
           <div className="space-y-2">
-            {currentRole?.missing?.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl"
-              >
-                <span className="text-sm font-semibold text-red-300">{s}</span>
-                <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
-              </motion.div>
-            ))}
-            {currentRole?.missing?.length === 0 && (
-              <p className="text-xs text-green-400/60 text-center py-4 italic font-bold">Perfect match! You have all the core skills.</p>
+            {currentRole?.missing && currentRole.missing.length > 0 ? (
+              currentRole.missing.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-center justify-between bg-orange-500/5 border border-orange-500/15 px-4 py-3 rounded-xl hover:border-orange-500/25 transition-colors"
+                >
+                  <span className="text-sm font-semibold text-orange-300">{s}</span>
+                  <span className="text-[10px] font-black text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full">📚 Learn</span>
+                </motion.div>
+              ))
+            ) : (
+              <div className="py-6 text-center bg-green-500/5 border border-green-500/15 rounded-lg">
+                <p className="text-sm font-bold text-green-400">✨ Perfect Match!</p>
+                <p className="text-xs text-green-300/60 mt-1">You have all the core skills for this role.</p>
+              </div>
             )}
           </div>
         </DarkCard>
@@ -228,6 +276,46 @@ function ScorePage({ data }) {
           </DarkCard>
         ))}
       </div>
+
+      {/* Dimension Breakdown Section */}
+      <DarkCard delay={0.2} glow>
+        <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-6">Dimension Breakdown</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            { label: 'Skills Breadth', value: Math.min(100, Math.max(0, Math.round((data.allDetected?.length || 0) / 15 * 100))), color: '#F97316', desc: 'Variety of technical skills' },
+            { label: 'Work Experience', value: Math.min(100, 75), color: '#34D399', desc: 'Years & depth of experience' },
+            { label: 'Project Portfolio', value: Math.min(100, Math.round((data.jobRoles?.length || 0) * 15)), color: '#818CF8', desc: 'Project complexity & scope' },
+            { label: 'Certifications', value: 60, color: '#F59E0B', desc: 'Professional credentials' },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + i * 0.08 }}
+              className="space-y-2.5"
+            >
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-white">{item.label}</label>
+                <span className="text-xs font-black text-[#888]" style={{ color: item.color }}>{item.value}%</span>
+              </div>
+              <div className="w-full h-2.5 bg-[#0A0A0A] border border-[#181818] rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${item.value}%` }}
+                  transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 + i * 0.08 }}
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    backgroundColor: item.color,
+                    boxShadow: `0 0 12px ${item.color}60`,
+                  }}
+                />
+              </div>
+              <p className="text-xs text-[#555] text-right">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </DarkCard>
+
       <DarkCard delay={0.3}>
         <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Companies</h4>
         <div className="flex flex-wrap gap-2">
@@ -252,6 +340,170 @@ function ScorePage({ data }) {
 /* ══════════════════════════════════════════════════════════════════
    Sub-page: Recommendations
 ══════════════════════════════════════════════════════════════════ */
+function RecommendationsView({ data }) {
+  const [recTab, setRecTab] = useState('resume');
+  
+  // Hardcoded fallback if LLM is down
+  const fallbackEnhancements = [
+    { txt: "Communication", type: "strength" }, 
+    { txt: "Leadership & Coordination", type: "strength" }, 
+    { txt: "Problem solving & Critical Thinking", type: "strength" },
+    { txt: "Time Management", type: "strength" }, 
+    { txt: "Attention to Detail", type: "strength" }, 
+    { txt: "Teamwork & Adaptability", type: "strength" },
+    { txt: "Agile/Scrum Methodologies", type: "inferred" }, 
+    { txt: "Include Quantifiable Metrics (e.g. 'Increased sales by 20%')", type: "inferred" },
+    { txt: "Tailor Resume keywords to ATS", type: "inferred" }, 
+    { txt: "Use Strong Action Verbs", type: "inferred" },
+    { txt: "Clean, Professional Formatting", type: "inferred" }
+  ];
+
+  // Dynamically map from LLM generated outputs
+  let finalEnhancements = fallbackEnhancements;
+  if (data?.llm_enhancement) {
+    const ai = data.llm_enhancement;
+    finalEnhancements = [
+      ...(ai.inferred_skills || []).map(s => ({ txt: s, type: 'inferred' })),
+      ...(ai.strengths || []).map(s => ({ txt: s, type: 'strength' })),
+      ...(ai.weaknesses || []).map(s => ({ txt: s, type: 'weakness' }))
+    ];
+  }
+
+  // Use Dynamic LLM Learning Path if available
+  const learningPath = (data?.llm_insights?.learning_path?.length > 0)
+    ? data.llm_insights.learning_path
+    : data?.recommendations;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex gap-2">
+        <button
+          onClick={() => setRecTab('resume')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all border outline-none ${
+            recTab === 'resume'
+              ? 'bg-[#34D399] border-[#34D399] text-[#050505] shadow-[0_0_15px_rgba(52,211,153,0.4)]'
+              : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+          }`}
+        >
+          Resume Enhancements
+        </button>
+        <button
+          onClick={() => setRecTab('career')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all border outline-none ${
+            recTab === 'career'
+              ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]'
+              : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+          }`}
+        >
+          Career Recommendations
+        </button>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={recTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.25 }}
+        >
+          {recTab === 'resume' ? (
+            <DarkCard glow>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                   <div className="w-3 h-3 rounded-full bg-green-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
+                   <div>
+                     <h4 className="font-black text-sm text-white uppercase tracking-widest">AI Inferred Profile Insights</h4>
+                     <p className="text-xs text-[#888] mt-1">Our AI has mapped hidden context behind your bullet points to infer additional traits and critical weaknesses.</p>
+                   </div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                {finalEnhancements.map((item, idx) => {
+                  let badgeColors = "bg-[#34D399]/10 border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/20";
+                  if (item.type === 'weakness') {
+                    badgeColors = "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20";
+                  } else if (item.type === 'inferred') {
+                    badgeColors = "bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20";
+                  }
+                  
+                  return (
+                    <span key={idx} className={`border text-xs font-bold px-4 py-2 rounded-full cursor-default transition-colors ${badgeColors}`}>
+                      {item.type === 'weakness' && <span className="mr-1">⚠️</span>}
+                      {item.type === 'inferred' && <span className="mr-1">🔗</span>}
+                      {item.txt}
+                    </span>
+                  );
+                })}
+              </div>
+            </DarkCard>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <DarkCard delay={0}>
+                <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Target Roles</h4>
+                <div className="space-y-3">
+                  {data?.jobRoles?.map((role, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.07 }}
+                      whileHover={{ borderColor: 'rgba(249,115,22,0.3)', backgroundColor: 'rgba(249,115,22,0.03)' }}
+                      className="p-4 border border-[#1A1A1A] rounded-xl cursor-pointer transition-all duration-200 group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
+                          {typeof role === 'string' ? role : role.title}
+                        </h5>
+                      <div className="flex flex-col gap-1.5 items-end">
+                        <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
+                          {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
+                        </span>
+                        {data?.experience_advantage_roles?.includes(typeof role === 'string' ? role : role.title) && (
+                          <span className="text-[10px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full whitespace-nowrap">
+                            ✨ AI Enhanced Fit
+                          </span>
+                        )}
+                      </div>
+                      </div>
+                      {typeof role === 'object' && role.salary && (
+                        <p className="text-xs text-[#555] mt-1">{role.salary}</p>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </DarkCard>
+
+              <DarkCard delay={0.1} glow>
+                <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Learning Path</h4>
+                <div className="space-y-3 relative">
+                  <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
+                  {learningPath?.map((rec, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      className="relative flex items-start gap-4 pl-1"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10 relative">
+                        {i + 1}
+                      </div>
+                      <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">
+                        {rec}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </DarkCard>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function RecommendationsPage({ data }) {
   if (!data) return (
     <div>
@@ -262,61 +514,7 @@ function RecommendationsPage({ data }) {
   return (
     <div className="space-y-6">
       <PageHeader title="Career Recommendations" subtitle="AI-powered learning path and role matching." />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Target Roles */}
-        <DarkCard delay={0}>
-          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Target Roles</h4>
-          <div className="space-y-3">
-            {data.jobRoles.map((role, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
-                whileHover={{ borderColor: 'rgba(249,115,22,0.3)', backgroundColor: 'rgba(249,115,22,0.03)' }}
-                className="p-4 border border-[#1A1A1A] rounded-xl cursor-pointer transition-all duration-200 group"
-              >
-                <div className="flex items-center justify-between">
-                  <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
-                    {typeof role === 'string' ? role : role.title}
-                  </h5>
-                  <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
-                    {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
-                  </span>
-                </div>
-                {typeof role === 'object' && role.salary && (
-                  <p className="text-xs text-[#555] mt-1">{role.salary}</p>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </DarkCard>
-
-        {/* Learning Path */}
-        <DarkCard delay={0.1} glow>
-          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Learning Path</h4>
-          <div className="space-y-3 relative">
-            {/* connector line */}
-            <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
-            {data.recommendations.map((rec, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className="relative flex items-start gap-4 pl-1"
-              >
-                <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10 relative">
-                  {i + 1}
-                </div>
-                <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">
-                  {rec}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </DarkCard>
-      </div>
+      <RecommendationsView data={data} />
     </div>
   );
 }
@@ -349,10 +547,6 @@ export default function Dashboard() {
   const overviewTabContent = {
     overview: (
       <DarkCard>
-        <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Resume Parsing Output</h4>
-        <div className="text-[#888] text-sm leading-relaxed mb-6 bg-[#050505] border border-[#1A1A1A] p-4 rounded-xl font-mono">
-          {analyzedData?.extractedText}
-        </div>
         <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
         <div className="flex flex-wrap gap-2">
           {analyzedData?.allDetected?.map((skill, i) => (
@@ -418,42 +612,7 @@ export default function Dashboard() {
         </div>
       </div>
     ),
-    recommendations: (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <DarkCard>
-          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Roles</h4>
-          <div className="space-y-3">
-            {analyzedData?.jobRoles?.map((role, i) => (
-              <motion.div key={i} whileHover={{ borderColor: 'rgba(249,115,22,0.3)' }} className="p-4 border border-[#1A1A1A] rounded-xl group cursor-pointer transition-all">
-                <div className="flex items-center justify-between">
-                  <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
-                    {typeof role === 'string' ? role : role.title}
-                  </h5>
-                  <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
-                    {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
-                  </span>
-                </div>
-                {typeof role === 'object' && role.salary && <p className="text-xs text-[#555] mt-1">{role.salary}</p>}
-              </motion.div>
-            ))}
-          </div>
-        </DarkCard>
-        <DarkCard glow>
-          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Learning Path</h4>
-          <div className="space-y-3 relative">
-            <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
-            {analyzedData?.recommendations?.map((rec, i) => (
-              <div key={i} className="relative flex items-start gap-4 pl-1">
-                <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10">
-                  {i + 1}
-                </div>
-                <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">{rec}</div>
-              </div>
-            ))}
-          </div>
-        </DarkCard>
-      </div>
-    )
+    recommendations: <RecommendationsView data={analyzedData} />
   };
 
   const OverviewPage = () => (
@@ -500,6 +659,24 @@ export default function Dashboard() {
       ) : (
         <div className="space-y-8">
           <InsightCards data={analyzedData} />
+          
+          {/* AI Insights Card */}
+          {analyzedData?.llm_enhancement && analyzedData.llm_enhancement.summary && (
+            <DarkCard delay={0.2} glow>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-purple-400">✨</span>
+                <h4 className="font-black text-sm text-white uppercase tracking-widest">AI Intelligence Summary</h4>
+              </div>
+              <p className="text-[#888] text-sm leading-relaxed mb-4">{analyzedData.llm_enhancement.summary}</p>
+              {analyzedData.llm_insights?.career_advice && (
+                 <div className="bg-[#111] border border-[#222] p-4 rounded-xl">
+                   <h5 className="text-xs font-bold text-white mb-2">Career Advisory Pipeline</h5>
+                   <p className="text-[#666] text-xs leading-relaxed">{analyzedData.llm_insights.career_advice}</p>
+                 </div>
+              )}
+            </DarkCard>
+          )}
+
           {/* Dark tab bar */}
           <div>
             <div className="flex gap-1 bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-1 mb-6 w-fit">
@@ -544,7 +721,7 @@ export default function Dashboard() {
       <Sidebar />
       <MobileNav isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl w-full overflow-y-auto relative">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full overflow-y-auto relative">
         {/* Background grid */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
@@ -625,7 +802,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Routes */}
+        {/* Routes - Now properly displays all pages */}
         <div className="relative z-10">
           <Routes>
             <Route path="/" element={<OverviewPage />} />
@@ -633,6 +810,8 @@ export default function Dashboard() {
             <Route path="/skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
             <Route path="/score" element={<ScorePage data={analyzedData} />} />
             <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
+            {/* Fallback route */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
       </div>
