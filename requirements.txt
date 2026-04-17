@@ -1,7 +1,6 @@
-annotated-doc==0.0.4
+﻿annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.13.0
-bcrypt==5.0.0
 blis==1.3.3
 catalogue==2.0.10
 certifi==2026.2.25
@@ -31,9 +30,9 @@ mdurl==0.1.2
 murmurhash==1.0.15
 mysql-connector-python==9.6.0
 nltk==3.9.4
-numpy
+numpy==2.4.4
 packaging==26.1
-pandas
+pandas==3.0.2
 passlib==1.7.4
 pdfminer.six==20251230
 pdfplumber==0.11.9
@@ -54,8 +53,8 @@ python-multipart==0.0.26
 regex==2026.4.4
 requests==2.33.1
 rich==15.0.0
-scikit-learn
-scipy
+scikit-learn==1.8.0
+scipy==1.17.1
 setuptools==82.0.1
 shellingham==1.5.4
 sib-api-v3-sdk==7.6.0
@@ -79,9 +78,4 @@ uvicorn==0.44.0
 wasabi==1.1.3
 weasel==1.0.0
 wrapt==2.1.2
-slowapi==0.1.9  # Rate limiting
-redis==5.0.1  # For rate limit counter
-reportlab==4.0.9  # PDF generation
-python-jose==3.3.0  # JWT tokens
-email-validator==2.1.0  # Email validation
-google-generativeai==0.8.4  # Gemini LLM Integration
+bcrypt==3.2.2

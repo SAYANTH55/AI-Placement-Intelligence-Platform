@@ -10,26 +10,28 @@ def load_placement_model():
         return joblib.load(MODEL_PATH)
     return None
 
-def predict_placement(skills, experience_str):
+def predict_placement(parsed_data):
     """
-    Predicts placement readiness using the trained ML model.
+    Predicts placement readiness using the trained ML model dynamically extracting data.
     """
     model = load_placement_model()
     if not model:
         return {"placement_probability": 0.5, "status": "Model not found", "readiness": "Medium"}
 
-    # Extract numeric experience
-    try:
-        experience = float(experience_str.split()[0])
-    except:
-        experience = 0.0
+    # Use the dynamic experience parsed, default to 0.0
+    experience = parsed_data.get('experience_years', 0.0)
 
-    skills_count = len(skills)
+    skills_count = len(parsed_data.get('skills', []))
     
-    # We don't have GPA and Projects from current basic parser, 
-    # so we'll use average defaults or derive from text extensions later
-    gpa = 3.5 
-    projects = 3 if skills_count > 5 else 1
+    # Use dynamic GPA if available, otherwise default average 3.0
+    gpa = parsed_data.get('gpa')
+    if gpa is None:
+        gpa = 3.0
+        
+    # Use dynamic projects if available, otherwise default based on skills
+    projects = parsed_data.get('projects_count')
+    if projects is None or projects == 0:
+        projects = 3 if skills_count > 5 else 1
 
     # Format for model input
     input_data = pd.DataFrame([{
@@ -50,6 +52,8 @@ def predict_placement(skills, experience_str):
         "readiness": readiness,
         "features": {
             "experience": experience,
-            "skills_count": skills_count
+            "skills_count": skills_count,
+            "gpa": gpa,
+            "projects_count": projects
         }
     }
