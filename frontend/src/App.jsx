@@ -23,17 +23,14 @@ const ProtectedRoute = ({ children }) => {
 function AppContent() {
   const { user } = useAppContext();
   const location = useLocation();
-
   const isDashboard = location.pathname.startsWith('/dashboard');
-  const isLanding = location.pathname === '/';
-  const showGlobalNavbar = !isLanding && !isDashboard;
 
   return (
     <div className="relative min-h-screen bg-[#060606] flex flex-col" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {!isDashboard && <EdgeGlow />}
-      {showGlobalNavbar && <Navbar />}
+      <EdgeGlow />
+      <Navbar />
 
-      <div className={isDashboard ? 'flex-1' : 'flex-1 flex flex-col'}>
+      <div className={isDashboard ? 'flex-1 flex overflow-hidden' : 'flex-1 flex flex-col'}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />

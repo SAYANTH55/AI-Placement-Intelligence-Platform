@@ -12,15 +12,8 @@ const LandingPage = () => {
 
   return (
     <div className="bg-[#060606] flex flex-col overflow-x-hidden relative font-inter selection:bg-orange-500/20 selection:text-orange-300 min-h-screen">
-
       <style dangerouslySetInnerHTML={{
         __html: `
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-scroll { animation: scroll 25s linear infinite; }
-        .group:hover .animate-scroll { animation-play-state: paused; }
         .hardware-accelerated { will-change: transform; transform: translateZ(0); }
       `}} />
 
@@ -39,44 +32,6 @@ const LandingPage = () => {
         />
       </div>
 
-      {/* Navbar */}
-      <motion.nav
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="absolute top-0 left-0 right-0 z-50 px-6 py-6 hardware-accelerated"
-      >
-        <div className="max-w-7xl mx-auto flex items-center justify-between bg-[#0A0A0A]/80 backdrop-blur-xl border border-[#1E1E1E] px-8 py-4 rounded-full shadow-[0_4px_30px_rgba(249,115,22,0.08)]">
-          <Logo iconSize={36} primaryText="text-xl" secondaryText="text-sm hidden lg:block" gap="gap-3" />
-
-          <div className="hidden lg:flex items-center gap-10 font-medium text-[#888]">
-            {[
-              { label: 'Home', path: '/' },
-              { label: 'Features', path: '/features' },
-              { label: 'How it Works', path: '/how-it-works' },
-              { label: 'Contact', path: '/contact' },
-            ].map(({ label, path }, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(path)}
-                className="relative group hover:text-white transition-colors duration-200 bg-transparent border-none cursor-pointer font-medium text-[#888]"
-              >
-                {label}
-                <span className="absolute -bottom-1.5 left-0 w-full h-0.5 bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)] origin-left scale-x-0 transition-transform duration-200 ease-in-out group-hover:scale-x-100 rounded-full hardware-accelerated" />
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => navigate('/login')}
-            className="hidden lg:flex items-center gap-2 bg-[#F97316] text-white px-6 py-2.5 rounded-full font-semibold hover:scale-105 hover:shadow-[0_0_20px_rgba(249,115,22,0.5)] transition-all duration-200 ease-in-out hardware-accelerated"
-          >
-            Start Hub
-            <Zap className="w-4 h-4 text-white fill-white" />
-          </button>
-        </div>
-      </motion.nav>
-
       {/* Main Split Screen Area */}
       <div className="flex flex-col lg:flex-row min-h-screen relative z-10">
 
@@ -85,7 +40,7 @@ const LandingPage = () => {
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="w-full lg:w-7/12 min-h-[90vh] flex flex-col justify-center pt-36 pb-40 px-8 lg:px-16 xl:px-24 relative hardware-accelerated"
+          className="w-full lg:w-7/12 min-h-[80vh] flex flex-col justify-center pt-20 pb-40 px-8 lg:px-16 xl:px-24 relative hardware-accelerated"
         >
           <div className="max-w-2xl">
             <motion.div

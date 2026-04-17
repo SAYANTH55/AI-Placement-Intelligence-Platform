@@ -1,29 +1,43 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
-import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap } from 'lucide-react';
+import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap, Sparkles, ChevronDown } from 'lucide-react';
 import Logo from '../Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Sidebar() {
   const { user, setUser } = useAppContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const menuItems = [
-    { name: 'Overview', path: '/dashboard', icon: <LayoutDashboard size={17} />, exact: true },
-    { name: 'Resume Analysis', path: '/dashboard/analysis', icon: <FileText size={17} /> },
-    { name: 'Skill Gap', path: '/dashboard/skills', icon: <Target size={17} /> },
-    { name: 'Placement Score', path: '/dashboard/score', icon: <Activity size={17} /> },
-    { name: 'Recommendations', path: '/dashboard/recommendations', icon: <Briefcase size={17} /> }
+  // Determine if we are in the Profile Intelligence engine
+  const profileRoutes = ['/dashboard/profile', '/dashboard/analysis', '/dashboard/skills', '/dashboard/score', '/dashboard/recommendations'];
+  const isProfileActive = profileRoutes.some(route => location.pathname === route);
+
+  const mainItems = [
+    { name: 'Dashboard Hub', path: '/dashboard', icon: <LayoutDashboard size={17} />, exact: true },
+    { 
+      name: 'Profile Intelligence', 
+      path: '/dashboard/profile', 
+      icon: <Target size={17} />,
+      isEngine: true,
+      isActive: isProfileActive
+    },
+    { name: 'Preparation Engine', path: '/dashboard/preparation', icon: <Briefcase size={17} /> },
+    { name: 'Practice Engine', path: '/dashboard/practice', icon: <Sparkles size={17} /> },
+  ];
+
+  const profileSubItems = [
+    { name: 'Overview', path: '/dashboard/profile', icon: <Activity size={14} /> },
+    { name: 'Resume Analysis', path: '/dashboard/analysis', icon: <FileText size={14} /> },
+    { name: 'Skill Gap', path: '/dashboard/skills', icon: <Target size={14} /> },
+    { name: 'Score', path: '/dashboard/score', icon: <Activity size={14} /> },
+    { name: 'Recommendations', path: '/dashboard/recommendations', icon: <Zap size={14} /> }
   ];
 
   const handleLogout = () => {
     setUser(null);
     navigate('/');
   };
-
-  const initials = user?.name
-    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-    : 'U';
 
   return (
     <motion.aside
@@ -42,59 +56,90 @@ export default function Sidebar() {
         <Logo iconSize={32} primaryText="text-sm" secondaryText="hidden" gap="gap-2.5" />
       </div>
 
-      {/* Nav Items */}
-      <div className="flex-1 py-6 px-3 relative z-10">
-        <p className="text-[10px] font-black text-[#333] uppercase tracking-[0.3em] mb-4 px-3">
-          Intelligence Hub
-        </p>
-        <nav className="space-y-1">
-          {menuItems.map((item, i) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.07 + 0.2, duration: 0.4 }}
-            >
-              <NavLink
-                to={item.path}
-                end={item.exact}
-                className={({ isActive }) =>
-                  `relative flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 group overflow-hidden ${
-                    isActive
-                      ? 'bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20'
-                      : 'text-[#555] hover:text-white hover:bg-white/4'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {/* Active left bar */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="sidebar-active"
-                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]"
-                        transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                      />
+      <div className="flex-1 py-6 px-3 space-y-8 relative z-10 overflow-y-auto custom-scrollbar">
+        {/* Module Selection */}
+        <div>
+          <p className="text-[10px] font-black text-[#222] uppercase tracking-[0.3em] mb-4 px-3">
+            System Modules
+          </p>
+          <nav className="space-y-1">
+            {mainItems.map((item, i) => (
+              <div key={item.name}>
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                >
+                  <NavLink
+                    to={item.path}
+                    end={item.exact}
+                    className={({ isActive }) =>
+                      `relative flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 group overflow-hidden ${
+                        isActive || (item.isEngine && item.isActive)
+                          ? 'bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 shadow-[0_0_20px_rgba(249,115,22,0.05)]'
+                          : 'text-[#555] hover:text-white hover:bg-white/4'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {(isActive || (item.isEngine && item.isActive)) && (
+                          <motion.div
+                            layoutId="sidebar-active"
+                            className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]"
+                          />
+                        )}
+                        <div className="flex items-center gap-3">
+                          <span className={(isActive || (item.isEngine && item.isActive)) ? 'text-[#F97316]' : 'text-[#444] group-hover:text-[#888]'}>
+                            {item.icon}
+                          </span>
+                          {item.name}
+                        </div>
+                        {item.isEngine && (
+                          <ChevronDown size={14} className={`transition-transform duration-300 ${item.isActive ? 'rotate-180 text-[#F97316]' : 'opacity-20'}`} />
+                        )}
+                      </>
                     )}
-                    <div className="flex items-center gap-3">
-                      <span className={isActive ? 'text-[#F97316]' : 'text-[#444] group-hover:text-[#888]'}>
-                        {item.icon}
-                      </span>
-                      {item.name}
-                    </div>
-                    {isActive && (
+                  </NavLink>
+                </motion.div>
+
+                {/* Sub-menu implementation */}
+                {item.isEngine && (
+                  <AnimatePresence>
+                    {item.isActive && (
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-1.5 h-1.5 rounded-full bg-[#F97316] shadow-[0_0_6px_rgba(249,115,22,0.8)]"
-                      />
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'circOut' }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-1 ml-4 pl-4 border-l border-[#1A1A1A] py-1 space-y-0.5">
+                          {profileSubItems.map((sub, idx) => (
+                            <NavLink
+                              key={sub.name}
+                              to={sub.path}
+                              className={({ isActive }) =>
+                                `flex items-center gap-2.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all duration-200 ${
+                                  isActive
+                                    ? 'text-[#F97316] bg-[#F97316]/5'
+                                    : 'text-[#444] hover:text-[#888] hover:bg-white/3'
+                                }`
+                              }
+                            >
+                              <span className="opacity-40">{sub.icon}</span>
+                              {sub.name}
+                            </NavLink>
+                          ))}
+                        </div>
+                      </motion.div>
                     )}
-                  </>
+                  </AnimatePresence>
                 )}
-              </NavLink>
-            </motion.div>
-          ))}
-        </nav>
+              </div>
+            ))}
+          </nav>
+        </div>
       </div>
 
       {/* Help Card */}
@@ -114,29 +159,8 @@ export default function Sidebar() {
           <h4 className="font-black text-sm text-white mb-0.5 relative z-10">AI Advisor</h4>
           <p className="text-xs text-white/80 relative z-10">Your career intelligence is live and learning.</p>
         </motion.div>
-
-        {/* User + Logout */}
-        {user && (
-          <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#0D0D0D] border border-[#1A1A1A]">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#F97316] text-white flex items-center justify-center font-black text-sm flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)]">
-                {initials}
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white">{user.name}</p>
-                <p className="text-[10px] text-[#444] truncate max-w-[100px]">{user.email}</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="p-1.5 rounded-lg text-[#444] hover:text-red-400 hover:bg-red-500/10 transition-colors"
-              title="Logout"
-            >
-              <LogOut size={15} />
-            </button>
-          </div>
-        )}
       </div>
     </motion.aside>
   );
 }
+

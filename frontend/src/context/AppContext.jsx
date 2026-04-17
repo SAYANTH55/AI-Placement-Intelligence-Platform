@@ -21,7 +21,21 @@ export const AppProvider = ({ children }) => {
 
   const [result, setResult] = useState(initialData);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null); // Simple auth state
+  
+  // Auth state initialized from localStorage for persistence
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('ai_placement_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Sync user state to localStorage whenever it changes
+  React.useEffect(() => {
+    if (user) {
+      localStorage.setItem('ai_placement_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('ai_placement_user');
+    }
+  }, [user]);
 
   return (
     <AppContext.Provider value={{ result, setResult, loading, setLoading, user, setUser }}>

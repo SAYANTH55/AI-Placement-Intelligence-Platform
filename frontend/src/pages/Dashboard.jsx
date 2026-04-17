@@ -520,8 +520,192 @@ function RecommendationsPage({ data }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Main Dashboard
-══════════════════════════════════════════════════════════════════ */
+   Modules Hub: The Entry View
+   ══════════════════════════════════════════════════════════════════ */
+function ModulesHub() {
+  const navigate = useNavigate();
+  const engines = [
+    {
+      id: 'profile',
+      title: 'Profile Intelligence',
+      desc: 'Understand your market fit. Resume parsing, skill extraction, and placement probability.',
+      icon: <Target className="w-8 h-8" />,
+      color: '#F97316',
+      path: '/dashboard/profile',
+      status: 'Ready'
+    },
+    {
+      id: 'prep',
+      title: 'Preparation Engine',
+      desc: 'Master the core. OOP, DSA, and CS fundamentals tailored to your skill gaps.',
+      icon: <Briefcase className="w-8 h-8" />,
+      color: '#34D399',
+      path: '/dashboard/preparation',
+      status: 'Early Access'
+    },
+    {
+      id: 'practice',
+      title: 'Practice Engine',
+      desc: 'Get job-ready. Aptitude, coding practice, and simulated interview prep.',
+      icon: <Sparkles className="w-8 h-8" />,
+      color: '#818CF8',
+      path: '/dashboard/practice',
+      status: 'Coming Soon'
+    }
+  ];
+
+  return (
+    <div className="space-y-8">
+      <PageHeader title="Intelligence Modules" subtitle="Choose an engine to accelerate your placement journey." />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {engines.map((engine, i) => (
+          <motion.div
+            key={engine.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            whileHover={{ y: -5 }}
+            onClick={() => navigate(engine.path)}
+            className="group cursor-pointer"
+          >
+            <DarkCard 
+              className={`h-full border-t-2 overflow-visible`} 
+              style={{ borderTopColor: engine.color }}
+              glow
+            >
+              <div className="flex flex-col h-full">
+                <div className="flex items-start justify-between mb-4">
+                  <div 
+                    className="p-3 rounded-2xl bg-black border border-[#1A1A1A] transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+                    style={{ color: engine.color }}
+                  >
+                    {engine.icon}
+                  </div>
+                  <span 
+                    className="text-[10px] font-black px-2 py-1 rounded-full border"
+                    style={{ color: engine.color, borderColor: `${engine.color}40`, backgroundColor: `${engine.color}10` }}
+                  >
+                    {engine.status}
+                  </span>
+                </div>
+                
+                <h3 className="text-lg font-black text-white mb-2 group-hover:text-[#F97316] transition-colors">
+                  {engine.title}
+                </h3>
+                <p className="text-[#555] text-xs leading-relaxed flex-1">
+                  {engine.desc}
+                </p>
+                
+                <div className="mt-6 flex items-center gap-2 text-[10px] font-black text-[#F97316] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                  Enter Engine <ArrowRight size={12} />
+                </div>
+              </div>
+            </DarkCard>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Preparation Engine (WIP)
+   ══════════════════════════════════════════════════════════════════ */
+function PreparationModule() {
+  const sections = [
+    {
+      title: 'Programming Fundamentals',
+      items: ['OOP (Inheritance, Polymorphism)', 'Data Types', 'Memory Basics']
+    },
+    {
+      title: 'DSA Mastery',
+      items: ['Arrays & Linked Lists', 'Trees & Graphs', 'Sorting & Searching']
+    },
+    {
+      title: 'Core CS Concepts',
+      items: ['DBMS', 'Operating Systems', 'Networking']
+    },
+    {
+      title: 'Domain Specific',
+      items: ['AI: ML & Deep Learning', 'Web: React & APIs']
+    }
+  ];
+
+  return (
+    <div className="space-y-8">
+      <PageHeader title="Preparation Engine" subtitle="Convert skill gaps into mastery through structured learning modules." />
+      
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        {sections.map((s, idx) => (
+          <DarkCard key={idx} delay={idx * 0.1}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-6 bg-[#34D399] rounded-full shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+              <h4 className="font-black text-sm text-white tracking-widest uppercase">{s.title}</h4>
+            </div>
+            <div className="space-y-2">
+              {s.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3 bg-black/40 border border-[#1A1A1A] px-4 py-3 rounded-xl group hover:border-[#34D399]/30 transition-all">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#34D399]/40" />
+                  <span className="text-xs text-[#888] font-medium group-hover:text-[#34D399] transition-colors">{item}</span>
+                  <span className="ml-auto text-[10px] font-bold text-[#333] italic">WIP</span>
+                </div>
+              ))}
+            </div>
+          </DarkCard>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Practice Engine (WIP)
+   ══════════════════════════════════════════════════════════════════ */
+function PracticeModule() {
+  const practiceAreas = [
+    { title: 'Aptitude Section', icon: <Target size={18} />, sub: ['Quantitative', 'Logical Reasoning', 'Verbal'] },
+    { title: 'Coding Practice', icon: <RefreshCw size={18} />, sub: ['Easy', 'Medium', 'Hard (DSA Heavy)'] },
+    { title: 'Interview Prep', icon: <Sparkles size={18} />, sub: ['Technical (REST, Patterns)', 'HR (Behavioral)'] }
+  ];
+
+  return (
+    <div className="space-y-8">
+      <PageHeader title="Practice Engine" subtitle="Sharpen your sword. Rigorous practice modules for the final mile." />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {practiceAreas.map((area, i) => (
+          <DarkCard key={i} delay={i * 0.1} glow>
+            <div className="flex flex-col items-center text-center p-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#818CF8]/10 border border-[#818CF8]/30 flex items-center justify-center text-[#818CF8] mb-4">
+                {area.icon}
+              </div>
+              <h4 className="font-black text-white text-base mb-4">{area.title}</h4>
+              <div className="w-full space-y-2">
+                {area.sub.map((s, idx) => (
+                  <div key={idx} className="bg-[#050505] border border-[#1A1A1A] py-2 px-3 rounded-lg text-[10px] font-bold text-[#555] uppercase tracking-tighter">
+                    {s}
+                  </div>
+                ))}
+              </div>
+              <button className="mt-6 w-full py-2 rounded-xl bg-[#818CF8]/5 border border-[#818CF8]/20 text-[10px] font-black text-[#818CF8] uppercase tracking-widest opacity-50 cursor-not-allowed">
+                Initializing Arena...
+              </button>
+            </div>
+          </DarkCard>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Main Dashboard Component
+   ══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
   const { user } = useAppContext();
   const [analyzedData, setAnalyzedData] = useState(null);
@@ -531,7 +715,7 @@ export default function Dashboard() {
 
   const handleAnalyzeComplete = (data) => {
     setAnalyzedData(data);
-    setSelectedRoleIndex(0); // Reset to top match
+    setSelectedRoleIndex(0);
   };
   const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); setSelectedRoleIndex(0); };
 
@@ -618,7 +802,7 @@ export default function Dashboard() {
   const OverviewPage = () => (
     <div className="space-y-8">
       {!analyzedData ? (
-        <div className="max-w-2xl space-y-6">
+        <div className="w-full space-y-6">
           <UploadBox onAnalyzeComplete={handleAnalyzeComplete} />
 
           {/* Info banner */}
@@ -802,15 +986,24 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Routes - Now properly displays all pages */}
+        {/* Routes - Modular Hub Entry */}
         <div className="relative z-10">
           <Routes>
-            <Route path="/" element={<OverviewPage />} />
+            <Route path="/" element={<ModulesHub />} />
+            
+            {/* Module 1: Profile Intelligence */}
+            <Route path="/profile" element={<OverviewPage />} />
             <Route path="/analysis" element={<AnalysisPage data={analyzedData} onAnalyzeComplete={handleAnalyzeComplete} />} />
             <Route path="/skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
             <Route path="/score" element={<ScorePage data={analyzedData} />} />
             <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
-            {/* Fallback route */}
+            
+            {/* Module 2: Preparation Engine */}
+            <Route path="/preparation" element={<PreparationModule />} />
+            
+            {/* Module 3: Practice Engine */}
+            <Route path="/practice" element={<PracticeModule />} />
+            
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>

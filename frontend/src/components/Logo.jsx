@@ -57,11 +57,11 @@ const Logo = ({
       className={`group flex items-center cursor-pointer hardware-accelerated ${gap} ${className}`}
     >
       <LogoIcon size={iconSize} />
-      <div className="flex items-baseline gap-2">
+      <div className="flex items-center gap-1.5">
         <span className={`font-semibold tracking-tight ${primaryText}`} style={{ fontFamily: 'Poppins, sans-serif', color: '#E36B13' }}>
           AI Placement
         </span>
-        <span className={`font-medium ${secondaryText} transition-colors group-hover:text-[#E36B13]`} style={{ fontFamily: 'Inter, sans-serif', color: '#1A1A1A', opacity: 0.7 }}>
+        <span className={`font-medium ${secondaryText} transition-colors group-hover:opacity-100`} style={{ fontFamily: 'Inter, sans-serif', color: '#E36B13', opacity: 0.7 }}>
           Intelligence Platform
         </span>
       </div>
