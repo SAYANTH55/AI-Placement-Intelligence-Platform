@@ -26,6 +26,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 otp_store: Dict[str, dict] = {}
 
 # --- Schemas ---
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 class ForgotPasswordRequest(BaseModel):
     identifier: str  # Email or Phone
 
@@ -54,6 +58,27 @@ def normalize_phone(phone: str) -> str:
     return re.sub(r'\D', '', phone)
 
 # --- Endpoints ---
+
+@router.post("/login")
+async def login(request: LoginRequest, db: Session = Depends(get_db)):
+    email = request.email.lower().strip()
+    user = db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+    if not pwd_context.verify(request.password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+    return {
+        "message": "Login successful",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "role": "student"
+        }
+    }
 
 @router.post("/register")
 async def register(request: RegisterRequest, db: Session = Depends(get_db)):

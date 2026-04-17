@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, Zap } from 'lucide-react';
 import Logo from '../components/Logo';
 import { motion } from 'framer-motion';
+import API from '../services/api';
 
 const DEMO_EMAIL = 'student@university.edu';
 const DEMO_PASSWORD = '12345678';
@@ -34,15 +35,22 @@ export default function Login() {
     }
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
-      setUser({ email, role: 'student', name: 'Deon' });
+    try {
+      // First try real API login
+      const response = await API.post('/auth/login', { email, password });
+      setUser(response.data.user);
       navigate('/dashboard');
-    } else {
-      setError('Invalid credentials. Use the demo credentials below.');
+    } catch (err) {
+      // Fallback for demo credentials
+      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+        setUser({ email, role: 'student', name: 'Deon' });
+        navigate('/dashboard');
+      } else {
+        setError(err.response?.data?.detail || 'Invalid credentials.');
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
