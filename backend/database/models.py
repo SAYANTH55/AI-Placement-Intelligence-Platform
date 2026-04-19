@@ -83,3 +83,33 @@ class RateLimitTracker(Base):
     request_count = Column(Integer, default=1)
     window_start = Column(DateTime(timezone=True), server_default=func.now())
     window_end = Column(DateTime(timezone=True))  # 1-hour window
+
+
+class UserProgress(Base):
+    """Track user practice sessions and placement score evolution over time"""
+    __tablename__ = "user_progress"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    session_date = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Snapshot of score at this session
+    placement_score = Column(Float, nullable=True)
+
+    # Full skill list at this point in time (for skill growth chart)
+    skills_snapshot = Column(JSON, nullable=True)
+
+    # Practice engine sub-scores (0-100)
+    aptitude_score = Column(Float, nullable=True)
+    coding_score = Column(Float, nullable=True)
+    interview_score = Column(Float, nullable=True)
+
+    # Context
+    target_role = Column(String, nullable=True)
+    completed_topics = Column(JSON, nullable=True)  # List of completed topic strings
+
+    # Relationships
+    user = relationship("User", backref="progress")
+
+    class Config:
+        from_attributes = True
