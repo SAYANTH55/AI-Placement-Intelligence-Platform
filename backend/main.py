@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from api import endpoints, auth, resume_routes
+from api import endpoints, auth, resume_routes, engine_routes
 from database.db import engine
 from database import models
 
@@ -19,7 +19,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="AI Placement Intelligence Platform API",
     description="AI-powered placement prediction and skill matching",
-    version="2.0.0"
+    version="3.0.0"
 )
 
 # Allow all origins for development (restrict in production)
@@ -35,6 +35,8 @@ app.add_middleware(
 app.include_router(endpoints.router, tags=["resume-analysis"])
 app.include_router(auth.router, tags=["authentication"])
 app.include_router(resume_routes.router, tags=["resume-history"])
+app.include_router(engine_routes.router, tags=["engines"])
+
 
 @app.get("/")
 async def root():

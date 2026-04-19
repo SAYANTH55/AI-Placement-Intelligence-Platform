@@ -11,6 +11,9 @@ from ai_model.prediction_model.predictor import predict_placement
 from ai_model.job_matcher.matcher import calculate_role_matches, get_job_fits_with_diversity
 from ai_model.utils.skill_normalizer import get_skill_diversity_score
 from services.llm_service import analyze_with_llm, generate_career_insights
+from services.preparation_engine import generate_plan
+from services.practice_engine import get_practice_set
+
 
 logger = logging.getLogger(__name__)
 
@@ -123,6 +126,20 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         logger.info(f"LLM Output: {llm_output}")
         logger.info(f"Merged Roles: {final_roles}")
 
+        # 7. Preparation Engine — generate learning roadmap from missing skills
+        missing_for_prep = top_role["missing"] if top_role else []
+        detected_top_role_name = top_role["role"] if top_role else ""
+        preparation_plan = generate_plan(
+            missing_skills=missing_for_prep,
+            top_role=detected_top_role_name
+        )
+
+        # 8. Practice Engine — generate role-specific question set
+        practice_set = get_practice_set(
+            top_role=detected_top_role_name,
+            user_skills=final_skills
+        )
+
         # Clean up
         os.remove(file_path)
         
@@ -154,9 +171,12 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
                     "strengths": llm_output.get("strengths", []),
                     "weaknesses": llm_output.get("weaknesses", [])
                 },
-                "llm_insights": llm_insights
+                "llm_insights": llm_insights,
+                "preparation_plan": preparation_plan,
+                "practice_set": practice_set
             }
         }
+
     except Exception as e:
         logger.error(f"Error in upload_resume: {e}")
         if os.path.exists(file_path):
