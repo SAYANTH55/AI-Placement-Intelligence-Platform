@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate, NavLink, Navigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { aiResult } from '../utils/mockData';
@@ -8,8 +8,9 @@ import UploadBox from '../components/dashboard/UploadBox';
 import InsightCards from '../components/dashboard/InsightCards';
 import SkillBadge from '../components/dashboard/SkillBadge';
 import ScoreRing from '../components/dashboard/ScoreRing';
-import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
 
 /* ── Shared dark card ── */
 function DarkCard({ children, className = '', delay = 0, glow = false }) {
@@ -524,6 +525,8 @@ function RecommendationsPage({ data }) {
    ══════════════════════════════════════════════════════════════════ */
 function ModulesHub() {
   const navigate = useNavigate();
+  const { preparationData, practiceData } = useAppContext();
+
   const engines = [
     {
       id: 'profile',
@@ -532,25 +535,34 @@ function ModulesHub() {
       icon: <Target className="w-8 h-8" />,
       color: '#F97316',
       path: '/dashboard/profile',
-      status: 'Ready'
+      status: 'Live'
     },
     {
       id: 'prep',
       title: 'Preparation Engine',
-      desc: 'Master the core. OOP, DSA, and CS fundamentals tailored to your skill gaps.',
-      icon: <Briefcase className="w-8 h-8" />,
+      desc: 'Dynamic learning roadmap. Skill gaps converted to prioritized, topic-level action plans.',
+      icon: <BookOpen className="w-8 h-8" />,
       color: '#34D399',
       path: '/dashboard/preparation',
-      status: 'Early Access'
+      status: preparationData ? 'Loaded' : 'Ready'
     },
     {
       id: 'practice',
       title: 'Practice Engine',
-      desc: 'Get job-ready. Aptitude, coding practice, and simulated interview prep.',
+      desc: 'Role-specific aptitude, DSA coding problems, and technical + HR interview questions.',
       icon: <Sparkles className="w-8 h-8" />,
       color: '#818CF8',
       path: '/dashboard/practice',
-      status: 'Coming Soon'
+      status: practiceData ? 'Loaded' : 'Live'
+    },
+    {
+      id: 'tracking',
+      title: 'Tracking Engine',
+      desc: 'Score evolution charts, session history, and a feedback loop that improves your prediction.',
+      icon: <BarChart2 className="w-8 h-8" />,
+      color: '#F59E0B',
+      path: '/dashboard/tracking',
+      status: 'Live'
     }
   ];
 
@@ -558,47 +570,31 @@ function ModulesHub() {
     <div className="space-y-8">
       <PageHeader title="Intelligence Modules" subtitle="Choose an engine to accelerate your placement journey." />
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {engines.map((engine, i) => (
           <motion.div
             key={engine.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.08 }}
             whileHover={{ y: -5 }}
             onClick={() => navigate(engine.path)}
             className="group cursor-pointer"
           >
-            <DarkCard 
-              className={`h-full border-t-2 overflow-visible`} 
-              style={{ borderTopColor: engine.color }}
-              glow
-            >
+            <DarkCard className="h-full" glow>
               <div className="flex flex-col h-full">
                 <div className="flex items-start justify-between mb-4">
-                  <div 
-                    className="p-3 rounded-2xl bg-black border border-[#1A1A1A] transition-all group-hover:scale-110 shadow-[0_0_15px_rgba(0,0,0,0.5)]"
-                    style={{ color: engine.color }}
-                  >
+                  <div className="p-3 rounded-2xl bg-black border border-[#1A1A1A] transition-all group-hover:scale-110" style={{ color: engine.color }}>
                     {engine.icon}
                   </div>
-                  <span 
-                    className="text-[10px] font-black px-2 py-1 rounded-full border"
-                    style={{ color: engine.color, borderColor: `${engine.color}40`, backgroundColor: `${engine.color}10` }}
-                  >
+                  <span className="text-[10px] font-black px-2 py-1 rounded-full border" style={{ color: engine.color, borderColor: `${engine.color}40`, backgroundColor: `${engine.color}10` }}>
                     {engine.status}
                   </span>
                 </div>
-                
-                <h3 className="text-lg font-black text-white mb-2 group-hover:text-[#F97316] transition-colors">
-                  {engine.title}
-                </h3>
-                <p className="text-[#555] text-xs leading-relaxed flex-1">
-                  {engine.desc}
-                </p>
-                
-                <div className="mt-6 flex items-center gap-2 text-[10px] font-black text-[#F97316] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                  Enter Engine <ArrowRight size={12} />
+                <h3 className="text-base font-black text-white mb-2 group-hover:text-[#F97316] transition-colors">{engine.title}</h3>
+                <p className="text-[#555] text-xs leading-relaxed flex-1">{engine.desc}</p>
+                <div className="mt-5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: engine.color }}>
+                  Enter Engine <ArrowRight size={11} />
                 </div>
               </div>
             </DarkCard>
@@ -610,95 +606,468 @@ function ModulesHub() {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Preparation Engine (WIP)
+   Preparation Engine — Live Learning Roadmap
    ══════════════════════════════════════════════════════════════════ */
 function PreparationModule() {
-  const sections = [
-    {
-      title: 'Programming Fundamentals',
-      items: ['OOP (Inheritance, Polymorphism)', 'Data Types', 'Memory Basics']
-    },
-    {
-      title: 'DSA Mastery',
-      items: ['Arrays & Linked Lists', 'Trees & Graphs', 'Sorting & Searching']
-    },
-    {
-      title: 'Core CS Concepts',
-      items: ['DBMS', 'Operating Systems', 'Networking']
-    },
-    {
-      title: 'Domain Specific',
-      items: ['AI: ML & Deep Learning', 'Web: React & APIs']
-    }
-  ];
+  const { preparationData, setPreparationData, analyzedData: _unused } = useAppContext();
+  // We grab analyzedData from the parent scope via props threading
+  return <PreparationContent />;
+}
+
+function PreparationContent({ analyzedData }) {
+  const { preparationData, setPreparationData } = useAppContext();
+  const [loading, setLoading] = useState(false);
+  const [completedTopics, setCompletedTopics] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('prep_completed') || '[]'); } catch { return []; }
+  });
+
+  const tierConfig = {
+    programming: { label: 'Programming Fundamentals', color: '#F97316', glow: 'rgba(249,115,22,0.15)' },
+    dsa:         { label: 'DSA & Algorithms',         color: '#818CF8', glow: 'rgba(129,140,248,0.15)' },
+    core_cs:     { label: 'Core CS Concepts',          color: '#34D399', glow: 'rgba(52,211,153,0.15)' },
+    domain:      { label: 'Domain Specific',           color: '#F59E0B', glow: 'rgba(245,158,11,0.15)' },
+  };
+
+  const priorityColors = { high: '#F97316', medium: '#818CF8', low: '#34D399' };
+  const priorityLabels = { high: 'Critical', medium: 'Recommended', low: 'Bonus' };
+
+  const toggleTopic = useCallback((topic) => {
+    setCompletedTopics(prev => {
+      const updated = prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic];
+      localStorage.setItem('prep_completed', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const plan = preparationData;
+
+  if (!plan) {
+    return (
+      <div className="space-y-8">
+        <PageHeader title="Preparation Engine" subtitle="Upload your resume to get a personalized learning roadmap." />
+        <EmptyState icon={BookOpen} title="No Roadmap Yet" message="Go to Profile Intelligence, upload your resume. Your custom roadmap will appear here." />
+      </div>
+    );
+  }
+
+  const tiers = plan.tiers || {};
+  const allTierKeys = ['programming', 'dsa', 'core_cs', 'domain'];
+  const totalCompleted = completedTopics.length;
+  const totalTopics = plan.learning_plan?.reduce((sum, item) => sum + (item.topics?.length || 0), 0) || 0;
+  const progressPct = totalTopics > 0 ? Math.round((totalCompleted / totalTopics) * 100) : 0;
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Preparation Engine" subtitle="Convert skill gaps into mastery through structured learning modules." />
-      
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-      >
-        {sections.map((s, idx) => (
-          <DarkCard key={idx} delay={idx * 0.1}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-6 bg-[#34D399] rounded-full shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-              <h4 className="font-black text-sm text-white tracking-widest uppercase">{s.title}</h4>
-            </div>
-            <div className="space-y-2">
-              {s.items.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 bg-black/40 border border-[#1A1A1A] px-4 py-3 rounded-xl group hover:border-[#34D399]/30 transition-all">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#34D399]/40" />
-                  <span className="text-xs text-[#888] font-medium group-hover:text-[#34D399] transition-colors">{item}</span>
-                  <span className="ml-auto text-[10px] font-bold text-[#333] italic">WIP</span>
-                </div>
-              ))}
-            </div>
-          </DarkCard>
-        ))}
-      </motion.div>
+      <PageHeader title="Preparation Engine" subtitle={`Learning roadmap for ${plan.target_role || 'your target role'} — ${plan.total_gaps} skill gaps identified.`} />
+
+      {/* Progress Overview */}
+      <DarkCard glow delay={0}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+          <div>
+            <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest">Overall Roadmap Progress</h4>
+            <p className="text-xs text-[#555] mt-1">{plan.total_gaps} skills to acquire · ~{plan.estimated_weeks} weeks estimated</p>
+          </div>
+          <div className="text-right">
+            <span className="text-2xl font-black text-white">{progressPct}%</span>
+            <p className="text-xs text-[#555]">topics mastered</p>
+          </div>
+        </div>
+        <div className="w-full h-2 bg-[#111] border border-[#1A1A1A] rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPct}%` }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            className="h-full rounded-full bg-[#F97316] shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+          />
+        </div>
+      </DarkCard>
+
+      {/* 4 Tier Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {allTierKeys.map((tierKey, idx) => {
+          const conf = tierConfig[tierKey];
+          const items = tiers[tierKey] || [];
+          if (items.length === 0) return null;
+          return (
+            <DarkCard key={tierKey} delay={idx * 0.1}>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-2 h-6 rounded-full shadow-[0_0_8px]" style={{ backgroundColor: conf.color, boxShadow: `0 0 8px ${conf.glow}` }} />
+                <h4 className="font-black text-sm text-white tracking-widest uppercase">{conf.label}</h4>
+                <span className="ml-auto text-[10px] font-black px-2 py-1 rounded-full border" style={{ color: conf.color, borderColor: `${conf.color}40`, backgroundColor: `${conf.color}10` }}>
+                  {items.length} skills
+                </span>
+              </div>
+              <div className="space-y-3">
+                {items.map((item, i) => (
+                  <div key={i} className="border border-[#1A1A1A] rounded-xl overflow-hidden">
+                    <div className="flex items-center gap-3 px-4 py-3 bg-black/30">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: priorityColors[item.priority] || '#555' }} />
+                      <span className="text-sm font-bold text-white flex-1">{item.skill}</span>
+                      <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: priorityColors[item.priority], backgroundColor: `${priorityColors[item.priority]}15`, border: `1px solid ${priorityColors[item.priority]}30` }}>
+                        {priorityLabels[item.priority]}
+                      </span>
+                    </div>
+                    <div className="px-4 py-2 space-y-1.5 bg-black/10">
+                      {item.topics?.map((topic, ti) => {
+                        const done = completedTopics.includes(topic);
+                        return (
+                          <button
+                            key={ti}
+                            onClick={() => toggleTopic(topic)}
+                            className={`w-full flex items-center gap-2.5 py-1.5 px-2 rounded-lg text-xs transition-all ${
+                              done ? 'text-[#34D399]' : 'text-[#555] hover:text-[#888]'
+                            }`}
+                          >
+                            {done
+                              ? <CheckCircle size={13} className="text-[#34D399] flex-shrink-0" />
+                              : <Circle size={13} className="text-[#333] flex-shrink-0" />
+                            }
+                            <span className={done ? 'line-through opacity-60' : ''}>{topic}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </DarkCard>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Practice Engine (WIP)
+   Practice Engine — Live 3-Tab Arena
    ══════════════════════════════════════════════════════════════════ */
 function PracticeModule() {
-  const practiceAreas = [
-    { title: 'Aptitude Section', icon: <Target size={18} />, sub: ['Quantitative', 'Logical Reasoning', 'Verbal'] },
-    { title: 'Coding Practice', icon: <RefreshCw size={18} />, sub: ['Easy', 'Medium', 'Hard (DSA Heavy)'] },
-    { title: 'Interview Prep', icon: <Sparkles size={18} />, sub: ['Technical (REST, Patterns)', 'HR (Behavioral)'] }
+  return <PracticeContent />;
+}
+
+function PracticeContent() {
+  const { practiceData } = useAppContext();
+  const [activeTab, setActiveTab] = useState('aptitude');
+  const [revealedAnswers, setRevealedAnswers] = useState({});
+  const [codingFilter, setCodingFilter] = useState('all');
+
+  const toggleAnswer = (id) => setRevealedAnswers(prev => ({ ...prev, [id]: !prev[id] }));
+
+  const tabs = [
+    { id: 'aptitude',  label: 'Aptitude',  icon: <Target size={14} />,        color: '#F97316' },
+    { id: 'coding',    label: 'Coding',    icon: <Code size={14} />,           color: '#818CF8' },
+    { id: 'interview', label: 'Interview', icon: <MessageSquare size={14} />, color: '#34D399' },
   ];
 
+  if (!practiceData) {
+    return (
+      <div className="space-y-8">
+        <PageHeader title="Practice Engine" subtitle="Sharpen your skills with role-specific practice problems." />
+        <EmptyState icon={Sparkles} title="Arena Not Loaded" message="Upload your resume in Profile Intelligence first. Your custom practice set will appear here." />
+      </div>
+    );
+  }
+
+  const diffBadge = { easy: { color: '#34D399', bg: 'rgba(52,211,153,0.1)' }, medium: { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' }, hard: { color: '#F87171', bg: 'rgba(248,113,113,0.1)' } };
+  const catColors = { quantitative: '#F97316', logical_reasoning: '#818CF8', verbal: '#34D399' };
+
+  const filteredCoding = codingFilter === 'all'
+    ? practiceData.coding
+    : practiceData.coding?.filter(p => p.difficulty === codingFilter);
+
   return (
-    <div className="space-y-8">
-      <PageHeader title="Practice Engine" subtitle="Sharpen your sword. Rigorous practice modules for the final mile." />
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {practiceAreas.map((area, i) => (
-          <DarkCard key={i} delay={i * 0.1} glow>
-            <div className="flex flex-col items-center text-center p-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#818CF8]/10 border border-[#818CF8]/30 flex items-center justify-center text-[#818CF8] mb-4">
-                {area.icon}
-              </div>
-              <h4 className="font-black text-white text-base mb-4">{area.title}</h4>
-              <div className="w-full space-y-2">
-                {area.sub.map((s, idx) => (
-                  <div key={idx} className="bg-[#050505] border border-[#1A1A1A] py-2 px-3 rounded-lg text-[10px] font-bold text-[#555] uppercase tracking-tighter">
-                    {s}
-                  </div>
-                ))}
-              </div>
-              <button className="mt-6 w-full py-2 rounded-xl bg-[#818CF8]/5 border border-[#818CF8]/20 text-[10px] font-black text-[#818CF8] uppercase tracking-widest opacity-50 cursor-not-allowed">
-                Initializing Arena...
-              </button>
+    <div className="space-y-6">
+      <PageHeader title="Practice Engine" subtitle={`Role: ${practiceData.target_role} · ${practiceData.stats?.total_coding || 0} coding · ${practiceData.stats?.total_aptitude || 0} aptitude · ${practiceData.stats?.total_interview || 0} interview`} />
+
+      {/* Stats Bar */}
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: 'Aptitude',  count: practiceData.stats?.total_aptitude || 0,  color: '#F97316' },
+          { label: 'Coding',    count: practiceData.stats?.total_coding || 0,    color: '#818CF8' },
+          { label: 'Interview', count: practiceData.stats?.total_interview || 0, color: '#34D399' },
+        ].map((s, i) => (
+          <DarkCard key={i} delay={i * 0.05}>
+            <div className="text-center">
+              <div className="text-2xl font-black" style={{ color: s.color }}>{s.count}</div>
+              <div className="text-[10px] font-black text-[#555] uppercase tracking-widest mt-1">{s.label} Qs</div>
             </div>
           </DarkCard>
         ))}
       </div>
+
+      {/* Tab Bar */}
+      <div className="flex gap-1 bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-1 w-fit">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+              activeTab === tab.id ? 'text-white' : 'text-[#444] hover:text-[#888]'
+            }`}
+          >
+            {activeTab === tab.id && (
+              <motion.div layoutId="practice-tab-pill" className="absolute inset-0 rounded-xl" style={{ backgroundColor: tab.color, boxShadow: `0 0 15px ${tab.color}60` }} transition={{ type: 'spring', stiffness: 500, damping: 40 }} />
+            )}
+            <span className="relative z-10 flex items-center gap-1.5">{tab.icon}{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div key={activeTab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
+
+          {/* ─── APTITUDE TAB ─── */}
+          {activeTab === 'aptitude' && (
+            <div className="space-y-4">
+              {practiceData.aptitude?.map((q, i) => (
+                <DarkCard key={q.id} delay={i * 0.03}>
+                  <div className="flex items-start gap-3 mb-3">
+                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0" style={{ backgroundColor: `${catColors[q.category] || '#F97316'}15`, color: catColors[q.category] || '#F97316', border: `1px solid ${catColors[q.category] || '#F97316'}30` }}>{i + 1}</span>
+                    <div className="flex-1">
+                      <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: catColors[q.category] || '#F97316' }}>{q.category?.replace('_', ' ')}</span>
+                      <p className="text-sm font-semibold text-white mt-1 leading-relaxed">{q.question}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {q.options?.map((opt, oi) => (
+                      <div key={oi} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
+                        revealedAnswers[q.id] && opt.startsWith(q.answer)
+                          ? 'bg-[#34D399]/10 border-[#34D399]/40 text-[#34D399]'
+                          : 'bg-[#0A0A0A] border-[#1A1A1A] text-[#666]'
+                      }`}>{opt}</div>
+                    ))}
+                  </div>
+                  <button onClick={() => toggleAnswer(q.id)} className="text-[10px] font-black uppercase tracking-widest text-[#F97316] hover:text-[#FF8C3A] transition-colors flex items-center gap-1">
+                    {revealedAnswers[q.id] ? '▲ Hide' : '▼ Reveal'} Answer
+                  </button>
+                  {revealedAnswers[q.id] && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 bg-[#34D399]/5 border border-[#34D399]/20 rounded-xl px-4 py-3">
+                      <p className="text-xs text-[#34D399] font-semibold">✓ Answer: {q.answer}</p>
+                      <p className="text-xs text-[#888] mt-1 leading-relaxed">{q.explanation}</p>
+                    </motion.div>
+                  )}
+                </DarkCard>
+              ))}
+            </div>
+          )}
+
+          {/* ─── CODING TAB ─── */}
+          {activeTab === 'coding' && (
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                {['all', 'easy', 'medium', 'hard'].map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setCodingFilter(f)}
+                    className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all border ${
+                      codingFilter === f ? 'bg-[#818CF8] border-[#818CF8] text-white' : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+                    }`}
+                  >{f}</button>
+                ))}
+              </div>
+              {filteredCoding?.map((p, i) => (
+                <DarkCard key={p.id} delay={i * 0.04}>
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black px-2.5 py-1 rounded-full" style={{ color: diffBadge[p.difficulty]?.color, backgroundColor: diffBadge[p.difficulty]?.bg, border: `1px solid ${diffBadge[p.difficulty]?.color}30` }}>{p.difficulty}</span>
+                      <span className="text-[10px] text-[#444] font-bold uppercase">{p.topic?.replace('_', ' ')}</span>
+                    </div>
+                    <a
+                      href={`https://leetcode.com/search/?q=${encodeURIComponent(p.title)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="text-[10px] font-black text-[#818CF8] hover:text-white transition-colors flex items-center gap-1"
+                    >Practice →</a>
+                  </div>
+                  <h4 className="font-black text-white mb-2">{p.title}</h4>
+                  <p className="text-sm text-[#888] leading-relaxed mb-3">{p.problem}</p>
+                  <button onClick={() => toggleAnswer(p.id)} className="text-[10px] font-black uppercase tracking-widest text-[#818CF8] hover:text-white transition-colors flex items-center gap-1">
+                    {revealedAnswers[p.id] ? '▲ Hide' : '▼ Show'} Hint
+                  </button>
+                  {revealedAnswers[p.id] && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 bg-[#818CF8]/5 border border-[#818CF8]/20 rounded-xl px-4 py-3">
+                      <p className="text-xs text-[#818CF8] font-semibold mb-1">💡 Hint</p>
+                      <p className="text-xs text-[#888] leading-relaxed">{p.hint}</p>
+                    </motion.div>
+                  )}
+                </DarkCard>
+              ))}
+            </div>
+          )}
+
+          {/* ─── INTERVIEW TAB ─── */}
+          {activeTab === 'interview' && (
+            <div className="space-y-4">
+              {/* Technical */}
+              <div>
+                <p className="text-[10px] font-black text-[#818CF8] uppercase tracking-widest mb-3">Technical Questions</p>
+                {practiceData.interview?.filter(q => q.type === 'technical').map((q, i) => (
+                  <DarkCard key={q.id} delay={i * 0.04} className="mb-3">
+                    <p className="text-sm font-semibold text-white leading-relaxed mb-3">{q.question}</p>
+                    <button onClick={() => toggleAnswer(q.id)} className="text-[10px] font-black uppercase tracking-widest text-[#818CF8] hover:text-white transition-colors">
+                      {revealedAnswers[q.id] ? '▲ Hide' : '▼ Show'} Sample Answer
+                    </button>
+                    {revealedAnswers[q.id] && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 bg-[#818CF8]/5 border border-[#818CF8]/20 rounded-xl px-4 py-3">
+                        <p className="text-xs text-[#888] leading-relaxed">{q.sample_answer}</p>
+                      </motion.div>
+                    )}
+                  </DarkCard>
+                ))}
+              </div>
+              {/* HR */}
+              <div>
+                <p className="text-[10px] font-black text-[#34D399] uppercase tracking-widest mb-3">HR & Behavioral Questions</p>
+                {practiceData.interview?.filter(q => q.type === 'hr').map((q, i) => (
+                  <DarkCard key={q.id} delay={i * 0.04} className="mb-3">
+                    <p className="text-sm font-semibold text-white leading-relaxed mb-3">{q.question}</p>
+                    <button onClick={() => toggleAnswer(q.id)} className="text-[10px] font-black uppercase tracking-widest text-[#34D399] hover:text-white transition-colors">
+                      {revealedAnswers[q.id] ? '▲ Hide' : '▼ Show'} Framework
+                    </button>
+                    {revealedAnswers[q.id] && (
+                      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 bg-[#34D399]/5 border border-[#34D399]/20 rounded-xl px-4 py-3">
+                        <p className="text-xs text-[#888] leading-relaxed">{q.sample_answer}</p>
+                      </motion.div>
+                    )}
+                  </DarkCard>
+                ))}
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   Tracking Engine — Score Evolution & Progress History
+   ══════════════════════════════════════════════════════════════════ */
+function TrackingModule() {
+  const { user, trackingData, setTrackingData } = useAppContext();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.id && !trackingData) {
+      setLoading(true);
+      fetchProgress(user.id)
+        .then(data => setTrackingData(data))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    }
+  }, [user, trackingData, setTrackingData]);
+
+  if (loading) return (
+    <div className="space-y-8">
+      <PageHeader title="Tracking Engine" subtitle="Loading your progress history..." />
+      <DarkCard><div className="flex items-center justify-center py-12"><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-8 h-8 border-2 border-[#F97316] border-t-transparent rounded-full" /></div></DarkCard>
+    </div>
+  );
+
+  const noData = !trackingData || trackingData.total_sessions === 0;
+
+  if (noData) return (
+    <div className="space-y-8">
+      <PageHeader title="Tracking Engine" subtitle="Your placement score and skill growth over time." />
+      <EmptyState icon={BarChart2} title="No Sessions Recorded" message="Complete practice sessions in the Practice Engine to track your score evolution here." />
+    </div>
+  );
+
+  const evolution = trackingData.score_evolution || [];
+  const sessions = trackingData.sessions || [];
+  const maxScore = Math.max(...evolution.map(e => e.score), 1);
+  const chartW = 600, chartH = 150;
+
+  // Build SVG polyline path
+  const points = evolution.map((e, i) => {
+    const x = (i / Math.max(evolution.length - 1, 1)) * (chartW - 40) + 20;
+    const y = chartH - 10 - ((e.score / 100) * (chartH - 20));
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <div className="space-y-8">
+      <PageHeader title="Tracking Engine" subtitle={`${trackingData.total_sessions} sessions recorded · Best score: ${trackingData.best_score}%`} />
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {[
+          { label: 'Total Sessions', value: trackingData.total_sessions, color: '#F97316', icon: <Award size={16} /> },
+          { label: 'Best Score', value: `${trackingData.best_score}%`, color: '#34D399', icon: <TrendingUp size={16} /> },
+          { label: 'Latest Score', value: `${trackingData.latest_session?.placement_score?.toFixed(1) || '—'}%`, color: '#818CF8', icon: <Target size={16} /> },
+          { label: 'Skills Acquired', value: trackingData.latest_session?.skills_count || 0, color: '#F59E0B', icon: <Zap size={16} /> },
+        ].map((s, i) => (
+          <DarkCard key={i} delay={i * 0.07}>
+            <div className="flex items-center gap-2 mb-2" style={{ color: s.color }}>{s.icon}<span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#555' }}>{s.label}</span></div>
+            <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
+          </DarkCard>
+        ))}
+      </div>
+
+      {/* Score Evolution Chart */}
+      {evolution.length > 1 && (
+        <DarkCard glow delay={0.1}>
+          <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Score Evolution</h4>
+          <div className="w-full overflow-x-auto">
+            <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ minWidth: '300px' }}>
+              {/* Grid lines */}
+              {[25, 50, 75, 100].map(v => (
+                <line key={v} x1="20" y1={chartH - 10 - (v / 100) * (chartH - 20)} x2={chartW - 20} y2={chartH - 10 - (v / 100) * (chartH - 20)} stroke="#1A1A1A" strokeWidth="1" />
+              ))}
+              {[25, 50, 75, 100].map(v => (
+                <text key={v} x="15" y={chartH - 10 - (v / 100) * (chartH - 20) + 4} fontSize="8" fill="#333" textAnchor="end">{v}</text>
+              ))}
+              {/* Glow fill */}
+              <defs>
+                <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#F97316" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#F97316" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {points && <polyline points={points} fill="none" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0 0 4px rgba(249,115,22,0.6))" />}
+              {/* Dots */}
+              {evolution.map((e, i) => {
+                const x = (i / Math.max(evolution.length - 1, 1)) * (chartW - 40) + 20;
+                const y = chartH - 10 - ((e.score / 100) * (chartH - 20));
+                return <circle key={i} cx={x} cy={y} r="4" fill="#F97316" stroke="#060606" strokeWidth="2" />;
+              })}
+            </svg>
+          </div>
+          <div className="flex gap-4 mt-3 overflow-x-auto">
+            {evolution.map((e, i) => (
+              <div key={i} className="text-center flex-shrink-0">
+                <div className="text-sm font-black text-[#F97316]">{e.score}%</div>
+                <div className="text-[9px] text-[#444] mt-0.5">{e.date}</div>
+              </div>
+            ))}
+          </div>
+        </DarkCard>
+      )}
+
+      {/* Sessions Table */}
+      <DarkCard delay={0.2}>
+        <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Session History</h4>
+        <div className="space-y-3">
+          {sessions.slice().reverse().map((s, i) => (
+            <motion.div key={s.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 gap-2">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center">
+                  <Clock size={14} className="text-[#F97316]" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">{s.target_role || 'Unknown Role'}</p>
+                  <p className="text-[10px] text-[#555]">{s.date}</p>
+                </div>
+              </div>
+              <div className="flex gap-4 text-xs">
+                {s.aptitude_score != null && <div className="text-center"><div className="font-black text-[#F97316]">{s.aptitude_score}%</div><div className="text-[#444] text-[9px]">Aptitude</div></div>}
+                {s.coding_score != null && <div className="text-center"><div className="font-black text-[#818CF8]">{s.coding_score}%</div><div className="text-[#444] text-[9px]">Coding</div></div>}
+                {s.interview_score != null && <div className="text-center"><div className="font-black text-[#34D399]">{s.interview_score}%</div><div className="text-[#444] text-[9px]">Interview</div></div>}
+                <div className="text-center"><div className="font-black text-white">{s.placement_score?.toFixed(1) || '—'}%</div><div className="text-[#444] text-[9px]">Overall</div></div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </DarkCard>
     </div>
   );
 }
@@ -707,17 +1076,21 @@ function PracticeModule() {
    Main Dashboard Component
    ══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
-  const { user } = useAppContext();
+  const { user, setPreparationData, setPracticeData } = useAppContext();
   const [analyzedData, setAnalyzedData] = useState(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRoleIndex, setSelectedRoleIndex] = useState(0);
 
-  const handleAnalyzeComplete = (data) => {
+  const handleAnalyzeComplete = useCallback((data) => {
     setAnalyzedData(data);
     setSelectedRoleIndex(0);
-  };
-  const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); setSelectedRoleIndex(0); };
+    // Seed engine data from the single upload_resume response
+    if (data?.preparation_plan) setPreparationData(data.preparation_plan);
+    if (data?.practice_set) setPracticeData(data.practice_set);
+  }, [setPreparationData, setPracticeData]);
+
+  const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); setSelectedRoleIndex(0); setPreparationData(null); setPracticeData(null); };
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
@@ -1003,6 +1376,9 @@ export default function Dashboard() {
             
             {/* Module 3: Practice Engine */}
             <Route path="/practice" element={<PracticeModule />} />
+
+            {/* Module 4: Tracking Engine */}
+            <Route path="/tracking" element={<TrackingModule />} />
             
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

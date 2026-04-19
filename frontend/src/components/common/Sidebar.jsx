@@ -1,6 +1,6 @@
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
-import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap, Sparkles, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap, Sparkles, ChevronDown, TrendingUp, BarChart2 } from 'lucide-react';
 import Logo from '../Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,6 +24,7 @@ export default function Sidebar() {
     },
     { name: 'Preparation Engine', path: '/dashboard/preparation', icon: <Briefcase size={17} /> },
     { name: 'Practice Engine', path: '/dashboard/practice', icon: <Sparkles size={17} /> },
+    { name: 'Tracking Engine', path: '/dashboard/tracking', icon: <BarChart2 size={17} /> },
   ];
 
   const profileSubItems = [
