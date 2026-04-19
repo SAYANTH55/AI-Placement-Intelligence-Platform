@@ -10,8 +10,6 @@ export const AppProvider = ({ children }) => {
     recommendations: ["Learn AWS core services", "Build a small Docker project"],
     placement_probability: 81,
     companies: ["Google", "Microsoft", "Amazon"],
-    
-    // Simulating future dynamic fields that might be added by AI
     dynamic_scores: {
       interview_confidence: 65,
       communication: 88,
@@ -21,10 +19,38 @@ export const AppProvider = ({ children }) => {
 
   const [result, setResult] = useState(initialData);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null); // Simple auth state
+
+  // Engine-level data — populated from upload_resume response or engine API calls
+  const [preparationData, setPreparationData] = useState(null);
+  const [practiceData, setPracticeData] = useState(null);
+  const [trackingData, setTrackingData] = useState(null);
+
+  // Auth state initialized from localStorage for persistence
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('ai_placement_user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Sync user state to localStorage whenever it changes
+  React.useEffect(() => {
+    if (user) {
+      localStorage.setItem('ai_placement_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('ai_placement_user');
+    }
+  }, [user]);
 
   return (
-    <AppContext.Provider value={{ result, setResult, loading, setLoading, user, setUser }}>
+    <AppContext.Provider
+      value={{
+        result, setResult,
+        loading, setLoading,
+        user, setUser,
+        preparationData, setPreparationData,
+        practiceData, setPracticeData,
+        trackingData, setTrackingData,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
@@ -32,3 +58,4 @@ export const AppProvider = ({ children }) => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => useContext(AppContext);
+

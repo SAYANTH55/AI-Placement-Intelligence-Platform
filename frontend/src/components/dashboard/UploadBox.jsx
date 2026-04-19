@@ -107,7 +107,11 @@ export default function UploadBox({ onAnalyzeComplete }) {
         // Hybrid AI extensions
         llm_enhancement: raw.llm_enhancement || null,
         llm_insights: raw.llm_insights || null,
-        experience_advantage_roles: raw.experience_advantage_roles || []
+        experience_advantage_roles: raw.experience_advantage_roles || [],
+        
+        // Engine Data (v3.0.0)
+        preparation_plan: raw.preparation_plan || null,
+        practice_set: raw.practice_set || null
       };
 
       console.log('✅ Analysis complete:', formattedResult);

@@ -3,15 +3,11 @@ import { useAppContext } from '../../context/AppContext';
 import { Zap, LogOut, User } from 'lucide-react';
 import Logo from '../Logo';
 import { motion } from 'framer-motion';
+import ProfileDropdown from './ProfileDropdown';
 
 export default function Navbar() {
-  const { user, setUser } = useAppContext();
+  const { user } = useAppContext();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    setUser(null);
-    navigate('/');
-  };
 
   const navLinks = [
     { to: '/', label: 'Home', end: true },
@@ -25,7 +21,7 @@ export default function Navbar() {
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-50 bg-[#060606]/90 backdrop-blur-xl border-b border-[#1A1A1A] shadow-[0_4px_30px_rgba(249,115,22,0.08)]"
+      className="sticky top-0 z-[100] bg-[#060606]/90 backdrop-blur-xl border-b border-[#1A1A1A] shadow-[0_4px_30px_rgba(249,115,22,0.08)] w-full"
     >
       {/* Neon orange line under navbar */}
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
@@ -66,32 +62,24 @@ export default function Navbar() {
                 )}
               </NavLink>
             ))}
+            {user && (
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive ? 'text-[#F97316]' : 'text-[#888] hover:text-white'
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+            )}
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {user ? (
-              <>
-                <div className="hidden sm:flex items-center gap-2 text-sm text-[#888]">
-                  <div className="w-7 h-7 rounded-full bg-[#F97316]/10 border border-[#F97316]/30 flex items-center justify-center text-[#F97316]">
-                    <User size={14} />
-                  </div>
-                  <span className="font-medium text-white">{user.name}</span>
-                </div>
-                <button
-                  onClick={() => navigate('/dashboard')}
-                  className="text-sm font-semibold text-white bg-[#F97316] px-4 py-2 rounded-full hover:bg-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all duration-200"
-                >
-                  Dashboard
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 text-[#555] hover:text-red-500 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut size={18} />
-                </button>
-              </>
+              <ProfileDropdown />
             ) : (
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(249,115,22,0.4)' }}
