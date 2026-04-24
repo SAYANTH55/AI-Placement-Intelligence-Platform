@@ -11,6 +11,7 @@ import ScoreRing from '../components/dashboard/ScoreRing';
 import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
+import OutcomeTracker from '../components/dashboard/OutcomeTracker';
 
 /* ── Shared dark card ── */
 function DarkCard({ children, className = '', delay = 0, glow = false }) {
@@ -1068,6 +1069,9 @@ function TrackingModule() {
           ))}
         </div>
       </DarkCard>
+
+      {/* Outcome Tracking - Validates the intelligence model */}
+      <OutcomeTracker userId={user?.id} />
     </div>
   );
 }

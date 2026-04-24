@@ -13,6 +13,7 @@ import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import EdgeGlow from './components/common/EdgeGlow';
 import { useAppContext } from './context/AppContext';
+import AnalyticsDashboard from './components/admin/AnalyticsDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
@@ -42,6 +43,7 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin" element={<AnalyticsDashboard />} />
 
           {/* Protected Dashboard Routes - all handled inside Dashboard */}
           <Route

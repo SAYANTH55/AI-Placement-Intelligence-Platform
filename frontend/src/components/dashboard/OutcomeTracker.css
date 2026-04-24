@@ -1,0 +1,105 @@
+.outcome-tracker {
+    background: rgba(26, 26, 26, 0.8);
+    border: 1px solid rgba(255, 102, 0, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.outcome-tracker:hover {
+    border-color: rgba(255, 102, 0, 0.4);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.outcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.outcome-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.outcome-badge {
+    background: rgba(255, 102, 0, 0.1);
+    color: #ff6600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 102, 0, 0.3);
+}
+
+.outcome-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.form-group input, .form-group select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #ff6600;
+}
+
+.submit-btn {
+    grid-column: span 2;
+    background: linear-gradient(135deg, #ff6600 0%, #ff3300 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.success-msg {
+    grid-column: span 2;
+    text-align: center;
+    color: #4ade80;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(74, 222, 128, 0.1);
+    font-size: 0.9rem;
+}
