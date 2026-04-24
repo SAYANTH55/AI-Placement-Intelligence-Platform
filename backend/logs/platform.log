@@ -1,0 +1,13 @@
+2026-04-24 13:58:18,504 - AI_Placement_Platform - ERROR - [endpoints.py:187] - Error in upload_resume for file SONAL KUMARI RESUME.pdf: name 'logger' is not defined
+Traceback (most recent call last):
+  File "C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\api\endpoints.py", line 131, in upload_resume
+    logger.info(f"LLM Output: {llm_output}")
+NameError: name 'logger' is not defined
+2026-04-24 14:04:19,627 - AI_Placement_Platform - INFO - [endpoints.py:131] - LLM Output: {'inferred_roles': [], 'inferred_skills': [], 'summary': '', 'strengths': [], 'weaknesses': []}
+2026-04-24 14:04:19,629 - AI_Placement_Platform - INFO - [endpoints.py:132] - Merged Roles: ['Java Developer', 'Data Scientist', 'Mobile App Developer', 'Backend Developer', 'Python Developer', 'Data Analyst', 'Frontend Developer', 'Full Stack Developer']
+2026-04-24 14:10:13,165 - AI_Placement_Platform - INFO - [endpoints.py:131] - LLM Output: {'inferred_roles': [], 'inferred_skills': [], 'summary': '', 'strengths': [], 'weaknesses': []}
+2026-04-24 14:10:13,165 - AI_Placement_Platform - INFO - [endpoints.py:132] - Merged Roles: ['Full Stack Developer']
+2026-04-24 17:05:44,749 - AI_Placement_Platform - INFO - [prediction_engine.py:70] - Running ML inference for prediction
+2026-04-24 17:07:30,146 - AI_Placement_Platform - INFO - [prediction_engine.py:70] - Running ML inference for prediction
+2026-04-24 17:08:15,617 - AI_Placement_Platform - INFO - [prediction_engine.py:70] - Running ML inference for prediction
+2026-04-24 17:16:49,881 - AI_Placement_Platform - INFO - [prediction_engine.py:70] - Running ML inference for prediction
