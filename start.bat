@@ -4,7 +4,7 @@ color 0A
 echo.
 echo ================================================================
 echo  AI Placement Intelligence Platform - Startup Script
-echo  Version: 3.0.0 (Preparation + Practice + Tracking Engines)
+echo  Version: 4.0.0 (Production Hardened + Ground Truth Tracking)
 echo ================================================================
 echo.
 
@@ -88,15 +88,20 @@ if exist frontend (
 )
 
 echo.
-echo [6/8] Verifying Database Schema (UserProgress table)...
+echo [6/8] Verifying Database Schema (Outcomes + Progress)...
 cd backend
 python -c "from database.db import engine; from database import models; models.Base.metadata.create_all(bind=engine); print('DB OK')" 2>nul
 if errorlevel 1 (
     echo [WARN] DB migration check failed - will retry on server start
 ) else (
-    echo [OK] Database schema up to date (user_progress table ready)
+    echo [OK] Database schema up to date (outcomes + tracking tables ready)
 )
 cd ..
+
+echo.
+echo [X] Initializing Logs Directory...
+if not exist backend\logs mkdir backend\logs
+echo [OK] Logs directory ready
 
 echo.
 echo [7/8] Running Engine Smoke Test...
@@ -132,24 +137,25 @@ timeout /t 6 /nobreak >nul
 
 echo.
 echo ================================================================
-echo  [OK] Startup Sequence Complete - v3.0.0
+echo  [OK] Startup Sequence Complete - v4.0.0 (PROD)
 echo ================================================================
 echo.
 echo  Application URLs:
 echo    Frontend App      :  http://localhost:5173
+echo    Analytics Panel   :  http://localhost:5173/admin
 echo    API Docs (Swagger):  http://localhost:8000/docs
 echo    API Health Check  :  http://localhost:8000/health
 echo.
-echo  New Engine Endpoints (v3.0.0):
+echo  Core Intelligence Endpoints (v4.0.0):
+echo    POST /outcomes                - Record real-world SUCCESS (Ground Truth)
+echo    GET  /analytics/outcomes      - Cohort-wide placement analytics
 echo    POST /preparation/plan        - Learning roadmap from skill gaps
 echo    POST /practice/set            - Role-filtered question set
-echo    POST /tracking/record         - Record practice session
-echo    GET  /tracking/progress/{id}  - Score evolution history
-echo    POST /tracking/feedback       - Feedback loop re-scoring
+echo    POST /tracking/feedback       - Adaptive ML feedback loop
 echo.
 echo  Server Windows:
-echo    Backend  : "Backend - AI Placement Intelligence v3"
-echo    Frontend : "Frontend - AI Placement Intelligence v3"
+echo    Backend  : "Backend - AI Placement Intelligence v4"
+echo    Frontend : "Frontend - AI Placement Intelligence v4"
 echo.
 echo  Troubleshooting:
 echo    Backend fails  : Check backend console for import / port errors

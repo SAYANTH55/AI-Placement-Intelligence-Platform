@@ -113,3 +113,24 @@ class UserProgress(Base):
 
     class Config:
         from_attributes = True
+
+
+class PlacementOutcome(Base):
+    """Store real-world placement results for ground-truth validation"""
+    __tablename__ = "placement_outcomes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    got_placed = Column(Boolean, default=False)
+    company = Column(String, nullable=True)
+    role = Column(String, nullable=True)
+    offer_date = Column(DateTime(timezone=True), nullable=True)
+    time_to_offer_days = Column(Integer, nullable=True)
+    package = Column(Float, nullable=True)  # Optional: CTC
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User", back_populates="outcomes")
+
+# Update User model to include outcomes relationship
+User.outcomes = relationship("PlacementOutcome", back_populates="user")
