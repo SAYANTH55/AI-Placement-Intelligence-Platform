@@ -92,8 +92,9 @@ def engineer_features(
 
         # ── 3. Behavioral metrics ──────────────────────────────────────────
         behavior    = intelligence_profile.get("behavior", {})
-        consistency = _clamp(float(behavior.get("consistency", 0.0)), 0.0, 1.0)
-        accuracy    = _clamp(float(behavior.get("accuracy",    0.0)), 0.0, 1.0)
+        # Default to 0.6 (Neutral-Strong) for cold start to avoid score suppression
+        consistency = _clamp(float(behavior.get("consistency", 0.6)), 0.0, 1.0)
+        accuracy    = _clamp(float(behavior.get("accuracy",    0.6)), 0.0, 1.0)
 
         weak_areas   = behavior.get("weak_areas",  [])
         strong_areas = behavior.get("strong_areas", [])

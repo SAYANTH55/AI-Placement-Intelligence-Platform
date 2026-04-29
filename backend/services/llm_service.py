@@ -120,7 +120,8 @@ def generate_career_insights(structured_data: dict) -> dict:
         return safe_fallback
 
     prompt = f"""
-    Generate structured career insights based on this final candidate evaluation. Return STRICT JSON.
+    Generate deeply personalized career insights based on this final candidate evaluation. Return STRICT JSON.
+    Use the provided data to suggest specific, non-generic career paths.
 
     Evaluation Data:
     - Final Skills: {structured_data.get('skills', [])}
@@ -128,13 +129,24 @@ def generate_career_insights(structured_data: dict) -> dict:
     - Target Roles Detected: {structured_data.get('roles', [])}
     - Placement Readiness Score: {structured_data.get('score', 0)}/100
 
-    Provide an actionable learning path addressing the missing skills, concise career advice, and a brief explanation of why this score was received.
+    Provide:
+    1. A progressive learning path addressing the gaps.
+    2. 3 Personalized Job Titles with a 'reason' why they fit this specific user.
+    3. Industry Trends for their top role.
+    4. 3 Tailored Interview Tips based on their profile.
+    5. A concise career summary.
 
     Expected JSON Schema:
     {{
         "learning_path": ["Step 1: Master X", "Step 2: Build Y"],
-        "career_advice": "Specific tailored advice.",
-        "explanation": "Brief explanation of the score and gap."
+        "personalized_jobs": [
+            {{"title": "Job Title", "reason": "Why it fits"}},
+            {{"title": "Job Title", "reason": "Why it fits"}}
+        ],
+        "industry_trends": "Brief current market trend summary.",
+        "interview_tips": ["Tip 1", "Tip 2", "Tip 3"],
+        "career_advice": "Detailed tailored strategy.",
+        "explanation": "Brief explanation of the readiness score."
     }}
     Return ONLY JSON.
     """

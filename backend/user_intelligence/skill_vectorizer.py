@@ -4,23 +4,25 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def estimate_depth(skill_name: str, projects: list) -> str:
+def estimate_depth(skill_name: str, projects: list, experience_years: float) -> str:
     """
-    Logic-based depth estimation (PHASE 2).
+    Logic-based depth estimation (PHASE 2 - Upgrade).
+    Based on projects, complexity_keywords, and experience_years.
     """
-    # Count how many projects mention this skill
     project_count = 0
+    complexity_keywords = ["scalable", "distributed", "microservices", "optimized", "architecture"]
     high_complexity = False
     
     for p in projects:
         if skill_name in p.get("skills", []):
             project_count += 1
-            if p.get("complexity") == "medium":
+            desc = p.get("description", "").lower()
+            if p.get("complexity") == "medium" or any(kw in desc for kw in complexity_keywords):
                 high_complexity = True
                 
-    if project_count >= 2 and high_complexity:
+    if (project_count >= 2 and high_complexity) or (experience_years >= 3.0 and project_count >= 1):
         return "advanced"
-    elif project_count >= 1:
+    elif project_count >= 1 or experience_years >= 1.0:
         return "intermediate"
     else:
         return "basic"
@@ -44,16 +46,20 @@ def vectorize_skills(student_profile: dict) -> dict:
         weight = skill_obj.get("weight", 1.0)
         
         # Phase 2: Context Aggregation
-        contexts = []
+        contexts = skill_obj.get("contexts", [])
         for p in projects:
             if name in p.get("skills", []):
                 contexts.extend(p.get("contexts", []))
         
         # Phase 2: Depth Estimation
-        depth = estimate_depth(name, projects)
+        exp_years_str = student_profile.get("experience", "0 years")
+        import re
+        exp_match = re.search(r'(\d+)', str(exp_years_str))
+        exp_years = float(exp_match.group(1)) if exp_match else 0.0
+        depth = estimate_depth(name, projects, exp_years)
         
-        # Stability logic (PHASE 2 stub)
-        stability = 0.5 + (0.1 if depth == "advanced" else 0)
+        # Stability logic initial assignment
+        stability = confidence
         
         # Initial score blending
         base_score = round(min(confidence * weight, 1.0), 2)

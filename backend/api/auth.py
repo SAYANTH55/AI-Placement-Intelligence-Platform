@@ -15,7 +15,8 @@ from sqlalchemy import func
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.email_service import send_otp_email
 from database.db import get_db
-from database.models import User
+from database.models import User, PR
+from placement.auth_depends import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -70,14 +71,26 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     if not pwd_context.verify(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
         
+    token = create_access_token({"sub": str(user.id), "role": user.role})
+
+    # Build the base user payload
+    user_payload = {
+        "id": user.id,
+        "email": user.email,
+        "name": user.name,
+        "role": user.role
+    }
+
+    # For PR users, attach their pr_id so the frontend can call /pr/{pr_id}/students
+    if user.role == "pr":
+        pr_profile = db.query(PR).filter(PR.user_id == user.id).first()
+        if pr_profile:
+            user_payload["pr_id"] = pr_profile.id
+
     return {
         "message": "Login successful",
-        "user": {
-            "id": user.id,
-            "email": user.email,
-            "name": user.name,
-            "role": "student"
-        }
+        "user": user_payload,
+        "token": token
     }
 
 @router.post("/register")

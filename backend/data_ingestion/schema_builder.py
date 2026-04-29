@@ -76,7 +76,7 @@ def build_student_profile(parsed_data: dict, source: str = "resume") -> dict:
         },
         "experience": {
             "years": exp_years,
-            "projects": [],
+            "projects": parsed_data.get("projects", []),
             "internships": []
         },
         "data_quality": {

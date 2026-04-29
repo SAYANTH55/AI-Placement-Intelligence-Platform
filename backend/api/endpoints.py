@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
 import shutil
@@ -13,6 +13,9 @@ from ai_model.utils.skill_normalizer import get_skill_diversity_score
 from services.llm_service import analyze_with_llm, generate_career_insights
 from services.preparation_engine import generate_plan
 from services.practice_engine import get_practice_set
+from database.db import get_db as get_session, SessionLocal
+from database.models import ResumeAnalysis, User, Student
+from database.student_service import StudentService
 
 
 from utils.logger import platform_logger
@@ -69,19 +72,30 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         role_matches_data = role_matches_data_dict['role_matches']
         diversity_info = role_matches_data_dict['diversity_analysis']
 
-        # 3. Safe Merging Logic
+        # 3. Dynamic Skill Merging (Layer 1 + Layer 2)
+        parsed_skills_objs = student_profile.get("skills", [])
+        parsed_skill_names = {s["name"].lower(): s for s in parsed_skills_objs}
+        
         llm_skills = llm_output.get("inferred_skills", [])
         llm_roles = llm_output.get("inferred_roles", [])
-        final_skills = list(set(detected_skills) | set(llm_skills))
+        
+        # Merge: Keep parsed skills (high confidence), add LLM skills (medium confidence)
+        final_skill_objs = list(parsed_skills_objs)
+        for ls in llm_skills:
+            if ls.lower() not in parsed_skill_names:
+                final_skill_objs.append({
+                    "name": ls,
+                    "confidence": 0.75, # Conservative inference
+                    "weight": 0.9,
+                    "source": "llm_inference"
+                })
+        
+        student_profile["skills"] = final_skill_objs
+        final_skills = [s["name"] for s in final_skill_objs]
         final_roles = list(set([r["role"] for r in role_matches_data]) | set(llm_roles))
-
+        
         # 4. RUN THE ADAPTIVE INTELLIGENCE ENGINE (Production Hardened ML)
         from user_intelligence.intelligence_service import intelligence_service
-        
-        # Sync the student profile for internal intelligence tracking
-        # Re-attach the final skills to the profile before intelligence building
-        student_profile["skills"] = [{"name": s, "level": 0.7} for s in final_skills] 
-        
         intel_profile = await loop.run_in_executor(None, intelligence_service.build_intelligence_profile, student_profile)
         prediction = intel_profile.get("prediction", {})
         
@@ -217,16 +231,22 @@ async def health_check():
         }
     }
 
-@router.post("/analyze_user")
-async def analyze_user(data: AnalyzeUserInput):
+@router.get("/analyze_user")
+async def analyze_user(data: AnalyzeUserInput, db: SessionLocal = Depends(get_session)):
     """
     Transforms static student profile into dynamic intelligence vector map.
     Includes trace_id and readiness disclaimer (ISSUE 5 & 7).
     """
-    from database.student_repository import get_student_profile
     from user_intelligence.intelligence_service import intelligence_service
     
-    profile = get_student_profile(data.student_id)
+    # Locate profile
+    profile = StudentService.get_student_profile_by_email(db, data.student_id) if "@" in data.student_id else None
+    if not profile:
+        try:
+            profile = StudentService.get_student_profile(db, int(data.student_id))
+        except:
+            pass
+            
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
         
@@ -250,15 +270,21 @@ class SkillUpdateInput(BaseModel):
     updates: list[SkillUpdateItem]
 
 @router.post("/update_skills")
-async def update_skills(data: SkillUpdateInput):
+async def update_skills(data: SkillUpdateInput, db: SessionLocal = Depends(get_session)):
     """
     ✅ ENHANCED (PHASE 10): Manual user correction layer.
     Allows users to refine their profile intelligence if parsing was imprecise.
     """
-    from database.student_repository import get_student_profile, save_student_profile
     from ai_model.utils.skill_normalizer import normalize_skill
     
-    profile = get_student_profile(data.student_id)
+    # Locate profile
+    profile = StudentService.get_student_profile_by_email(db, data.student_id) if "@" in data.student_id else None
+    if not profile:
+        try:
+            profile = StudentService.get_student_profile(db, int(data.student_id))
+        except:
+            pass
+            
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
         
@@ -281,7 +307,8 @@ async def update_skills(data: SkillUpdateInput):
     profile["skills"] = list(skill_map.values())
     profile["source"] = "user_refined"
     
-    saved = save_student_profile(profile)
+    email = profile.get("profile", {}).get("email")
+    saved = StudentService.save_student_profile(db, email, profile)
     if not saved:
         raise HTTPException(status_code=500, detail="Failed to save profile corrections")
         

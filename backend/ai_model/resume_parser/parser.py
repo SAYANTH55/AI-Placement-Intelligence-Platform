@@ -30,24 +30,25 @@ def extract_text_from_docx(file_path):
     return text
 
 SECTIONS_KEYWORDS = {
-    "skills": ["skills", "technologies", "technical skills", "tech stack", "expertise"],
-    "projects": ["projects", "personal projects", "academic projects", "professional projects"],
-    "experience": ["experience", "work experience", "professional experience", "employment history"],
-    "education": ["education", "academic background", "qualifications"]
+    "skills": ["skills", "technologies", "technical skills", "tech stack", "expertise", "computer proficiency", "proficiency", "technical proficiency"],
+    "projects": ["projects", "personal projects", "academic projects", "professional projects", "active participation"],
+    "experience": ["experience", "work experience", "professional experience", "employment history", "experience / internship", "internship"],
+    "education": ["education", "academic background", "qualifications", "additional qualifications"]
 }
 
 CONTEXT_MAP = {
+    "api": "backend",
+    "model": "machine_learning",
+    "ui": "frontend",
     "scalable": "system_design",
     "distributed": "system_design",
     "microservices": "system_design",
-    "api": "backend",
     "rest": "backend",
     "graphql": "backend",
     "database": "backend",
     "sql": "backend",
     "nosql": "backend",
     "dashboard": "frontend",
-    "ui": "frontend",
     "ux": "frontend",
     "responsive": "frontend",
     "component": "frontend",
@@ -63,6 +64,14 @@ CONTEXT_MAP = {
     "ci/cd": "devops",
     "pipeline": "devops"
 }
+
+def classify_section(text_block: str) -> str:
+    """Classify text block based on keyword heuristics."""
+    clean_line = text_block.strip().lower()
+    for section, keywords in SECTIONS_KEYWORDS.items():
+        if any(kw in clean_line for kw in keywords):
+            return section
+    return "summary"
 
 def split_sections(text: str) -> dict:
     """
@@ -80,15 +89,12 @@ def split_sections(text: str) -> dict:
             continue
             
         found_header = False
-        for section, keywords in SECTIONS_KEYWORDS.items():
-            if any(kw in clean_line for kw in keywords) and len(clean_line) < 30:
-                # Save previous section
-                sections[current_section] = "\n".join(current_content)
-                # Reset for new section
-                current_section = section
-                current_content = []
-                found_header = True
-                break
+        section = classify_section(line)
+        if section != "summary" and len(clean_line) < 30:
+            sections[current_section] = "\n".join(current_content)
+            current_section = section
+            current_content = []
+            found_header = True
         
         if not found_header:
             current_content.append(line)
@@ -138,7 +144,7 @@ def extract_projects(sections: dict) -> list:
 
 def extract_skills_with_fuzzy_matching(text: str, SKILL_DICT: list = None, section_context: str = "general") -> list:
     """
-    ✅ ENHANCED (PHASE 1): Context-aware skill extraction with weights.
+    ✅ ENHANCED (PHASE 1): Context-aware skill extraction with weights and context tracking.
     """
     if SKILL_DICT is None:
         SKILL_DICT = ALL_SKILLS
@@ -150,20 +156,31 @@ def extract_skills_with_fuzzy_matching(text: str, SKILL_DICT: list = None, secti
     phrases = re.findall(r'\b[\w\.\+\#]+[\s][\w\.\+\#]+(?:[\s][\w\.\+\#]+)?\b', text_lower)
     candidates = words + phrases
     
+    contexts = []
+    for kw, ctx in CONTEXT_MAP.items():
+        if kw in text_lower:
+            contexts.append(ctx)
+    contexts = list(set(contexts))
+
     for candidate in candidates:
         if candidate in SKILL_DICT:
             skill_name = candidate.title()
-            # Determine weight based on section
             weight = 1.0
-            if section_context == "projects": weight = 1.5
-            elif section_context == "experience": weight = 1.3
-            elif section_context == "skills": weight = 0.8 # Just listing it is lower signal
+            source = "resume"
+            if section_context == "projects":
+                weight = 1.5
+                source = "project"
+            elif section_context == "experience":
+                weight = 1.3
+            elif section_context == "skills":
+                weight = 0.8
             
             detected_skills.append({
                 "name": skill_name, 
                 "confidence": 1.0, 
-                "source": "resume",
+                "source": source,
                 "weight": weight,
+                "contexts": contexts,
                 "context_section": section_context
             })
             continue
@@ -175,13 +192,17 @@ def extract_skills_with_fuzzy_matching(text: str, SKILL_DICT: list = None, secti
                     for official_skill in skills_list:
                         if normalize_skill(official_skill) == canonical:
                             weight = 0.85
-                            if section_context == "projects": weight = 1.2
+                            source = "resume"
+                            if section_context == "projects":
+                                weight = 1.5
+                                source = "project"
                             
                             detected_skills.append({
                                 "name": official_skill, 
                                 "confidence": 0.85, 
-                                "source": "resume",
+                                "source": source,
                                 "weight": weight,
+                                "contexts": contexts,
                                 "context_section": section_context
                             })
                             break
@@ -234,13 +255,22 @@ def parse_resume(file_path):
         
     # Deduplicate and keep highest weight
     seen = {}
-    final_skills = []
     for s in all_detected_skills:
         name = normalize_skill(s["name"])
         if name not in seen or s["weight"] > seen[name]["weight"]:
             seen[name] = s
             
     final_skills = list(seen.values())
+
+    # Phase 1.5: Global Catch-All (Sweep entire text to catch skills lost in sections)
+    global_skills = extract_skills_with_fuzzy_matching(text, section_context="general")
+    for gs in global_skills:
+        name = normalize_skill(gs["name"])
+        if name not in seen:
+            # Add with slightly lower weight since context is unknown
+            gs["weight"] = 0.7
+            seen[name] = gs
+            final_skills.append(gs)
 
     # Phase 1: Project Extraction
     projects = extract_projects(sections)

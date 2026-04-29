@@ -1,7 +1,8 @@
 from data_ingestion.sources import ResumeSource, ManualInputSource, AcademicSource
 from data_ingestion.schema_builder import build_student_profile
 from data_ingestion.validators import validate_student_profile
-from database.student_repository import save_student_profile, get_student_profile_by_email
+from database.db import SessionLocal
+from database.student_service import StudentService
 from data_ingestion.merger import merge_profiles
 import logging
 import traceback
@@ -39,19 +40,23 @@ def process_input(source_type: str, data) -> dict:
         # 3. Validation Phase (Attach state flags rather than crashing)
         student_profile = validate_student_profile(student_profile)
         
-        # 3.5. Merging Phase (Lookup disjoint records natively)
-        email = student_profile.get("profile", {}).get("email")
-        if email:
-            existing_profile = get_student_profile_by_email(email)
-            if existing_profile:
-                logger.info(f"Existing profile found for {email}. Merging resources natively.")
-                student_profile = merge_profiles(existing_profile, student_profile)
-                student_profile["log"]["status"] = "merged_update"
-        
         # 4. Storage Phase (Push to DB resiliently)
-        save_success = save_student_profile(student_profile)
-        if not save_success:
-            student_profile["flags"].append("DB_SAVE_FAILED")
+        db = SessionLocal()
+        try:
+            # 3.5. Merging Phase (Lookup disjoint records natively)
+            email = student_profile.get("profile", {}).get("email")
+            if email:
+                existing_profile = StudentService.get_student_profile_by_email(db, email)
+                if existing_profile:
+                    logger.info(f"Existing profile found for {email}. Merging resources natively.")
+                    student_profile = merge_profiles(existing_profile, student_profile)
+                    student_profile["log"]["status"] = "merged_update"
+            
+            save_success = StudentService.save_student_profile(db, email, student_profile)
+            if not save_success:
+                student_profile["flags"].append("DB_SAVE_FAILED")
+        finally:
+            db.close()
             
         logger.info(f"Successfully processed {source_type} resulting in profile {student_profile.get('student_id')}")
         

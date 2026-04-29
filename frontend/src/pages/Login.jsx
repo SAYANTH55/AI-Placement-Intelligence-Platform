@@ -6,8 +6,8 @@ import Logo from '../components/Logo';
 import { motion } from 'framer-motion';
 import API from '../services/api';
 
-const DEMO_EMAIL = 'student@university.edu';
-const DEMO_PASSWORD = '12345678';
+const DEMO_EMAIL = 'student1@test.com';
+const DEMO_PASSWORD = 'studentpassword';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -38,16 +38,20 @@ export default function Login() {
     try {
       // First try real API login
       const response = await API.post('/auth/login', { email, password });
-      setUser(response.data.user);
-      navigate('/dashboard');
+      const userData = response.data.user;
+      const token = response.data.token;
+
+      // Persist token and user
+      localStorage.setItem('token', token);
+      setUser(userData);
+
+      if (userData.role === 'admin') navigate('/admin');
+      else if (userData.role === 'pr') navigate('/pr');
+      else if (userData.role === 'student') navigate('/student');
+      else navigate('/dashboard');
     } catch (err) {
-      // Fallback for demo credentials
-      if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
-        setUser({ email, role: 'student', name: 'Deon' });
-        navigate('/dashboard');
-      } else {
-        setError(err.response?.data?.detail || 'Invalid credentials.');
-      }
+      console.error("Login attempt failed:", err);
+      setError(err.response?.data?.detail || 'Invalid credentials or server offline.');
     } finally {
       setLoading(false);
     }
@@ -171,10 +175,16 @@ export default function Login() {
         {/* Demo credentials */}
         <div className="mt-5 bg-[#0F0F0F] border border-[#1E1E1E] rounded-xl p-4">
           <p className="text-xs font-bold text-[#F97316] uppercase tracking-wider mb-1.5">Demo Access Credentials</p>
-          <div className="flex items-center justify-between text-xs text-[#888] font-mono bg-[#0A0A0A] p-2 rounded-lg border border-[#1A1A1A]">
-            <span>{DEMO_EMAIL}</span>
-            <span className="text-[#333] mx-2">|</span>
-            <span>{DEMO_PASSWORD}</span>
+          <div className="text-xs text-[#888] font-mono bg-[#0A0A0A] p-2 rounded-lg border border-[#1A1A1A] space-y-1">
+            <div className="flex justify-between">
+              <span>{DEMO_EMAIL}</span> <span className="text-[#333]">|</span> <span>{DEMO_PASSWORD}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>pr1@university.edu</span> <span className="text-[#333]">|</span> <span>prpassword</span>
+            </div>
+            <div className="flex justify-between">
+              <span>admin@university.edu</span> <span className="text-[#333]">|</span> <span>adminpassword</span>
+            </div>
           </div>
         </div>
 

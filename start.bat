@@ -4,7 +4,7 @@ color 0A
 echo.
 echo ================================================================
 echo  AI Placement Intelligence Platform - Startup Script
-echo  Version: 4.0.0 (Production Hardened + Ground Truth Tracking)
+echo  Version: 4.2.0 (ML Compatibility + State Machine Integrity)
 echo ================================================================
 echo.
 
@@ -50,12 +50,13 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+set "PYTHON_EXEC=%CD%\venv\Scripts\python.exe"
 echo [OK] Virtual environment activated
 
 echo.
 echo [3/8] Installing / Verifying Python Dependencies...
-python -m pip install --upgrade pip >nul 2>&1
-pip install -r requirements.txt >nul 2>&1
+"%PYTHON_EXEC%" -m pip install --upgrade pip >nul 2>&1
+"%PYTHON_EXEC%" -m pip install -r requirements.txt >nul 2>&1
 if errorlevel 1 (
     echo [WARN] Some dependencies may have failed - attempting to continue...
 ) else (
@@ -64,7 +65,7 @@ if errorlevel 1 (
 
 echo.
 echo [4/8] Downloading spaCy NLP Model...
-python -m spacy download en_core_web_sm >nul 2>&1
+"%PYTHON_EXEC%" -m spacy download en_core_web_sm >nul 2>&1
 if errorlevel 1 (
     echo [WARN] spaCy model download failed - NLP features may be limited
 ) else (
@@ -87,14 +88,22 @@ if exist frontend (
     echo [WARN] Frontend directory not found
 )
 
-echo.
-echo [6/8] Verifying Database Schema (Outcomes + Progress)...
 cd backend
-python -c "from database.db import engine; from database import models; models.Base.metadata.create_all(bind=engine); print('DB OK')" 2>nul
+"%PYTHON_EXEC%" -c "from database.db import engine; from database import models; models.Base.metadata.create_all(bind=engine); print('DB OK')" 2>nul
 if errorlevel 1 (
     echo [WARN] DB migration check failed - will retry on server start
 ) else (
     echo [OK] Database schema up to date (outcomes + tracking tables ready)
+)
+
+echo.
+echo [?] Would you like to re-seed the Placement Database with mock data?
+echo     (This will provide demo students, drives, and outcomes)
+set /p SEED_CHOICE="Seed database now? (y/n): "
+if /i "!SEED_CHOICE!"=="y" (
+    echo      Seeding database...
+    "%PYTHON_EXEC%" seed_placement.py
+    echo [OK] Placement data seeded successfully
 )
 cd ..
 
@@ -106,12 +115,24 @@ echo [OK] Logs directory ready
 echo.
 echo [7/8] Running Engine Smoke Test...
 cd backend
-python smoke_test.py 2>nul | findstr /C:"[OK]" /C:"[FAIL]"
-cd ..
+"%PYTHON_EXEC%" smoke_test.py 2>nul | findstr /C:"[OK]" /C:"[FAIL]"
 echo [OK] Smoke test complete
 
 echo.
-echo [8/8] Starting All Services...
+echo [8/9] Running End-to-End State Machine Tests...
+set "DATABASE_URL=sqlite:///e2e_test.db"
+"%PYTHON_EXEC%" test_e2e_placement.py > e2e_test.log 2>&1
+set "DATABASE_URL="
+if errorlevel 1 (
+    echo [WARN] E2E Tests Failed. Check backend/e2e_test.log for details.
+) else (
+    echo [OK] E2E State Machine Validation Passed!
+)
+if exist e2e_test.db del e2e_test.db
+cd ..
+
+echo.
+echo [9/9] Starting All Services...
 echo.
 echo ================================================================
 
@@ -122,7 +143,7 @@ set FALLBACK_GEMINI_API_KEY=YOUR_FALLBACK_GEMINI_API_KEY_HERE
 REM ── Start Backend ───────────────────────────────────────────────
 echo.
 echo [>>] Launching FastAPI Backend (v3.0.0) on port 8000...
-start "Backend - AI Placement Intelligence v3" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && cd backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
+start "Backend - AI Placement Intelligence v3" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
 
 REM Give backend 4 seconds to initialize DB tables and engines
 timeout /t 4 /nobreak >nul
@@ -137,12 +158,14 @@ timeout /t 6 /nobreak >nul
 
 echo.
 echo ================================================================
-echo  [OK] Startup Sequence Complete - v4.0.0 (PROD)
+echo  [OK] Startup Sequence Complete - v4.2.0 (ML Integration Ready)
 echo ================================================================
 echo.
 echo  Application URLs:
 echo    Frontend App      :  http://localhost:5173
 echo    Analytics Panel   :  http://localhost:5173/admin
+echo    Student Dashboard :  http://localhost:5173/student
+echo    PR Dashboard      :  http://localhost:5173/pr
 echo    API Docs (Swagger):  http://localhost:8000/docs
 echo    API Health Check  :  http://localhost:8000/health
 echo.
@@ -154,8 +177,13 @@ echo    POST /practice/set            - Role-filtered question set
 echo    POST /tracking/feedback       - Adaptive ML feedback loop
 echo.
 echo  Server Windows:
-echo    Backend  : "Backend - AI Placement Intelligence v4"
-echo    Frontend : "Frontend - AI Placement Intelligence v4"
+echo    Backend  : "Backend - AI Placement Intelligence Platform"
+echo    Frontend : "Frontend - AI Placement Intelligence Platform"
+echo.
+echo  Placement Demo Credentials:
+echo    Admin: admin@university.edu / adminpassword
+echo    PR:    pr1@university.edu / prpassword
+echo    Student: student1@test.com / studentpassword
 echo.
 echo  Troubleshooting:
 echo    Backend fails  : Check backend console for import / port errors

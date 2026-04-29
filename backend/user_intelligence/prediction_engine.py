@@ -26,7 +26,14 @@ class HeuristicPredictor(BasePredictor):
         strength_scalar = sum(scores) / len(scores) if scores else 0.0
         
         consistency = behavior.get("consistency", 0.5)
-        adjusted_score = strength_scalar * consistency * 1.5 
+        
+        # If consistency is low and we have no data, don't penalize. 
+        # For cold start, consistency is often a placeholder.
+        if behavior.get("mode") == "cold_start" and consistency < 0.6:
+            adjusted_score = strength_scalar * 1.1 # Give a slight 'potential' boost
+        else:
+            adjusted_score = strength_scalar * consistency * 1.5 
+            
         current_score = min(adjusted_score, 1.0)
         
         vel = progression.get("velocity", 0.0)
@@ -93,9 +100,9 @@ class AdaptivePredictor:
         from learning_layer.inference_engine import inference_engine
         from utils.logger import platform_logger
         
-        if inference_engine.is_available():
+        if inference_engine.is_available() and behavior.get("mode") != "cold_start":
             try:
-                # Dynamic ML pipeline interception
+                # Dynamic ML pipeline interception - Only for active users
                 prediction = self.ml_predictor.predict(active_vector, progression, behavior, graph_insights)
                 platform_logger.debug(f"ML Prediction successful: score={prediction.get('predicted_score')}")
                 

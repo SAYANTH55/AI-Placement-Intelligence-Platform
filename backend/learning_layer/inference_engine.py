@@ -276,3 +276,13 @@ def _estimate_regression_confidence(features: list[float]) -> float:
 
 # ─── Module-level singleton ────────────────────────────────────────────────────
 inference_engine = InferenceEngine()
+
+def predict(features):
+    """
+    Module-level pluggable interface for ML predictions.
+    Blends and falls back safely per audit requirements.
+    """
+    if inference_engine.is_available():
+        return inference_engine.predict(features)
+    else:
+        return inference_engine._heuristic_fallback(features)

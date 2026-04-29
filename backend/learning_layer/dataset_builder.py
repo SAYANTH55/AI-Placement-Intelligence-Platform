@@ -284,8 +284,6 @@ class DatasetBuilder:
             }
         return meta
 
-    @staticmethod
-    def _empty_dataset() -> dict:
         return {
             "features":     [],
             "labels":       [],
@@ -293,3 +291,35 @@ class DatasetBuilder:
             "val_labels":   [],
             "meta":         {"total_samples": 0, "label_mode": "unknown"},
         }
+
+# --- New DB-Driven ML Pipeline ---
+from database.db import SessionLocal
+from database.models import PlacementOutcome
+
+def build_dataset():
+    """
+    Constructs a structured ML dataset consisting of Features (X) and Labels (y)
+    by iterating over raw placement outcomes in the database.
+    """
+    db = SessionLocal()
+    data = []
+    from user_intelligence.feature_engineer import build_feature_vector
+    
+    try:
+        outcomes = db.query(PlacementOutcome).all()
+        
+        for outcome in outcomes:
+            student = outcome.student
+            if not student or not student.profile_data:
+                continue
+                
+            features = build_feature_vector(student.profile_data)
+            label = 1 if outcome.got_placed else 0
+            
+            data.append((features, label))
+            
+    finally:
+        db.close()
+        
+    return data
+

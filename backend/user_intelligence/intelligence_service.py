@@ -96,24 +96,55 @@ class IntelligenceService:
             if mode == "cold_start":
                 prediction["confidence"] = 0.3
             
-            # 7. Global Intelligence Score (PHASE 7 - Configurable Weights)
-            # 7. Global Intelligence Score (REFINED: Decision Breakdown)
-            SCORE_WEIGHTS = {
-                "skills": 0.50,
-                "behavior": 0.25,
-                "progression": 0.25
-            }
+            # 7. Global Intelligence Score (REFINED: Dynamic Cold-Start Weighting)
+            if mode == "cold_start":
+                # For new uploads, capability is king. Don't penalize for lack of platform activity.
+                SCORE_WEIGHTS = {
+                    "skills": 0.90,
+                    "behavior": 0.05,
+                    "progression": 0.05
+                }
+            else:
+                # For active users, behavior and velocity are critical for placement readiness.
+                SCORE_WEIGHTS = {
+                    "skills": 0.50,
+                    "behavior": 0.25,
+                    "progression": 0.25
+                }
             
             norm_vel = min(max(progression.get("velocity", 0.0) * 10, 0), 1)
-            skill_comp = prediction.get("current_score", 0.0)
-            behavior_comp = behavior_metrics.get("accuracy", 0.0)
-            prog_comp = norm_vel
             
+            # CALCULATE REAL-WORLD COVERAGE (Breadth Penalty)
+            # A student with 2 skills at 100% is NOT 100% ready.
+            detected_count = len(active_vector)
+            target_breadth = 10 # Industry standard for 'Strong' profile
+            breadth_factor = min(detected_count / target_breadth, 1.0)
+            
+            raw_avg = compute_avg(active_vector)
+            
+            # Capability is now (Average Quality * Breadth Coverage)
+            skill_comp = raw_avg * (0.4 + 0.6 * breadth_factor)
+            
+            # Use neutral 0.6 for behavior/progression in cold-start if they are 0
+            behavior_comp = behavior_metrics.get("accuracy", 0.0)
+            if mode == "cold_start" and behavior_comp == 0:
+                behavior_comp = 0.5
+                
+            prog_comp = norm_vel
+            if mode == "cold_start" and prog_comp == 0:
+                prog_comp = 0.5
+            
+            # Final weighted score
             overall = (
                 (skill_comp * SCORE_WEIGHTS["skills"]) + 
                 (behavior_comp * SCORE_WEIGHTS["behavior"]) + 
                 (prog_comp * SCORE_WEIGHTS["progression"])
             )
+            
+            # If role matching data exists, pull the overall readiness closer to the best match
+            # This prevents the '96% score vs 29% match' paradox
+            best_match_score = prediction.get("placement_probability", overall)
+            overall = (overall * 0.4) + (best_match_score * 0.6)
             
             # ISSUE B: Decision Breakdown
             decision_factors = {
@@ -143,13 +174,18 @@ class IntelligenceService:
                 (0.3 * model_conf), 
             2)
             
-            # 7c. Output Realism
-            score_point = round(prediction.get("predicted_score", 0.5), 2)
+            # 7c. Output Realism & Final Sync
+            # CRITICAL: We sync the overall weighted score back into the prediction object
+            # so that all engines (Frontend, Placement, etc.) see the calibrated intelligence.
+            score_point = round(overall, 2)
+            prediction["predicted_score"] = score_point
+            prediction["current_score"] = score_point
+            prediction["placement_prob"] = score_point
+            
             margin = 0.05 if system_confidence > 0.8 else 0.10 if system_confidence > 0.5 else 0.15
             low_bound = round(max(score_point - margin, 0.0), 2)
             high_bound = round(min(score_point + margin, 1.0), 2)
             prediction["predicted_score_range"] = f"{low_bound} - {high_bound}"
-            prediction["predicted_score"] = score_point
             
             # 7d. Proactive Gating (ISSUE G)
             last_score = compute_avg(current_state["historical_vectors"][-1].get("vector", {})) if current_state.get("historical_vectors") else overall
