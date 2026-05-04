@@ -4,22 +4,24 @@ import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
-# Add parent directory to sys.path to allow importing from ai_model
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Add backend directory and parent workspace root to sys.path so imports work from different launch contexts
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(BASE_DIR)
+sys.path.append(os.path.abspath(os.path.join(BASE_DIR, "..")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from api import endpoints, auth, resume_routes, engine_routes
+from api import endpoints, auth, resume_routes, engine_routes, learning_routes, outcome_routes
 from database.db import engine
 from database import models
 
-# Create database tables
+# Create All Unified Database Tables
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="AI Placement Intelligence Platform API",
     description="AI-powered placement prediction and skill matching",
-    version="3.0.0"
+    version="4.0.0"
 )
 
 # Allow all origins for development (restrict in production)
@@ -31,11 +33,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes
+
 # Include routers
 app.include_router(endpoints.router, tags=["resume-analysis"])
 app.include_router(auth.router, tags=["authentication"])
 app.include_router(resume_routes.router, tags=["resume-history"])
 app.include_router(engine_routes.router, tags=["engines"])
+app.include_router(learning_routes.router, tags=["learning-layer"])
+app.include_router(outcome_routes.router, tags=["outcomes"])
+app.include_router(pr_routes.router)
+app.include_router(drive_routes.router)
+app.include_router(application_routes.router)
+app.include_router(round_routes.router)
+app.include_router(dashboard_routes.router)
 
 
 @app.get("/")
@@ -50,6 +61,16 @@ async def root():
             "Rate limiting for abuse prevention"
         ],
         "docs": "/docs"
+    }
+
+@app.get("/debug/db-path")
+async def get_db_path():
+    from database.db import SQLALCHEMY_DATABASE_URL
+    import os
+    return {
+        "database_url": SQLALCHEMY_DATABASE_URL,
+        "absolute_path": os.path.abspath("ai_placement.db"),
+        "cwd": os.getcwd()
     }
 
 @app.get("/health")

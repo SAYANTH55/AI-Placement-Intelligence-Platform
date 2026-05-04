@@ -25,6 +25,7 @@ export default function Sidebar() {
     { name: 'Preparation Engine', path: '/dashboard/preparation', icon: <Briefcase size={17} /> },
     { name: 'Practice Engine', path: '/dashboard/practice', icon: <Sparkles size={17} /> },
     { name: 'Tracking Engine', path: '/dashboard/tracking', icon: <BarChart2 size={17} /> },
+    { name: 'Placement Engine', path: '/dashboard/placement', icon: <Briefcase size={17} /> },
   ];
 
   const profileSubItems = [

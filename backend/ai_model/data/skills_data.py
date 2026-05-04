@@ -21,7 +21,7 @@ SKILLS_DICTIONARY = {
         "Machine Learning", "Deep Learning", "NLP", "Computer Vision", "TensorFlow", 
         "PyTorch", "Scikit-Learn", "Pandas", "NumPy", "Keras", "OpenCV", "LLM", "Generative AI",
         "Hugging Face", "MLOps", "Feature Engineering", "Model Deployment",
-        "Reinforcement Learning", "GANs", "Transformers", "BERT", "GPT"
+        "Reinforcement Learning", "GANs", "Transformers", "BERT", "GPT", "R", "Tableau", "WEKA", "IBM SPSS", "Qlik Sense", "Data Mining", "Statistical Analysis"
     ],
     "Cloud/DevOps": [
         "AWS", "Azure", "GCP", "Docker", "Kubernetes", "Terraform", "Jenkins", 

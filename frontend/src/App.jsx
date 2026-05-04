@@ -13,6 +13,10 @@ import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import EdgeGlow from './components/common/EdgeGlow';
 import { useAppContext } from './context/AppContext';
+import AnalyticsDashboard from './components/admin/AnalyticsDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import PlacementModule from './components/placement/PlacementModule';
+import StudentPlacementView from './components/placement/StudentPlacementView';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
@@ -42,13 +46,26 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/admin/*" element={
+            <ProtectedRoute>
+              {(user?.role === 'admin' || user?.role === 'pr') ? <AdminDashboard /> : <Navigate to="/dashboard" replace />}
+            </ProtectedRoute>
+          } />
+
+          <Route path="/pr/*" element={<Navigate to="/admin" replace />} />
+
+          <Route path="/student" element={
+            <ProtectedRoute>
+              {user?.role === 'student' ? <StudentPlacementView /> : <Navigate to="/dashboard" replace />}
+            </ProtectedRoute>
+          } />
 
           {/* Protected Dashboard Routes - all handled inside Dashboard */}
           <Route
             path="/dashboard/*"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                {(user?.role === 'admin' || user?.role === 'pr') ? <Navigate to="/admin" replace /> : <Dashboard />}
               </ProtectedRoute>
             }
           />

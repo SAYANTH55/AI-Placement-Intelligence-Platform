@@ -1,0 +1,31 @@
+{
+  "versions": [
+    {
+      "version": "20260424_080024",
+      "path": "C:\\Users\\deonb\\Desktop\\AI-Placement-Intelligence-Platform\\backend\\learning_layer\\model_versions\\model_20260424_080024.pkl",
+      "mode": "classification",
+      "trained_at": "2026-04-24T08:00:24.537072+00:00",
+      "metrics": {
+        "train_score": 1.0,
+        "val_score": 1.0,
+        "val_precision": 1.0,
+        "val_recall": 1.0,
+        "val_f1": 1.0
+      }
+    },
+    {
+      "version": "20260424_080446",
+      "path": "C:\\Users\\deonb\\Desktop\\AI-Placement-Intelligence-Platform\\backend\\learning_layer\\model_versions\\model_20260424_080446.pkl",
+      "mode": "classification",
+      "trained_at": "2026-04-24T08:04:46.357594+00:00",
+      "metrics": {
+        "train_score": 1.0,
+        "val_score": 1.0,
+        "val_precision": 1.0,
+        "val_recall": 1.0,
+        "val_f1": 1.0
+      }
+    }
+  ],
+  "latest": "20260424_080446"
+}

@@ -6,11 +6,13 @@ import Sidebar from '../components/common/Sidebar';
 import MobileNav from '../components/dashboard/MobileNav';
 import UploadBox from '../components/dashboard/UploadBox';
 import InsightCards from '../components/dashboard/InsightCards';
+import PlacementModule from '../components/placement/PlacementModule';
 import SkillBadge from '../components/dashboard/SkillBadge';
 import ScoreRing from '../components/dashboard/ScoreRing';
-import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock } from 'lucide-react';
+import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock, FileText, Star, Globe } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
+import OutcomeTracker from '../components/dashboard/OutcomeTracker';
 
 /* ── Shared dark card ── */
 function DarkCard({ children, className = '', delay = 0, glow = false }) {
@@ -68,32 +70,35 @@ function PageHeader({ title, subtitle }) {
 /* ══════════════════════════════════════════════════════════════════
    Sub-page: Analysis
 ══════════════════════════════════════════════════════════════════ */
-function AnalysisPage({ data, onAnalyzeComplete }) {
+function AnalysisPage({ data }) {
+  if (!data) return (
+    <div>
+      <PageHeader title="Resume Analysis" subtitle="Deep extraction of your skills and career signals." />
+      <EmptyState icon={FileText} title="No Analysis Yet" message="Go to Overview and upload your resume first." />
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <PageHeader title="Resume Analysis" subtitle="Deep extraction of your skills and career signals." />
-      {!data ? (
-        <UploadBox onAnalyzeComplete={onAnalyzeComplete} />
-      ) : (
-        <div className="space-y-6">
-          <DarkCard delay={0}>
-            <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
-            <div className="flex flex-wrap gap-2">
-              {data.allDetected.map((skill, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
-                >
-                  {skill}
-                </motion.span>
-              ))}
-            </div>
-          </DarkCard>
-        </div>
-      )}
+      <div className="space-y-6">
+        <DarkCard delay={0}>
+          <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
+          <div className="flex flex-wrap gap-2">
+            {data.allDetected.map((skill, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.04 }}
+                className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+        </DarkCard>
+      </div>
     </div>
   );
 }
@@ -370,10 +375,13 @@ function RecommendationsView({ data }) {
     ];
   }
 
-  // Use Dynamic LLM Learning Path if available
-  const learningPath = (data?.llm_insights?.learning_path?.length > 0)
-    ? data.llm_insights.learning_path
-    : data?.recommendations;
+  // Use Dynamic LLM Learning Path if available (Logic handled below)
+
+
+  const aiInsights = data?.llm_insights || {};
+  const learningPath = aiInsights.learning_path?.length > 0 ? aiInsights.learning_path : data?.recommendations || [];
+  const personalizedJobs = aiInsights.personalized_jobs || [];
+  const interviewTips = aiInsights.interview_tips || [];
 
   return (
     <div className="space-y-6">
@@ -386,7 +394,7 @@ function RecommendationsView({ data }) {
               : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
           }`}
         >
-          Resume Enhancements
+          Resume Insights
         </button>
         <button
           onClick={() => setRecTab('career')}
@@ -396,7 +404,7 @@ function RecommendationsView({ data }) {
               : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
           }`}
         >
-          Career Recommendations
+          Career Roadmap
         </button>
       </div>
 
@@ -409,94 +417,94 @@ function RecommendationsView({ data }) {
           transition={{ duration: 0.25 }}
         >
           {recTab === 'resume' ? (
-            <DarkCard glow>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                   <div className="w-3 h-3 rounded-full bg-green-400 shadow-[0_0_12px_rgba(74,222,128,0.8)]" />
-                   <div>
-                     <h4 className="font-black text-sm text-white uppercase tracking-widest">AI Inferred Profile Insights</h4>
-                     <p className="text-xs text-[#888] mt-1">Our AI has mapped hidden context behind your bullet points to infer additional traits and critical weaknesses.</p>
-                   </div>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2.5">
-                {finalEnhancements.map((item, idx) => {
-                  let badgeColors = "bg-[#34D399]/10 border-[#34D399]/30 text-[#34D399] hover:bg-[#34D399]/20";
-                  if (item.type === 'weakness') {
-                    badgeColors = "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20";
-                  } else if (item.type === 'inferred') {
-                    badgeColors = "bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20";
-                  }
-                  
-                  return (
-                    <span key={idx} className={`border text-xs font-bold px-4 py-2 rounded-full cursor-default transition-colors ${badgeColors}`}>
-                      {item.type === 'weakness' && <span className="mr-1">⚠️</span>}
-                      {item.type === 'inferred' && <span className="mr-1">🔗</span>}
-                      {item.txt}
-                    </span>
-                  );
-                })}
-              </div>
-            </DarkCard>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <DarkCard delay={0}>
-                <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Target Roles</h4>
-                <div className="space-y-3">
-                  {data?.jobRoles?.map((role, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.07 }}
-                      whileHover={{ borderColor: 'rgba(249,115,22,0.3)', backgroundColor: 'rgba(249,115,22,0.03)' }}
-                      className="p-4 border border-[#1A1A1A] rounded-xl cursor-pointer transition-all duration-200 group"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h5 className="font-bold text-sm text-white group-hover:text-[#F97316] transition-colors">
-                          {typeof role === 'string' ? role : role.title}
-                        </h5>
-                      <div className="flex flex-col gap-1.5 items-end">
-                        <span className="text-[10px] font-black text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-2.5 py-1 rounded-full">
-                          {typeof role === 'object' ? `${role.match}% match` : 'High Match'}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <DarkCard glow>
+                  <h4 className="font-black text-sm text-white uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-[#34D399]" />
+                    AI-Inferred Potential
+                  </h4>
+                  <div className="flex flex-wrap gap-2.5">
+                    {finalEnhancements.map((item, idx) => {
+                      let badgeColors = "bg-[#34D399]/10 border-[#34D399]/30 text-[#34D399]";
+                      if (item.type === 'weakness') badgeColors = "bg-red-500/10 border-red-500/30 text-red-400";
+                      else if (item.type === 'inferred') badgeColors = "bg-blue-500/10 border-blue-500/30 text-blue-400";
+                      
+                      return (
+                        <span key={idx} className={`border text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-tighter ${badgeColors}`}>
+                          {item.txt}
                         </span>
-                        {data?.experience_advantage_roles?.includes(typeof role === 'string' ? role : role.title) && (
-                          <span className="text-[10px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-full whitespace-nowrap">
-                            ✨ AI Enhanced Fit
-                          </span>
-                        )}
-                      </div>
-                      </div>
-                      {typeof role === 'object' && role.salary && (
-                        <p className="text-xs text-[#555] mt-1">{role.salary}</p>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
-              </DarkCard>
+                      );
+                    })}
+                  </div>
+                </DarkCard>
+              </div>
 
-              <DarkCard delay={0.1} glow>
-                <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Learning Path</h4>
-                <div className="space-y-3 relative">
-                  <div className="absolute left-3.5 top-4 bottom-4 w-px bg-gradient-to-b from-[#F97316]/40 to-transparent" />
-                  {learningPath?.map((rec, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.08 }}
-                      className="relative flex items-start gap-4 pl-1"
-                    >
-                      <div className="w-7 h-7 rounded-full bg-[#F97316] text-white text-xs font-black flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(249,115,22,0.4)] z-10 relative">
-                        {i + 1}
+              <div className="lg:col-span-1">
+                <DarkCard className="bg-gradient-to-br from-[#10B981]/10 to-transparent">
+                   <h4 className="font-black text-[10px] text-[#34D399] uppercase mb-4">AI Advisor Note</h4>
+                   <p className="text-xs text-[#888] leading-relaxed italic">
+                     "{aiInsights.career_advice || "Based on your technical depth, you are showing strong aptitude for high-scale systems. Focus on bridging the architectural gaps highlighted in your roadmap."}"
+                   </p>
+                </DarkCard>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column: Personalized Jobs & Market Trends */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {personalizedJobs.length > 0 ? personalizedJobs.map((job, i) => (
+                    <DarkCard key={i} className="group hover:border-[#F97316]/50 transition-all">
+                      <div className="flex justify-between items-start mb-3">
+                        <h5 className="font-black text-sm text-white group-hover:text-[#F97316] transition-colors">{job.title}</h5>
+                        <Star className="w-4 h-4 text-[#F97316]" />
                       </div>
-                      <div className="bg-[#0A0A0A] border border-[#1E1E1E] rounded-xl p-3 text-xs text-[#888] leading-relaxed flex-1">
-                        {rec}
-                      </div>
-                    </motion.div>
-                  ))}
+                      <p className="text-[11px] text-[#555] leading-relaxed">{job.reason}</p>
+                    </DarkCard>
+                  )) : (
+                    <div className="col-span-2 text-xs text-[#444] italic">AI is generating specific matches...</div>
+                  )}
                 </div>
-              </DarkCard>
+
+                <DarkCard>
+                   <h4 className="font-black text-[10px] text-[#F97316] uppercase mb-4 flex items-center gap-2">
+                     <Globe className="w-3 h-3" /> Industry Trends
+                   </h4>
+                   <p className="text-xs text-[#888] leading-relaxed">
+                     {aiInsights.industry_trends || "Companies are increasingly looking for Full-Stack capability combined with specialized AI tool proficiency."}
+                   </p>
+                </DarkCard>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                   {interviewTips.map((tip, i) => (
+                     <div key={i} className="p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl">
+                        <span className="text-[10px] font-black text-[#555] uppercase block mb-1">Tip {i+1}</span>
+                        <p className="text-[10px] text-[#888] leading-tight">{tip}</p>
+                     </div>
+                   ))}
+                </div>
+              </div>
+
+              {/* Right Column: Learning Roadmap (Denser View) */}
+              <div className="lg:col-span-1">
+                <DarkCard glow className="h-full">
+                  <h4 className="font-black text-[10px] text-[#F97316] uppercase mb-6 flex items-center gap-2">
+                    <TrendingUp className="w-3 h-3" /> Learning Path
+                  </h4>
+                  <div className="space-y-4 relative">
+                    <div className="absolute left-3 top-2 bottom-2 w-px bg-gradient-to-b from-[#F97316]/30 to-transparent" />
+                    {learningPath.map((step, i) => (
+                      <div key={i} className="relative flex gap-4 items-start">
+                        <div className="w-6 h-6 rounded-full bg-[#111] border border-[#F97316]/30 text-[10px] font-black text-[#F97316] flex items-center justify-center flex-shrink-0 z-10">
+                          {i+1}
+                        </div>
+                        <p className="text-[11px] text-[#888] mt-1 leading-tight">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </DarkCard>
+              </div>
             </div>
           )}
         </motion.div>
@@ -555,6 +563,7 @@ function ModulesHub() {
       path: '/dashboard/practice',
       status: practiceData ? 'Loaded' : 'Live'
     },
+    { id: 'placement', title: 'Placement Engine', icon: <Briefcase size={24} />, path: '/dashboard/placement', desc: 'Drives & Applications' },
     {
       id: 'tracking',
       title: 'Tracking Engine',
@@ -1068,6 +1077,9 @@ function TrackingModule() {
           ))}
         </div>
       </DarkCard>
+
+      {/* Outcome Tracking - Validates the intelligence model */}
+      <OutcomeTracker userId={user?.id} />
     </div>
   );
 }
@@ -1366,7 +1378,7 @@ export default function Dashboard() {
             
             {/* Module 1: Profile Intelligence */}
             <Route path="/profile" element={<OverviewPage />} />
-            <Route path="/analysis" element={<AnalysisPage data={analyzedData} onAnalyzeComplete={handleAnalyzeComplete} />} />
+            <Route path="/analysis" element={<AnalysisPage data={analyzedData} />} />
             <Route path="/skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
             <Route path="/score" element={<ScorePage data={analyzedData} />} />
             <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
@@ -1379,6 +1391,9 @@ export default function Dashboard() {
 
             {/* Module 4: Tracking Engine */}
             <Route path="/tracking" element={<TrackingModule />} />
+
+            {/* Module 5: Placement Engine */}
+            <Route path="/placement" element={<PlacementModule />} />
             
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

@@ -1,7 +1,13 @@
+import uuid
 from sqlalchemy import Column, Integer, String, DateTime, JSON, Text, Float, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from .db import Base
+
+APPLICATION_STATUSES = ["Applied", "In Progress", "Rejected", "Placed"]
+ROUND_STATUSES = ["Pending", "Pass", "Fail"]
+DRIVE_STATUSES = ["open", "closed"]
+EVENT_TYPES = ["new_drive_created", "application_created", "round_updated", "final_result"]
 
 class User(Base):
     __tablename__ = "users"
@@ -11,6 +17,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     phone = Column(String, unique=True, index=True)
     password = Column(String)  # Hashed password
+    role = Column(String, default="student") # student, pr, admin
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
@@ -113,3 +120,177 @@ class UserProgress(Base):
 
     class Config:
         from_attributes = True
+
+
+class Student(Base):
+    """Refined Student profile merging intelligence and placement tracking"""
+    __tablename__ = "placement_students"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    pr_id = Column(Integer, ForeignKey("placement_prs.id"), nullable=True)
+    
+    # Intelligence Data (merged from StudentProfileDB)
+    profile_data = Column(JSON, nullable=True) # Unified JSON schema for skills/exp/etc
+    
+    # Tracking Data
+    batch = Column(String, index=True)
+    cgpa = Column(Float)
+    
+    # Relationships
+    user = relationship("User", back_populates="student_profile")
+    pr = relationship("PR", back_populates="assigned_students")
+    applications = relationship("Application", back_populates="student")
+
+class PR(Base):
+    """Placement Representatives managing student batches"""
+    __tablename__ = "placement_prs"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    batch = Column(String, index=True)
+    
+    user = relationship("User", back_populates="pr_profile")
+    assigned_students = relationship("Student", back_populates="pr")
+
+class Drive(Base):
+    """Placement Drive lifecycle"""
+    __tablename__ = "placement_drives"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    company_name = Column(String, index=True)
+    role = Column(String)
+    description = Column(String)
+    eligibility_criteria = Column(String)
+    created_by = Column(Integer, ForeignKey("users.id"))
+    deadline = Column(DateTime(timezone=True))
+    status = Column(String, default="open") # open / closed
+    
+    creator = relationship("User")
+    rounds = relationship("Round", back_populates="drive", cascade="all, delete-orphan")
+    applications = relationship("Application", back_populates="drive")
+
+class Round(Base):
+    """Specific rounds within a Drive (Aptitude, Technical, HR)"""
+    __tablename__ = "placement_rounds"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    drive_id = Column(Integer, ForeignKey("placement_drives.id"))
+    round_number = Column(Integer)
+    round_name = Column(String)
+    
+    drive = relationship("Drive", back_populates="rounds")
+    results = relationship("RoundResult", back_populates="round")
+
+class Application(Base):
+    """Student applications to specific corporate drives"""
+    __tablename__ = "placement_applications"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    application_uuid = Column(String, unique=True, index=True, default=lambda: str(uuid.uuid4()))
+    student_id = Column(Integer, ForeignKey("placement_students.id"))
+    drive_id = Column(Integer, ForeignKey("placement_drives.id"))
+    resume_path = Column(String)
+    status = Column(String, default="Applied")  # Applied / In Progress / Rejected / Placed
+    final_status = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    student = relationship("Student", back_populates="applications")
+    drive = relationship("Drive", back_populates="applications")
+    round_results = relationship("RoundResult", back_populates="application", cascade="all, delete-orphan")
+
+    @property
+    def current_round(self) -> int:
+        if not self.round_results:
+            return 1
+            
+        if self.status in ("Placed", "Rejected"):
+            completed = [r.round.round_number for r in self.round_results if r.status != "Pending"]
+            return max(completed) if completed else 1
+
+        sorted_results = sorted(self.round_results, key=lambda x: x.round.round_number)
+        for r in sorted_results:
+            if r.status == "Pending":
+                return r.round.round_number
+                
+        return len(self.round_results)
+
+    @property
+    def resume_url(self):
+        return self.resume_path
+
+class RoundResult(Base):
+    """Outcome of a specific student in a specific round"""
+    __tablename__ = "application_rounds"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    application_id = Column(Integer, ForeignKey("placement_applications.id"))
+    round_id = Column(Integer, ForeignKey("placement_rounds.id"))
+    status = Column(String, default="Pending")  # Pending / Pass / Fail
+    updated_by = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    application = relationship("Application", back_populates="round_results")
+    round = relationship("Round", back_populates="results")
+    updater = relationship("User")
+
+class PlacementOutcome(Base):
+    """Store real-world placement results for ground-truth validation"""
+    __tablename__ = "placement_outcomes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), nullable=True)
+    drive_id = Column(Integer, ForeignKey("placement_drives.id"), nullable=True)
+    got_placed = Column(Boolean, default=False)
+    company = Column(String, nullable=True)
+    role = Column(String, nullable=True)
+    offer_date = Column(DateTime(timezone=True), nullable=True)
+    time_to_offer_days = Column(Integer, nullable=True)
+    package = Column(Float, nullable=True)  # Optional: CTC
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User", back_populates="outcomes")
+    student = relationship("Student")
+    drive = relationship("Drive")
+
+class PlacementNotification(Base):
+    """System notifications for placement updates"""
+    __tablename__ = "placement_notifications"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    message = Column(String)
+    read_status = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User")
+
+class PlacementEvent(Base):
+    """Store event bus messages for placement system activity"""
+    __tablename__ = "placement_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_type = Column(String, index=True)
+    payload = Column(JSON)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class AuditLog(Base):
+    """Audit trail for admin/user actions in the placement system"""
+    __tablename__ = "audit_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    action = Column(String, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    data = Column(JSON)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User")
+
+# Update User model to include relationships
+User.student_profile = relationship("Student", back_populates="user", uselist=False)
+User.pr_profile = relationship("PR", back_populates="user", uselist=False)
+User.outcomes = relationship("PlacementOutcome", back_populates="user")

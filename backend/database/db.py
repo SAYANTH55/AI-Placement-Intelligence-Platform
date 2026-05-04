@@ -6,8 +6,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Set up SQLite database
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ai_placement.db")
+# Resolve the database file path relative to THIS file (db.py),
+# so it is always the same file no matter where uvicorn is launched from.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_DEFAULT_DB_PATH = os.path.join(_HERE, "..", "ai_placement.db")
+_DEFAULT_DB_URL = f"sqlite:///{os.path.normpath(_DEFAULT_DB_PATH)}"
+
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", _DEFAULT_DB_URL)
 
 # connect_args is needed only for SQLite
 engine = create_engine(
