@@ -24,11 +24,7 @@ class ApplicationService:
         if not drive:
             raise ValueError("Drive not found")
         if len(drive.rounds) == 0:
-            from database.models import Round
-            default_round = Round(drive_id=drive_id, round_number=1, round_name="Aptitude / Screening")
-            db.add(default_round)
-            db.flush()
-            db.refresh(drive)
+            raise ValueError("Drive must have at least one round to accept applications")
             
         existing = db.query(Application).filter(Application.student_id == student_id, Application.drive_id == drive_id).first()
         if existing:

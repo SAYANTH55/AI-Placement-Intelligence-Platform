@@ -24,6 +24,10 @@ export const AppProvider = ({ children }) => {
   const [preparationData, setPreparationData] = useState(null);
   const [practiceData, setPracticeData] = useState(null);
   const [trackingData, setTrackingData] = useState(null);
+  const [analyzedData, setAnalyzedData] = useState(() => {
+    const saved = localStorage.getItem('analyzed_data');
+    return saved ? JSON.parse(saved) : null;
+  });
 
   // Auth state initialized from localStorage for persistence
   const [user, setUser] = useState(() => {
@@ -40,6 +44,15 @@ export const AppProvider = ({ children }) => {
     }
   }, [user]);
 
+  // Sync analyzedData to localStorage
+  React.useEffect(() => {
+    if (analyzedData) {
+      localStorage.setItem('analyzed_data', JSON.stringify(analyzedData));
+    } else {
+      localStorage.removeItem('analyzed_data');
+    }
+  }, [analyzedData]);
+
   return (
     <AppContext.Provider
       value={{
@@ -49,6 +62,7 @@ export const AppProvider = ({ children }) => {
         preparationData, setPreparationData,
         practiceData, setPracticeData,
         trackingData, setTrackingData,
+        analyzedData, setAnalyzedData,
       }}
     >
       {children}

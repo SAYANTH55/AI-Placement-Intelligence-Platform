@@ -31,7 +31,7 @@ const GlassCard = ({ children, className = '', delay = 0 }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay }}
-    className={`bg-[#08080A] border border-[#181818] rounded-3xl p-6 relative overflow-hidden group hover:border-[#F97316]/30 transition-all ${className}`}
+    className={`glass-panel rounded-3xl p-6 relative overflow-hidden group hover:border-[#F97316]/30 transition-all shadow-card-depth ${className}`}
   >
     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/20 to-transparent" />
     {children}
@@ -562,10 +562,10 @@ export default function PlacementEngine() {
             <motion.div
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="relative w-full max-w-2xl bg-[#0A0A0C] border-l border-[#181818] shadow-2xl h-full flex flex-col overflow-hidden"
+              className="relative w-full max-w-2xl glass-panel shadow-2xl h-full flex flex-col overflow-hidden"
             >
               {/* Drive Header Banner */}
-              <div className="relative bg-gradient-to-br from-[#F97316]/20 via-[#0A0A0C] to-[#0A0A0C] border-b border-[#F97316]/20">
+              <div className="relative bg-gradient-to-br from-[#F97316]/20 via-transparent to-transparent border-b border-[#F97316]/20">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvc3ZnPg==')] opacity-50" />
                 <div className="relative p-8">
                   <div className="flex justify-between items-start">
@@ -751,28 +751,28 @@ export default function PlacementEngine() {
         {showPostDrive && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPostDrive(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-[#0A0A0C] border border-[#181818] rounded-[2rem] p-10 max-w-2xl w-full">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative glass-panel shadow-card-depth rounded-[2rem] p-10 max-w-2xl w-full">
               <h2 className="text-2xl font-black mb-2">Launch New Drive</h2>
               <p className="text-[#555] text-sm mb-8">Establish a new institutional placement record.</p>
               
               <div className="space-y-4">
-                <input value={form.company_name} onChange={e => setForm({...form, company_name: e.target.value})} placeholder="Company Name" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none" />
-                <input value={form.role} onChange={e => setForm({...form, role: e.target.value})} placeholder="Job Role" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none" />
-                <textarea value={form.job_description} onChange={e => setForm({...form, job_description: e.target.value, description: e.target.value.substring(0, 100) + '...'})} placeholder="Job Description (Detailed for AI Match)" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none h-32" />
+                <input value={form.company_name} onChange={e => setForm({...form, company_name: e.target.value})} placeholder="Company Name" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
+                <input value={form.role} onChange={e => setForm({...form, role: e.target.value})} placeholder="Job Role" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
+                <textarea value={form.job_description} onChange={e => setForm({...form, job_description: e.target.value, description: e.target.value.substring(0, 100) + '...'})} placeholder="Job Description (Detailed for AI Match)" className="w-full glass-search p-4 rounded-2xl text-sm outline-none h-32" />
                 <div className="grid grid-cols-2 gap-4">
-                  <input value={form.ctc} onChange={e => setForm({...form, ctc: e.target.value})} placeholder="CTC / Package" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none" />
-                  <input value={form.deadline} onChange={e => setForm({...form, deadline: e.target.value})} type="date" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none text-[#555]" />
+                  <input value={form.ctc} onChange={e => setForm({...form, ctc: e.target.value})} placeholder="CTC / Package" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
+                  <input value={form.deadline} onChange={e => setForm({...form, deadline: e.target.value})} type="date" className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#555]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <select value={form.course} onChange={e => setForm({...form, course: e.target.value})} className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none text-[#555]">
+                  <select value={form.course} onChange={e => setForm({...form, course: e.target.value})} className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#555]">
                     <option value="ALL">All Courses</option>
                     <option value="MCA">MCA</option>
                     <option value="MSAIM">MSc AI/ML</option>
                   </select>
-                  <input value={form.eligibility_criteria} onChange={e => setForm({...form, eligibility_criteria: e.target.value})} placeholder="Eligibility (e.g. 7.0 CGPA)" className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none" />
+                  <input value={form.eligibility_criteria} onChange={e => setForm({...form, eligibility_criteria: e.target.value})} placeholder="Eligibility (e.g. 7.0 CGPA)" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
                 </div>
 
-                <div className="border-t border-[#181818] pt-6">
+                <div className="border-t border-white/5 pt-6">
                   <p className="text-[10px] font-black text-[#F97316] uppercase tracking-[0.2em] mb-4">Required Application Fields</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {AVAILABLE_FIELDS.map(field => (
@@ -810,7 +810,7 @@ export default function PlacementEngine() {
         {showPostUpdate && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPostUpdate(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-[#0A0A0C] border border-[#181818] rounded-[2rem] p-10 max-w-lg w-full">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative glass-panel shadow-card-depth rounded-[2rem] p-10 max-w-lg w-full">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-2xl font-black">Post Placement Update</h2>
@@ -827,7 +827,7 @@ export default function PlacementEngine() {
                   value={updateForm.title}
                   onChange={e => setUpdateForm({...updateForm, title: e.target.value})}
                   placeholder="Update Title (e.g. Test Tomorrow)"
-                  className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
+                  className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
                 />
                 <textarea
                   required
@@ -835,7 +835,7 @@ export default function PlacementEngine() {
                   onChange={e => setUpdateForm({...updateForm, description: e.target.value})}
                   placeholder="Detailed description..."
                   rows={3}
-                  className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none resize-none"
+                  className="w-full glass-search p-4 rounded-2xl text-sm outline-none resize-none"
                 />
                 
                 <div className="grid grid-cols-2 gap-4">
@@ -844,7 +844,7 @@ export default function PlacementEngine() {
                     <select
                       value={updateForm.update_type}
                       onChange={e => setUpdateForm({...updateForm, update_type: e.target.value})}
-                      className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
+                      className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
                     >
                       <option value="announcement">Announcement</option>
                       <option value="test">Test / Assessment</option>
@@ -856,7 +856,7 @@ export default function PlacementEngine() {
                     <select
                       value={updateForm.course}
                       onChange={e => setUpdateForm({...updateForm, course: e.target.value})}
-                      className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
+                      className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
                     >
                       <option value="ALL">All Courses</option>
                       <option value="MCA">MCA</option>
@@ -870,13 +870,13 @@ export default function PlacementEngine() {
                     value={updateForm.action_label}
                     onChange={e => setUpdateForm({...updateForm, action_label: e.target.value})}
                     placeholder="Button Label (Optional)"
-                    className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
+                    className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
                   />
                   <input
                     value={updateForm.action_url}
                     onChange={e => setUpdateForm({...updateForm, action_url: e.target.value})}
                     placeholder="Link URL (Optional)"
-                    className="w-full bg-black border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
+                    className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
                   />
                 </div>
 
@@ -902,7 +902,7 @@ export default function PlacementEngine() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }} 
               animate={{ scale: 1, opacity: 1, y: 0 }} 
               exit={{ scale: 0.9, opacity: 0, y: 20 }} 
-              className="relative bg-[#0A0A0C] border border-white/5 rounded-[2.5rem] p-8 max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-[#F97316]/10"
+              className="relative glass-panel shadow-card-depth rounded-[2.5rem] p-8 max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-[#F97316]/10"
             >
               {/* Modal Header */}
               <div className="flex justify-between items-start mb-8">
@@ -949,7 +949,7 @@ export default function PlacementEngine() {
                             value={applyForm[fieldId] || ''} 
                             onChange={e => setApplyForm({...applyForm, [fieldId]: e.target.value})}
                             required
-                            className="w-full bg-black/50 border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none h-32 resize-none"
+                            className="w-full glass-search p-4 rounded-2xl text-sm outline-none h-32 resize-none"
                           />
                         ) : fieldId === 'projects' ? (
                           <textarea 
@@ -957,7 +957,7 @@ export default function PlacementEngine() {
                             onChange={e => setApplyForm({...applyForm, [fieldId]: e.target.value})}
                             required
                             placeholder="Describe your key projects..."
-                            className="w-full bg-black/50 border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none h-32 resize-none"
+                            className="w-full glass-search p-4 rounded-2xl text-sm outline-none h-32 resize-none"
                           />
                         ) : fieldId === 'resume_url' ? (
                           <div className="relative">
@@ -985,13 +985,13 @@ export default function PlacementEngine() {
                             )}
                           </div>
                         ) : (
-                          <input 
-                            type={fieldId.includes('email') ? 'email' : fieldId.includes('url') ? 'url' : 'text'}
-                            value={applyForm[fieldId] || ''} 
-                            onChange={e => setApplyForm({...applyForm, [fieldId]: e.target.value})}
-                            required
-                            className="w-full bg-black/50 border border-[#181818] p-4 rounded-2xl text-sm focus:border-[#F97316] outline-none"
-                          />
+                            <input 
+                              type={fieldId.includes('email') ? 'email' : fieldId.includes('url') ? 'url' : 'text'}
+                              value={applyForm[fieldId] || ''} 
+                              onChange={e => setApplyForm({...applyForm, [fieldId]: e.target.value})}
+                              required
+                              className="w-full glass-search p-4 rounded-2xl text-sm outline-none"
+                            />
                         )}
                       </div>
                     );

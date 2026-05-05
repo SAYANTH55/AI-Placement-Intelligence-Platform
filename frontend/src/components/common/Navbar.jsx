@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 import { Zap, LogOut, User } from 'lucide-react';
 import Logo from '../Logo';
@@ -8,6 +8,7 @@ import ProfileDropdown from './ProfileDropdown';
 export default function Navbar() {
   const { user } = useAppContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navLinks = [
     { to: '/', label: 'Home', end: true },
@@ -64,12 +65,13 @@ export default function Navbar() {
             ))}
             {user && (
               <NavLink
-                to="/dashboard"
-                className={({ isActive }) =>
-                  `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActive ? 'text-[#F97316]' : 'text-[#888] hover:text-white'
-                  }`
-                }
+                to={user.role === 'admin' || user.role === 'pr' ? '/admin' : '/dashboard'}
+                className={({ isActive }) => {
+                  const active = isActive || location.pathname.startsWith('/admin') || location.pathname.startsWith('/dashboard');
+                  return `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    active ? 'text-[#F97316]' : 'text-[#888] hover:text-white'
+                  }`;
+                }}
               >
                 Dashboard
               </NavLink>

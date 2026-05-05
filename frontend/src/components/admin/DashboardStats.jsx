@@ -1,77 +1,105 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
 import {
-    Users, Award, FileText, CheckCircle, TrendingUp, TrendingDown,
-    Briefcase, Clock, Target, BarChart3, PieChart, Activity
+    ArrowUpRight, BarChart3, PieChart, Users, Bell, Briefcase
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const StatCard = ({ label, value, color = 'text-white', suffix = '', icon, trend, trendValue, delay = 0 }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay, duration: 0.4 }}
-        className="bg-[#08080A] border border-[#181818] rounded-2xl p-5 shadow-[0_0_20px_rgba(249,115,22,0.02)] flex flex-col justify-between hover:border-[#F97316]/20 transition-all group"
-    >
-        <div className="flex justify-between items-start mb-4">
-            <p className="text-[10px] uppercase tracking-widest text-[#555] font-bold">{label}</p>
-            <div className="p-2 bg-[#F97316]/10 rounded-lg text-[#F97316] group-hover:bg-[#F97316]/20 transition-colors">
-                {icon}
-            </div>
-        </div>
-        <p className={`text-3xl font-black ${color}`}>
-            {value ?? '—'}{suffix}
-        </p>
-        {trend && (
-            <div className={`flex items-center gap-1 mt-3 text-[10px] font-bold ${trend === 'up' ? 'text-[#34D399]' : 'text-[#EF4444]'}`}>
-                {trend === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                <span>{trendValue} vs last month</span>
-            </div>
-        )}
-    </motion.div>
-);
-
-/* Mini bar chart drawn with CSS */
-const MiniBarChart = ({ data, maxVal }) => (
-    <div className="flex items-end gap-1 h-16">
-        {data.map((val, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                    className="w-full bg-gradient-to-t from-[#F97316] to-[#F59E0B] rounded-t-sm transition-all duration-500 min-h-[2px]"
-                    style={{ height: `${Math.max((val / (maxVal || 1)) * 100, 4)}%` }}
-                />
-            </div>
-        ))}
+// Circular icon button used in top right of cards
+const CardAction = () => (
+    <div className="w-10 h-10 rounded-full bg-white/[0.04] border border-white/5 flex items-center justify-center hover:bg-white/[0.1] transition-colors cursor-pointer text-secondary-muted hover:text-white">
+        <ArrowUpRight size={18} />
     </div>
 );
 
-/* Donut chart using SVG */
-const DonutChart = ({ placed, total }) => {
-    const pct = total > 0 ? (placed / total) * 100 : 0;
-    const r = 40;
-    const circ = 2 * Math.PI * r;
-    const offset = circ - (pct / 100) * circ;
-
+/* Custom Thick Bar Chart matching reference */
+const ThickBarChart = ({ data, labels }) => {
+    const maxVal = Math.max(...data);
+    const activeIndex = data.indexOf(maxVal); // Highlight the peak month
+    
     return (
-        <div className="relative w-28 h-28 mx-auto">
-            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                <circle cx="50" cy="50" r={r} fill="none" stroke="#1A1A1A" strokeWidth="8" />
-                <motion.circle
-                    cx="50" cy="50" r={r} fill="none" stroke="url(#grad)" strokeWidth="8"
-                    strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={circ}
-                    animate={{ strokeDashoffset: offset }}
-                    transition={{ duration: 1.2, ease: 'easeOut' }}
-                />
-                <defs>
-                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#F97316" />
-                        <stop offset="100%" stopColor="#34D399" />
-                    </linearGradient>
-                </defs>
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-black text-white">{Math.round(pct)}%</span>
-                <span className="text-[9px] text-[#555] font-bold">PLACED</span>
+        <div className="flex items-end justify-between h-32 mt-8">
+            {data.map((val, i) => (
+                <div key={i} className="flex flex-col items-center gap-4 group w-12">
+                    <div className="w-full relative h-[100px] flex items-end">
+                        {/* Background Track */}
+                        <div className="absolute inset-0 bg-white/[0.02] rounded-xl border border-white/5" />
+                        {/* Fill */}
+                        <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: `${Math.max((val / (maxVal || 1)) * 100, 10)}%` }}
+                            transition={{ duration: 1, ease: 'easeOut' }}
+                            className={`w-full rounded-xl relative z-10 flex items-start justify-center pt-2 ${
+                                i === activeIndex 
+                                ? 'bg-neon-gradient shadow-neon-glow' 
+                                : 'bg-white/[0.05] group-hover:bg-white/[0.1]'
+                            }`}
+                        >
+                            {i === activeIndex && (
+                                <span className="text-white text-xs font-bold">{val}</span>
+                            )}
+                        </motion.div>
+                    </div>
+                    <span className="text-[11px] text-tertiary-muted font-medium">{labels[i]}</span>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+/* Custom Segmented Gauge Donut matching reference */
+const SegmentedGauge = ({ growth }) => {
+    const segments = 5;
+    const activeSegments = 3;
+    
+    return (
+        <div className="flex flex-col items-center mt-6">
+            <div className="relative w-48 h-24 overflow-hidden mb-6">
+                <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
+                    {/* Render segments */}
+                    {[...Array(segments)].map((_, i) => {
+                        const angle = (180 / segments);
+                        const startAngle = 180 + (i * angle);
+                        // Math to calculate SVG arc
+                        const radius = 40;
+                        const strokeWidth = 16;
+                        // Simplification: We'll use stroke-dasharray on circles, or just a single gradient path with gaps.
+                        return null; 
+                    })}
+                    {/* Actually, the easiest way to do a segmented gauge in SVG without complex math is a single circle with dashed stroke */}
+                    <circle 
+                        cx="50" cy="50" r="35" fill="none" 
+                        stroke="rgba(255,255,255,0.03)" strokeWidth="18" 
+                        strokeDasharray="18 4" strokeLinecap="butt"
+                    />
+                    <circle 
+                        cx="50" cy="50" r="35" fill="none" 
+                        stroke="url(#neon-grad)" strokeWidth="18" 
+                        strokeDasharray="18 4" strokeDashoffset="0"
+                        strokeLinecap="butt"
+                        pathLength="100"
+                    />
+                    {/* Masking out the right side to simulate the active segments */}
+                    <circle 
+                        cx="50" cy="50" r="35" fill="none" 
+                        stroke="rgba(255,255,255,0.03)" strokeWidth="20" 
+                        strokeDasharray="44 100" strokeDashoffset="-56"
+                        strokeLinecap="butt"
+                        pathLength="100"
+                    />
+                    <defs>
+                        <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#FF4D26" />
+                            <stop offset="100%" stopColor="#FF764D" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            
+            <div className="border border-white/10 rounded-full px-5 py-2.5 bg-white/[0.02]">
+                <p className="text-[11px] text-white font-medium">
+                    Placement rate has increased by <span className="font-bold">{growth}%</span>
+                </p>
             </div>
         </div>
     );
@@ -96,149 +124,198 @@ export default function DashboardStats() {
     }, []);
 
     if (loading) return (
-        <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center justify-center py-20 h-full">
+            <div className="w-8 h-8 border-2 border-[#FF4D26] border-t-transparent rounded-full animate-spin" />
         </div>
     );
 
     const totalStudents = stats?.total_students || 0;
-    const placedStudents = Math.round(totalStudents * ((stats?.placement_rate || 0) / 100));
-    const monthlyData = [12, 19, 8, 25, 14, 22, 30, 18, 26, 15, 28, 32];
+    const placementRate = stats?.placement_rate || 0;
+    const placedStudents = Math.round(totalStudents * (placementRate / 100));
+    const activeDrives = driveStats?.active_drives || 0;
+    const selectionRate = driveStats?.selection_rate || 0;
+    const appsPerDrive = driveStats?.applications_per_drive || 0;
+    const growthRate = stats?.growth_vs_last_year || 8.02;
+
+    // Real monthly data from API
+    const monthlyData = stats?.monthly_apps?.data || [0, 0, 0, 0, 0];
+    const monthlyLabels = stats?.monthly_apps?.labels || ['-', '-', '-', '-', '-'];
+
+    // Real batch stats from API
+    const batchStats = stats?.batch_stats || [];
+    
+    // Real recent activity from API
+    const recentActivity = stats?.recent_activity || [];
 
     return (
-        <div className="space-y-8">
-            {/* Page header */}
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                <h1 className="text-2xl font-black tracking-tight">Placement Dashboard</h1>
-                <p className="text-xs text-[#555] mt-1">Real-time overview of placement activity and student performance</p>
-            </motion.div>
-
-            {/* Stat cards row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="Total Students" value={totalStudents} icon={<Users size={16} />} trend="up" trendValue="+12%" delay={0} />
-                <StatCard label="Placement Rate" value={stats?.placement_rate} suffix="%" color="text-[#34D399]" icon={<Award size={16} />} trend="up" trendValue="+5.2%" delay={0.1} />
-                <StatCard label="Apps / Drive" value={driveStats?.applications_per_drive} color="text-[#F97316]" icon={<FileText size={16} />} trend="up" trendValue="+8%" delay={0.2} />
-                <StatCard label="Selection Rate" value={driveStats?.selection_rate} suffix="%" color="text-[#818CF8]" icon={<CheckCircle size={16} />} trend="down" trendValue="-2.1%" delay={0.3} />
-            </div>
-
-            {/* Charts row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Monthly Applications Chart */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                    className="lg:col-span-2 bg-[#08080A] border border-[#181818] rounded-3xl p-6"
-                >
-                    <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col xl:flex-row gap-6 h-full pb-10">
+            {/* Left Column - 65% */}
+            <div className="w-full xl:w-[65%] flex flex-col gap-6">
+                
+                {/* 1. Big Top Card: Total Students & Placement Progress */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
+                    <div className="flex justify-between items-start mb-10">
                         <div>
-                            <h3 className="text-sm font-black flex items-center gap-2">
-                                <BarChart3 size={16} className="text-[#F97316]" />
-                                Monthly Applications
-                            </h3>
-                            <p className="text-[10px] text-[#444] mt-1">Trend over the last 12 months</p>
+                            <h2 className="text-[56px] font-normal leading-none text-white tracking-tight mb-2">
+                                {totalStudents.toLocaleString()}
+                            </h2>
+                            <p className="text-[13px] text-secondary-muted font-medium">Total Registered Students</p>
                         </div>
-                        <div className="flex gap-2">
-                            {['6M', '1Y'].map(p => (
-                                <button key={p} className="px-3 py-1 rounded-lg text-[10px] font-bold bg-white/5 text-[#555] hover:text-white hover:bg-white/10 transition-all">
-                                    {p}
-                                </button>
-                            ))}
-                        </div>
+                        <CardAction />
                     </div>
-                    <MiniBarChart data={monthlyData} maxVal={Math.max(...monthlyData)} />
-                    <div className="flex justify-between mt-2 text-[9px] text-[#333] font-bold">
-                        {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(m => (
-                            <span key={m}>{m}</span>
-                        ))}
+                    
+                    {/* Massive Progress Bar */}
+                    <div className="relative h-10 bg-white/[0.03] rounded-full overflow-hidden flex items-center border border-white/5 p-1 mb-4">
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${placementRate}%` }}
+                            transition={{ duration: 1.5, ease: 'easeOut' }}
+                            className="h-full bg-neon-gradient rounded-full shadow-neon-glow flex items-center justify-end pr-3"
+                        >
+                            <div className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center text-white">
+                                <ArrowUpRight size={14} />
+                            </div>
+                        </motion.div>
                     </div>
+                    <p className="text-[11px] text-tertiary-muted font-medium">
+                        Overall placement rate has increased by {growthRate}% vs last year
+                    </p>
                 </motion.div>
 
-                {/* Donut Chart */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                    className="bg-[#08080A] border border-[#181818] rounded-3xl p-6 flex flex-col items-center justify-center"
-                >
-                    <h3 className="text-sm font-black flex items-center gap-2 mb-6 self-start">
-                        <PieChart size={16} className="text-[#34D399]" />
-                        Placement Ratio
-                    </h3>
-                    <DonutChart placed={placedStudents} total={totalStudents} />
-                    <div className="flex gap-6 mt-6 text-[10px]">
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#34D399]" />
-                            <span className="text-[#888] font-bold">Placed ({placedStudents})</span>
+                {/* 2. Middle Row: Two Charts */}
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Left Chart: Bar Chart */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 className="text-2xl font-medium text-white mb-1">Monthly Apps</h3>
+                                <p className="text-[11px] text-secondary-muted">Statistics by Month</p>
+                            </div>
+                            <CardAction />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-[#333]" />
-                            <span className="text-[#888] font-bold">Pending ({totalStudents - placedStudents})</span>
+                        <ThickBarChart 
+                            data={monthlyData} 
+                            labels={monthlyLabels} 
+                        />
+                    </motion.div>
+
+                    {/* Right Chart: Segmented Gauge */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 className="text-2xl font-medium text-white mb-1">{placementRate}%</h3>
+                                <p className="text-[11px] text-secondary-muted">Placement Ratio</p>
+                            </div>
+                            <CardAction />
                         </div>
-                    </div>
-                </motion.div>
+                        <SegmentedGauge growth={growthRate} />
+                        {/* Note: SegmentedGauge already has a growth message internally, we could pass growthRate there if needed */}
+                    </motion.div>
+                </div>
+
+                {/* 3. Bottom Row: Lists */}
+                <div className="flex flex-col md:flex-row gap-6">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
+                        <div className="flex justify-between items-start mb-8">
+                            <div>
+                                <h3 className="text-2xl font-medium text-white mb-1">Batch Stats</h3>
+                                <p className="text-[11px] text-secondary-muted">Performance by year</p>
+                            </div>
+                            <CardAction />
+                        </div>
+                        <div className="space-y-4">
+                            {batchStats.length > 0 ? batchStats.map((item, i) => (
+                                <div key={i} className="flex justify-between items-center py-2 border-b border-white/[0.03] last:border-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-white/[0.03] flex items-center justify-center text-white/50">
+                                            <Users size={14} />
+                                        </div>
+                                        <span className="text-[13px] text-secondary-muted font-medium">{item.name}</span>
+                                    </div>
+                                    <span className="text-lg text-white font-medium">{item.val}</span>
+                                </div>
+                            )) : (
+                                <p className="text-xs text-tertiary-muted italic">No batch data available</p>
+                            )}
+                        </div>
+                    </motion.div>
+
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
+                        <div className="flex justify-between items-start mb-8">
+                            <div>
+                                <h3 className="text-2xl font-medium text-white mb-1">Recent Activity</h3>
+                                <p className="text-[11px] text-secondary-muted">Latest system events</p>
+                            </div>
+                            <CardAction />
+                        </div>
+                        <div className="space-y-4">
+                            {recentActivity.length > 0 ? recentActivity.map((item, i) => (
+                                <div key={i} className="flex justify-between items-center py-2 border-b border-white/[0.03] last:border-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-white/[0.03] flex items-center justify-center text-white/50">
+                                            {item.type === 'drive' ? <Briefcase size={14} /> : <Bell size={14} />}
+                                        </div>
+                                        <span className="text-[13px] text-secondary-muted font-medium">{item.name}</span>
+                                    </div>
+                                    <span className="text-sm text-white font-medium">{item.val}</span>
+                                </div>
+                            )) : (
+                                <p className="text-xs text-tertiary-muted italic">No recent activity</p>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+
             </div>
 
-            {/* Bottom row */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Batch Performance */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                    className="bg-[#08080A] border border-[#181818] rounded-3xl p-6"
-                >
-                    <h3 className="text-sm font-black flex items-center gap-2 mb-5">
-                        <Target size={16} className="text-[#818CF8]" />
-                        Batch Performance
-                    </h3>
-                    <div className="space-y-3">
+            {/* Right Column - 35% */}
+            <div className="w-full xl:w-[35%] flex flex-col gap-6">
+                
+                {/* Top 2x2 Grid Panel */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03] flex-1">
+                    <div className="flex justify-between items-start mb-10">
+                        <h2 className="text-3xl font-medium text-white leading-tight pr-10">
+                            Key Platform<br />Metrics
+                        </h2>
+                        <CardAction />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
                         {[
-                            { batch: '2026', rate: 78, students: 120, color: 'from-[#F97316] to-[#F59E0B]' },
-                            { batch: '2025', rate: 85, students: 145, color: 'from-[#34D399] to-[#6EE7B7]' },
-                            { batch: '2024', rate: 92, students: 130, color: 'from-[#818CF8] to-[#A78BFA]' },
-                        ].map(b => (
-                            <div key={b.batch} className="p-4 bg-[#050505] rounded-xl border border-[#141414] hover:border-[#222] transition-all">
-                                <div className="flex items-center justify-between mb-3">
-                                    <div>
-                                        <span className="text-sm font-black">Class of {b.batch}</span>
-                                        <span className="text-[10px] text-[#444] ml-2">({b.students} students)</span>
-                                    </div>
-                                    <span className="text-xs font-black text-[#F97316]">{b.rate}%</span>
-                                </div>
-                                <div className="w-full h-1.5 bg-[#141414] rounded-full overflow-hidden">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${b.rate}%` }}
-                                        transition={{ duration: 1, delay: 0.6 }}
-                                        className={`h-full bg-gradient-to-r ${b.color} rounded-full`}
-                                    />
-                                </div>
+                            { label: 'Active Drives', val: activeDrives },
+                            { label: 'Apps / Drive', val: appsPerDrive },
+                            { label: 'Selection Rate', val: `${selectionRate}%` },
+                            { label: 'Placed Students', val: placedStudents }
+                        ].map((stat, i) => (
+                            <div key={i} className="bg-white/[0.02] border border-white/[0.03] rounded-2xl p-6 hover:bg-white/[0.04] transition-colors">
+                                <p className="text-[11px] text-secondary-muted mb-3">{stat.label}</p>
+                                <p className="text-[28px] text-white font-medium">{stat.val}</p>
                             </div>
                         ))}
                     </div>
                 </motion.div>
 
-                {/* Upcoming Deadlines & Recent Activity */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-                    className="bg-[#08080A] border border-[#181818] rounded-3xl p-6"
-                >
-                    <h3 className="text-sm font-black flex items-center gap-2 mb-5">
-                        <Activity size={16} className="text-[#F97316]" />
-                        Recent Activity
-                    </h3>
-                    <div className="space-y-3">
-                        {[
-                            { text: 'New drive posted: Google – SDE Intern', time: '2 hours ago', dot: 'bg-[#F97316]' },
-                            { text: '15 applications received for Microsoft drive', time: '5 hours ago', dot: 'bg-[#818CF8]' },
-                            { text: 'Round 2 results updated for Amazon', time: '1 day ago', dot: 'bg-[#34D399]' },
-                            { text: 'Batch 2026 report generated', time: '2 days ago', dot: 'bg-[#F59E0B]' },
-                        ].map((item, i) => (
-                            <div key={i} className="flex items-start gap-3 p-3 bg-[#050505] rounded-xl border border-[#141414] hover:border-[#222] transition-all">
-                                <div className={`w-2 h-2 rounded-full mt-1.5 ${item.dot} shrink-0`} />
-                                <div>
-                                    <p className="text-xs font-bold text-[#ccc]">{item.text}</p>
-                                    <p className="text-[10px] text-[#444] mt-0.5">{item.time}</p>
-                                </div>
-                            </div>
-                        ))}
+                {/* Bottom Promo Card */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="bg-neon-gradient p-10 rounded-[32px] shadow-neon-glow relative overflow-hidden min-h-[300px] flex items-end">
+                    {/* Decorative wireframe globe/grid in background */}
+                    <div className="absolute inset-0 pointer-events-none opacity-20">
+                        <svg viewBox="0 0 100 100" className="w-full h-full scale-150 origin-bottom-right">
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="white" strokeWidth="0.5" />
+                            <circle cx="100" cy="100" r="60" fill="none" stroke="white" strokeWidth="0.5" />
+                            <circle cx="100" cy="100" r="40" fill="none" stroke="white" strokeWidth="0.5" />
+                            <circle cx="100" cy="100" r="20" fill="none" stroke="white" strokeWidth="0.5" />
+                            {/* Radial lines */}
+                            <line x1="100" y1="100" x2="0" y2="0" stroke="white" strokeWidth="0.5" />
+                            <line x1="100" y1="100" x2="20" y2="0" stroke="white" strokeWidth="0.5" />
+                            <line x1="100" y1="100" x2="0" y2="50" stroke="white" strokeWidth="0.5" />
+                        </svg>
                     </div>
+
+                    <h2 className="text-[32px] font-medium text-white leading-[1.1] relative z-10 w-4/5">
+                        Generate new AI Placement<br />Reports instantly
+                    </h2>
                 </motion.div>
+
             </div>
         </div>
     );

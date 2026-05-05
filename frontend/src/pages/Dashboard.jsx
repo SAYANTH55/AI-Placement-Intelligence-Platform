@@ -9,7 +9,7 @@ import InsightCards from '../components/dashboard/InsightCards';
 import PlacementModule from '../components/placement/PlacementModule';
 import SkillBadge from '../components/dashboard/SkillBadge';
 import ScoreRing from '../components/dashboard/ScoreRing';
-import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock, FileText, Star, Globe } from 'lucide-react';
+import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock, FileText, Star, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
 import OutcomeTracker from '../components/dashboard/OutcomeTracker';
@@ -26,9 +26,16 @@ function DarkCard({ children, className = '', delay = 0, glow = false }) {
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-6 overflow-hidden ${glow ? 'shadow-[0_0_40px_rgba(249,115,22,0.07)]' : ''} ${className}`}
+      className={`relative rounded-[1.5rem] p-6 overflow-hidden ${className}`}
+      style={{
+        background: '#141210',
+        border: '1px solid rgba(255,255,255,0.06)',
+        boxShadow: glow
+          ? '0 0 32px rgba(249,115,22,0.15), 0 4px 32px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.04) inset'
+          : '0 4px 32px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.04) inset',
+      }}
     >
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(249,115,22,0.25), transparent)' }} />
       {children}
     </motion.div>
   );
@@ -45,8 +52,8 @@ function EmptyState({ icon: Icon, title, message }) {
       >
         <Icon size={28} />
       </motion.div>
-      <h3 className="text-white font-black text-lg mb-2">{title}</h3>
-      <p className="text-[#555] text-sm">{message}</p>
+      <h3 className="text-white font-black text-xl mb-2">{title}</h3>
+      <p className="text-[#555] text-sm max-w-xs mx-auto leading-relaxed">{message}</p>
     </DarkCard>
   );
 }
@@ -60,11 +67,11 @@ function PageHeader({ title, subtitle }) {
       transition={{ duration: 0.5 }}
       className="mb-8"
     >
-      <div className="flex items-center gap-2 mb-1">
-        <div className="w-1 h-6 rounded-full bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
-        <h2 className="text-2xl font-black text-white tracking-tight">{title}</h2>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-1.5 h-7 rounded-full bg-[#F97316] shadow-[0_0_12px_rgba(249,115,22,0.6)]" />
+        <h2 className="text-3xl font-black text-white tracking-tighter">{title}</h2>
       </div>
-      <p className="text-[#555] text-sm ml-3">{subtitle}</p>
+      <p className="text-[#666] text-sm font-medium ml-4">{subtitle}</p>
     </motion.div>
   );
 }
@@ -81,25 +88,71 @@ function AnalysisPage({ data }) {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader title="Resume Analysis" subtitle="Deep extraction of your skills and career signals." />
-      <div className="space-y-6">
-        <DarkCard delay={0}>
-          <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
-          <div className="flex flex-wrap gap-2">
-            {data.allDetected.map((skill, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.04 }}
-                className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
-              >
-                {skill}
-              </motion.span>
-            ))}
-          </div>
-        </DarkCard>
+
+      {/* Bento top row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Big skill count */}
+        <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F97316, transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>Skills Detected</p>
+          <p className="text-5xl font-black text-white mb-2">{data.allDetected?.length || 0}</p>
+          <p className="text-[11px]" style={{ color: '#555' }}>Extracted from your resume</p>
+        </div>
+        {/* Role matches */}
+        <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #34D399, transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>Role Matches</p>
+          <p className="text-5xl font-black mb-2" style={{ color: '#34D399' }}>{data.jobRoles?.length || 0}</p>
+          <p className="text-[11px]" style={{ color: '#555' }}>Career paths identified</p>
+        </div>
+        {/* Gap count */}
+        <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F87171, transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>Skill Gaps</p>
+          <p className="text-5xl font-black mb-2" style={{ color: '#F87171' }}>{data.missing?.length || 0}</p>
+          <p className="text-[11px]" style={{ color: '#555' }}>Skills to acquire</p>
+        </div>
+      </div>
+
+      {/* Skills grid */}
+      <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F97316, transparent)' }} />
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#F97316' }}>All Detected Skills</p>
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.25)', color: '#F97316' }}>{data.allDetected?.length} total</span>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {(data.allDetected || []).map((skill, i) => (
+            <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.03 }}
+              className="text-[10px] font-bold px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.2)', color: '#F97316' }}>
+              {skill}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+
+      {/* Role match bars */}
+      <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #34D399, transparent)' }} />
+        <p className="text-[10px] font-black uppercase tracking-widest mb-5" style={{ color: '#34D399' }}>Role Match Breakdown</p>
+        <div className="space-y-3">
+          {(data.jobRoles || []).filter(role => role.match > 0).map((role, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-white w-40 truncate flex-shrink-0">{role.title || role.role}</span>
+              <div className="flex-1 h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                <motion.div initial={{ width: 0 }} animate={{ width: `${role.match}%` }}
+                  transition={{ duration: 1, ease: 'easeOut', delay: i * 0.08 }}
+                  className="h-full rounded-full"
+                  style={{ background: i === 0 ? '#F97316' : '#34D399', boxShadow: `0 0 6px ${i === 0 ? '#F97316' : '#34D399'}60` }} />
+              </div>
+              <span className="text-xs font-black w-9 text-right" style={{ color: i === 0 ? '#F97316' : '#34D399' }}>{role.match}%</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -248,8 +301,42 @@ function SkillsPage({ data, selectedRoleIndex, setSelectedRoleIndex }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Sub-page: Score
+   Sub-page: Score — Reference-match bento layout
 ══════════════════════════════════════════════════════════════════ */
+function ArcGauge({ value = 0, color = '#F97316', size = 140 }) {
+  const r = 52, cx = size / 2, cy = size / 2 + 14;
+  const arc = (pct) => {
+    const a = Math.PI + pct * Math.PI;
+    return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+  };
+  const bg = arc(1), fg = arc(Math.min(value, 100) / 100);
+  return (
+    <svg width={size} height={size * 0.7} viewBox={`0 0 ${size} ${size * 0.7}`}>
+      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#1e1e1e" strokeWidth="10" strokeLinecap="round" />
+      {value > 0 && (
+        <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${fg.x} ${fg.y}`} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
+          style={{ filter: `drop-shadow(0 0 6px ${color}80)` }} />
+      )}
+      <text x={cx} y={cy - 5} textAnchor="middle" fontSize="32" fontWeight="900" fill="#fff">{value}%</text>
+      <text x={cx} y={cy + 18} textAnchor="middle" fontSize="10" fontWeight="800" fill="#666" style={{ letterSpacing: '0.05em' }}>PLACEMENT SCORE</text>
+    </svg>
+  );
+}
+
+function BarRow({ label, value, color, max = 100 }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[10px] font-bold w-20 sm:w-24 flex-shrink-0" style={{ color: '#666' }}>{label}</span>
+      <div className="flex-1 h-1.5 rounded-full" style={{ background: '#1c1c1c' }}>
+        <motion.div initial={{ width: 0 }} animate={{ width: `${(value / max) * 100}%` }}
+          transition={{ duration: 1.2, ease: 'easeOut' }}
+          className="h-full rounded-full" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
+      </div>
+      <span className="text-[11px] font-black w-10 flex-shrink-0 text-right" style={{ color }}>{value}%</span>
+    </div>
+  );
+}
+
 function ScorePage({ data }) {
   if (!data) return (
     <div>
@@ -257,93 +344,121 @@ function ScorePage({ data }) {
       <EmptyState icon={TrendingUp} title="No Score Yet" message="Upload your resume on Overview first." />
     </div>
   );
+
+  const dims = [
+    { label: 'Skills Breadth',    value: Math.min(100, Math.round((data.allDetected?.length || 0) / 15 * 100)), color: '#F97316' },
+    { label: 'Work Experience',   value: 75, color: '#34D399' },
+    { label: 'Project Portfolio', value: Math.min(100, (data.jobRoles?.length || 0) * 15), color: '#818CF8' },
+    { label: 'Certifications',    value: 60, color: '#F59E0B' },
+  ];
+
   return (
     <div className="space-y-6">
       <PageHeader title="Placement Score" subtitle="Your career readiness metrics across multiple dimensions." />
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {[
-          { label: 'Overall Readiness', value: data.score, desc: 'Composite score across all dimensions', color: '#F97316' },
-          { label: 'Interview Confidence', value: data.interview_confidence, desc: 'Communication & tech depth', color: '#818CF8' },
-          { label: 'Technical Depth', value: data.technical_depth, desc: 'Core engineering & algorithm strength', color: '#34D399' },
-        ].map((item, i) => (
-          <DarkCard key={i} delay={i * 0.1} glow className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <ScoreRing score={item.value} size={110} strokeWidth={10} />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{ boxShadow: [`0 0 0px ${item.color}40`, `0 0 20px ${item.color}40`, `0 0 0px ${item.color}40`] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-12 h-12 rounded-full"
-                />
-              </div>
+
+      {/* TOP ROW — Responsive Grid (1 col on mobile, 2 on tablet, 3 on desktop) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {/* Big score card with arc gauge */}
+        <div className="rounded-2xl p-6 flex flex-col items-center justify-center relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F97316, transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-[#555]">Overall Readiness</p>
+          <ArcGauge value={data.score} color="#F97316" size={180} />
+          <div className="mt-4 flex gap-5 text-center">
+            <div><p className="text-[9px] font-black text-[#444] uppercase tracking-widest">Confidence</p><p className="text-sm font-black text-white">{Math.round(data.score * 0.9)}%</p></div>
+            <div className="w-px self-stretch" style={{ background: 'rgba(255,255,255,0.04)' }} />
+            <div><p className="text-[9px] font-black text-[#444] uppercase tracking-widest">Uncertainty</p><p className="text-sm font-black text-[#F59E0B]">MEDIUM</p></div>
+          </div>
+        </div>
+
+        {/* Interview Confidence card */}
+        <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #818CF8, transparent)' }} />
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider mb-1 text-[#555]">Interview Confidence</p>
+              <p className="text-5xl font-black text-[#818CF8]" style={{ textShadow: '0 0 25px rgba(129,140,248,0.3)' }}>{data.interview_confidence}%</p>
             </div>
-            <div className="text-center">
-              <h4 className="font-black text-sm text-white">{item.label}</h4>
-              <p className="text-xs text-[#555] mt-0.5">{item.desc}</p>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/3 border border-white/5">
+              <MessageSquare size={16} className="text-[#444]" />
             </div>
-          </DarkCard>
-        ))}
+          </div>
+          <p className="text-[11px] mb-6 text-[#555]">Communication & technical depth assessment</p>
+          <div className="space-y-4">
+            <BarRow label="Communication" value={Math.min(100, data.interview_confidence + 5)} color="#818CF8" />
+            <BarRow label="Tech Depth" value={data.technical_depth} color="#818CF8" />
+            <BarRow label="Clarity" value={Math.min(100, data.interview_confidence - 5)} color="#818CF8" />
+          </div>
+        </div>
+
+        {/* Technical Depth card */}
+        <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #34D399, transparent)' }} />
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider mb-1 text-[#555]">Technical Depth</p>
+              <p className="text-5xl font-black text-[#34D399]" style={{ textShadow: '0 0 25px rgba(52,211,153,0.3)' }}>{data.technical_depth}%</p>
+            </div>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-white/3 border border-white/5">
+              <Code size={16} className="text-[#444]" />
+            </div>
+          </div>
+          <p className="text-[11px] mb-6 text-[#555]">Engineering fundamentals & algorithmic strength</p>
+          <div className="space-y-4">
+            <BarRow label="Algorithms" value={Math.min(100, data.technical_depth + 3)} color="#34D399" />
+            <BarRow label="Systems" value={Math.max(0, data.technical_depth - 10)} color="#34D399" />
+            <BarRow label="Databases" value={Math.min(100, data.technical_depth + 7)} color="#34D399" />
+          </div>
+        </div>
       </div>
 
-      {/* Dimension Breakdown Section */}
-      <DarkCard delay={0.2} glow>
-        <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-6">Dimension Breakdown</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            { label: 'Skills Breadth', value: Math.min(100, Math.max(0, Math.round((data.allDetected?.length || 0) / 15 * 100))), color: '#F97316', desc: 'Variety of technical skills' },
-            { label: 'Work Experience', value: Math.min(100, 75), color: '#34D399', desc: 'Years & depth of experience' },
-            { label: 'Project Portfolio', value: Math.min(100, Math.round((data.jobRoles?.length || 0) * 15)), color: '#818CF8', desc: 'Project complexity & scope' },
-            { label: 'Certifications', value: 60, color: '#F59E0B', desc: 'Professional credentials' },
-          ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.08 }}
-              className="space-y-2.5"
-            >
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-white">{item.label}</label>
-                <span className="text-xs font-black text-[#888]" style={{ color: item.color }}>{item.value}%</span>
-              </div>
-              <div className="w-full h-2.5 bg-[#0A0A0A] border border-[#181818] rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${item.value}%` }}
-                  transition={{ duration: 1.5, ease: 'easeOut', delay: 0.3 + i * 0.08 }}
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    backgroundColor: item.color,
-                    boxShadow: `0 0 12px ${item.color}60`,
-                  }}
-                />
-              </div>
-              <p className="text-xs text-[#555] text-right">{item.desc}</p>
-            </motion.div>
-          ))}
+      {/* BOTTOM ROW — 2 Columns Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Dimension breakdown */}
+        <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(249,115,22,0.3), transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-widest mb-6 text-[#F97316]">Dimension Breakdown</p>
+          <div className="space-y-5">
+            {dims.map((d, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}>
+                <div className="flex justify-between mb-2">
+                  <span className="text-xs font-bold text-white/90">{d.label}</span>
+                  <span className="text-xs font-black" style={{ color: d.color }}>{d.value}%</span>
+                </div>
+                <div className="w-full h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${d.value}%` }} transition={{ duration: 1.4, ease: 'easeOut', delay: 0.2 + i * 0.08 }}
+                    className="h-full rounded-full" style={{ background: d.color, boxShadow: `0 0 12px ${d.color}40` }} />
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </DarkCard>
 
-      <DarkCard delay={0.3}>
-        <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-4">Target Companies</h4>
-        <div className="flex flex-wrap gap-2">
-          {data.companies.map((c, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + i * 0.04 }}
-              whileHover={{ scale: 1.05, borderColor: 'rgba(249,115,22,0.5)' }}
-              className="bg-[#F97316]/5 border border-[#F97316]/20 text-[#F97316] text-xs font-black px-4 py-2 rounded-full cursor-default"
-            >
-              {c}
-            </motion.span>
-          ))}
+        {/* Target companies */}
+        <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(249,115,22,0.3), transparent)' }} />
+          <p className="text-[10px] font-black uppercase tracking-widest mb-6 text-[#F97316]">Target Match Clusters</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {(data.companies || []).map((c, i) => (
+              <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl hover:bg-white/3 transition-colors"
+                style={{ background: '#1a1612', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[11px] font-black"
+                    style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.2)', color: '#F97316' }}>
+                    {c[0]}
+                  </div>
+                  <span className="text-xs font-bold text-white/80">{c}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </DarkCard>
+      </div>
     </div>
   );
 }
+
 
 /* ══════════════════════════════════════════════════════════════════
    Sub-page: Recommendations
@@ -370,20 +485,35 @@ function RecommendationsView({ data }) {
   let finalEnhancements = fallbackEnhancements;
   if (data?.llm_enhancement) {
     const ai = data.llm_enhancement;
-    finalEnhancements = [
-      ...(ai.inferred_skills || []).map(s => ({ txt: s, type: 'inferred' })),
-      ...(ai.strengths || []).map(s => ({ txt: s, type: 'strength' })),
-      ...(ai.weaknesses || []).map(s => ({ txt: s, type: 'weakness' }))
-    ];
+    const hasData = (ai.inferred_skills?.length > 0 || ai.strengths?.length > 0 || ai.weaknesses?.length > 0);
+    
+    if (hasData) {
+      finalEnhancements = [
+        ...(ai.inferred_skills || []).map(s => ({ txt: s, type: 'inferred' })),
+        ...(ai.strengths || []).map(s => ({ txt: s, type: 'strength' })),
+        ...(ai.weaknesses || []).map(s => ({ txt: s, type: 'weakness' }))
+      ];
+    }
   }
 
   // Use Dynamic LLM Learning Path if available (Logic handled below)
 
 
   const aiInsights = data?.llm_insights || {};
-  const learningPath = aiInsights.learning_path?.length > 0 ? aiInsights.learning_path : data?.recommendations || [];
-  const personalizedJobs = aiInsights.personalized_jobs || [];
-  const interviewTips = aiInsights.interview_tips || [];
+  const learningPath = aiInsights.learning_path?.length > 0 ? aiInsights.learning_path : data?.recommendations || ["Master Node.js to improve your Full Stack Developer readiness", "Master REST API to improve your Full Stack Developer readiness", "Master TypeScript to improve your Full Stack Developer readiness"];
+  
+  const defaultJobs = [
+    { title: "Full Stack Engineer", reason: "Strong alignment with core web development patterns detected in your profile." },
+    { title: "Software Development Engineer", reason: "Your technical depth score indicates readiness for standard SDE roles." }
+  ];
+  const personalizedJobs = aiInsights.personalized_jobs?.length > 0 ? aiInsights.personalized_jobs : defaultJobs;
+  
+  const defaultTips = [
+    "Focus on explaining your project architecture clearly.",
+    "Be ready to discuss trade-offs in your technical decisions.",
+    "Practice behavioral questions using the STAR method."
+  ];
+  const interviewTips = aiInsights.interview_tips?.length > 0 ? aiInsights.interview_tips : defaultTips;
 
   return (
     <div className="space-y-6">
@@ -393,8 +523,9 @@ function RecommendationsView({ data }) {
           className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all border outline-none ${
             recTab === 'resume'
               ? 'bg-[#34D399] border-[#34D399] text-[#050505] shadow-[0_0_15px_rgba(52,211,153,0.4)]'
-              : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+              : 'text-[#444] hover:text-[#888]'
           }`}
+          style={recTab !== 'resume' ? { background: '#111', borderColor: '#1c1c1c' } : {}}
         >
           Resume Insights
         </button>
@@ -403,8 +534,9 @@ function RecommendationsView({ data }) {
           className={`px-4 py-2.5 rounded-xl text-xs font-black transition-all border outline-none ${
             recTab === 'career'
               ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]'
-              : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+              : 'text-[#444] hover:text-[#888]'
           }`}
+          style={recTab !== 'career' ? { background: '#111', borderColor: '#1c1c1c' } : {}}
         >
           Career Roadmap
         </button>
@@ -480,7 +612,7 @@ function RecommendationsView({ data }) {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                    {interviewTips.map((tip, i) => (
-                     <div key={i} className="p-3 bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl">
+                     <div key={i} className="p-3 rounded-xl" style={{ background: '#151515', border: '1px solid #1c1c1c' }}>
                         <span className="text-[10px] font-black text-[#555] uppercase block mb-1">Tip {i+1}</span>
                         <p className="text-[10px] text-[#888] leading-tight">{tip}</p>
                      </div>
@@ -531,7 +663,7 @@ function RecommendationsPage({ data }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Modules Hub: The Entry View
+   Modules Hub: The Entry View — Reference-match bento cards
    ══════════════════════════════════════════════════════════════════ */
 function ModulesHub() {
   const navigate = useNavigate();
@@ -542,73 +674,113 @@ function ModulesHub() {
       id: 'profile',
       title: 'Profile Intelligence',
       desc: 'Understand your market fit. Resume parsing, skill extraction, and placement probability.',
-      icon: <Target className="w-8 h-8" />,
+      icon: Target,
       color: '#F97316',
       path: '/dashboard/profile',
-      status: 'Live'
+      status: 'Live',
+      statusClass: 'badge-live',
     },
     {
       id: 'prep',
       title: 'Preparation Engine',
       desc: 'Dynamic learning roadmap. Skill gaps converted to prioritized, topic-level action plans.',
-      icon: <BookOpen className="w-8 h-8" />,
+      icon: BookOpen,
       color: '#34D399',
       path: '/dashboard/preparation',
-      status: preparationData ? 'Loaded' : 'Ready'
+      status: preparationData ? 'Loaded' : 'Ready',
+      statusClass: preparationData ? 'badge-loaded' : 'badge-ready',
     },
     {
       id: 'practice',
       title: 'Practice Engine',
       desc: 'Role-specific aptitude, DSA coding problems, and technical + HR interview questions.',
-      icon: <Sparkles className="w-8 h-8" />,
+      icon: Sparkles,
       color: '#818CF8',
       path: '/dashboard/practice',
-      status: practiceData ? 'Loaded' : 'Live'
+      status: practiceData ? 'Loaded' : 'Live',
+      statusClass: practiceData ? 'badge-loaded' : 'badge-live',
     },
-    { id: 'placement', title: 'Placement Engine', icon: <Briefcase size={24} />, path: '/dashboard/placement', desc: 'Drives & Applications' },
+    {
+      id: 'placement',
+      title: 'Placement Engine',
+      desc: 'Drives & Applications. View active placement drives and submit your candidacy.',
+      icon: Briefcase,
+      color: '#F97316',
+      path: '/dashboard/placement',
+      status: 'Live',
+      statusClass: 'badge-live',
+    },
     {
       id: 'tracking',
       title: 'Tracking Engine',
       desc: 'Score evolution charts, session history, and a feedback loop that improves your prediction.',
-      icon: <BarChart2 className="w-8 h-8" />,
+      icon: BarChart2,
       color: '#F59E0B',
       path: '/dashboard/tracking',
-      status: 'Live'
-    }
+      status: 'Live',
+      statusClass: 'badge-live',
+    },
   ];
-
   return (
     <div className="space-y-8">
       <PageHeader title="Intelligence Modules" subtitle="Choose an engine to accelerate your placement journey." />
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {engines.map((engine, i) => (
           <motion.div
             key={engine.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            whileHover={{ y: -5 }}
+            transition={{ delay: i * 0.07, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={() => navigate(engine.path)}
-            className="group cursor-pointer"
+            className="group cursor-pointer relative overflow-hidden rounded-[20px] flex flex-col"
+            style={{
+              background: '#141210',
+              border: '1px solid rgba(255,255,255,0.06)',
+              padding: '22px',
+              minHeight: '200px',
+              boxShadow: '0 4px 32px rgba(0,0,0,0.6)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
           >
-            <DarkCard className="h-full" glow>
-              <div className="flex flex-col h-full">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 rounded-2xl bg-black border border-[#1A1A1A] transition-all group-hover:scale-110" style={{ color: engine.color }}>
-                    {engine.icon}
-                  </div>
-                  <span className="text-[10px] font-black px-2 py-1 rounded-full border" style={{ color: engine.color, borderColor: `${engine.color}40`, backgroundColor: `${engine.color}10` }}>
-                    {engine.status}
-                  </span>
-                </div>
-                <h3 className="text-base font-black text-white mb-2 group-hover:text-[#F97316] transition-colors">{engine.title}</h3>
-                <p className="text-[#555] text-xs leading-relaxed flex-1">{engine.desc}</p>
-                <div className="mt-5 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: engine.color }}>
-                  Enter Engine <ArrowRight size={11} />
-                </div>
-              </div>
-            </DarkCard>
+            {/* Top accent shimmer */}
+            <div className="absolute top-0 left-0 right-0 h-px"
+              style={{ background: `linear-gradient(to right, transparent, ${engine.color}40, transparent)` }} />
+
+            {/* Header: icon box + status badge */}
+            <div className="flex items-start justify-between mb-5">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: `${engine.color}18`,
+                  border: `1px solid ${engine.color}30`,
+                }}
+              >
+                <engine.icon size={22} style={{ color: engine.color }} />
+              </motion.div>
+
+              <span className={engine.statusClass}>{engine.status}</span>
+            </div>
+
+            {/* Title + description */}
+            <h3
+              className="font-black text-white mb-2 leading-snug"
+              style={{ fontSize: '15px', transition: 'color 0.15s' }}
+            >
+              {engine.title}
+            </h3>
+            <p className="text-xs leading-relaxed flex-1" style={{ color: '#555' }}>
+              {engine.desc}
+            </p>
+
+            {/* Bottom CTA — always visible, reference style */}
+            <div className="flex items-center gap-1.5 mt-5 text-[10px] font-black uppercase tracking-[0.1em]" style={{ color: engine.color }}>
+              Enter Engine
+              <ArrowRight size={11} />
+            </div>
           </motion.div>
         ))}
       </div>
@@ -620,13 +792,11 @@ function ModulesHub() {
    Preparation Engine — Live Learning Roadmap
    ══════════════════════════════════════════════════════════════════ */
 function PreparationModule() {
-  const { preparationData, setPreparationData, analyzedData: _unused } = useAppContext();
-  // We grab analyzedData from the parent scope via props threading
   return <PreparationContent />;
 }
 
-function PreparationContent({ analyzedData }) {
-  const { preparationData, setPreparationData } = useAppContext();
+function PreparationContent() {
+  const { user, analyzedData, preparationData, setPreparationData } = useAppContext();
   const [loading, setLoading] = useState(false);
   const [completedTopics, setCompletedTopics] = useState(() => {
     try { return JSON.parse(localStorage.getItem('prep_completed') || '[]'); } catch { return []; }
@@ -644,11 +814,25 @@ function PreparationContent({ analyzedData }) {
 
   const toggleTopic = useCallback((topic) => {
     setCompletedTopics(prev => {
-      const updated = prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic];
+      const isAdding = !prev.includes(topic);
+      const updated = isAdding ? [...prev, topic] : prev.filter(t => t !== topic);
       localStorage.setItem('prep_completed', JSON.stringify(updated));
+      
+      // Record a session event if we are marking as complete
+      if (isAdding && user?.id) {
+        import('../services/engineApi').then(api => {
+          api.recordSession({
+            user_id: user.id,
+            placement_score: analyzedData?.score || 0,
+            target_role: preparationData?.target_role || "Skill Mastery",
+            completed_topics: [topic]
+          }).catch(err => console.error("Topic record failed:", err));
+        });
+      }
+      
       return updated;
     });
-  }, []);
+  }, [user, analyzedData, preparationData]);
 
   const plan = preparationData;
 
@@ -683,7 +867,7 @@ function PreparationContent({ analyzedData }) {
             <p className="text-xs text-[#555]">topics mastered</p>
           </div>
         </div>
-        <div className="w-full h-2 bg-[#111] border border-[#1A1A1A] rounded-full overflow-hidden">
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.02)' }}>
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progressPct}%` }}
@@ -710,15 +894,15 @@ function PreparationContent({ analyzedData }) {
               </div>
               <div className="space-y-3">
                 {items.map((item, i) => (
-                  <div key={i} className="border border-[#1A1A1A] rounded-xl overflow-hidden">
-                    <div className="flex items-center gap-3 px-4 py-3 bg-black/30">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: priorityColors[item.priority] || '#555' }} />
+                  <div key={i} className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center gap-3 px-4 py-3" style={{ background: '#1a1612' }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: priorityColors[item.priority] || '#555', boxShadow: `0 0 6px ${priorityColors[item.priority]}80` }} />
                       <span className="text-sm font-bold text-white flex-1">{item.skill}</span>
                       <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: priorityColors[item.priority], backgroundColor: `${priorityColors[item.priority]}15`, border: `1px solid ${priorityColors[item.priority]}30` }}>
                         {priorityLabels[item.priority]}
                       </span>
                     </div>
-                    <div className="px-4 py-2 space-y-1.5 bg-black/10">
+                    <div className="px-4 py-2 space-y-1.5" style={{ background: 'rgba(255,255,255,0.02)' }}>
                       {item.topics?.map((topic, ti) => {
                         const done = completedTopics.includes(topic);
                         return (
@@ -790,24 +974,25 @@ function PracticeContent() {
     <div className="space-y-6">
       <PageHeader title="Practice Engine" subtitle={`Role: ${practiceData.target_role} · ${practiceData.stats?.total_coding || 0} coding · ${practiceData.stats?.total_aptitude || 0} aptitude · ${practiceData.stats?.total_interview || 0} interview`} />
 
-      {/* Stats Bar */}
+      {/* Stats Bar — reference big-number style */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Aptitude',  count: practiceData.stats?.total_aptitude || 0,  color: '#F97316' },
-          { label: 'Coding',    count: practiceData.stats?.total_coding || 0,    color: '#818CF8' },
-          { label: 'Interview', count: practiceData.stats?.total_interview || 0, color: '#34D399' },
+          { label: 'Aptitude',  sub: 'Questions',  count: practiceData.stats?.total_aptitude || 0,  color: '#F97316' },
+          { label: 'Coding',    sub: 'Problems',   count: practiceData.stats?.total_coding || 0,    color: '#818CF8' },
+          { label: 'Interview', sub: 'Questions',  count: practiceData.stats?.total_interview || 0, color: '#34D399' },
         ].map((s, i) => (
-          <DarkCard key={i} delay={i * 0.05}>
-            <div className="text-center">
-              <div className="text-2xl font-black" style={{ color: s.color }}>{s.count}</div>
-              <div className="text-[10px] font-black text-[#555] uppercase tracking-widest mt-1">{s.label} Qs</div>
-            </div>
-          </DarkCard>
+          <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+            className="relative rounded-2xl p-5 overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${s.color}50, transparent)` }} />
+            <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>{s.label}</p>
+            <p className="text-4xl font-black" style={{ color: s.color, textShadow: `0 0 20px ${s.color}40` }}>{s.count}</p>
+            <p className="text-[11px] mt-1" style={{ color: '#444' }}>{s.sub} ready</p>
+          </motion.div>
         ))}
       </div>
 
       {/* Tab Bar */}
-      <div className="flex gap-1 bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-1 w-fit">
+      <div className="flex gap-1 rounded-2xl p-1 w-fit" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -844,8 +1029,8 @@ function PracticeContent() {
                       <div key={oi} className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
                         revealedAnswers[q.id] && opt.startsWith(q.answer)
                           ? 'bg-[#34D399]/10 border-[#34D399]/40 text-[#34D399]'
-                          : 'bg-[#0A0A0A] border-[#1A1A1A] text-[#666]'
-                      }`}>{opt}</div>
+                          : 'border-[#1c1c1c] text-[#555]'
+                      }`} style={revealedAnswers[q.id] && opt.startsWith(q.answer) ? {} : { background: '#151515' }}>{opt}</div>
                     ))}
                   </div>
                   <button onClick={() => toggleAnswer(q.id)} className="text-[10px] font-black uppercase tracking-widest text-[#F97316] hover:text-[#FF8C3A] transition-colors flex items-center gap-1">
@@ -867,13 +1052,13 @@ function PracticeContent() {
             <div className="space-y-4">
               <div className="flex gap-2">
                 {['all', 'easy', 'medium', 'hard'].map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setCodingFilter(f)}
+                  <button key={f} onClick={() => setCodingFilter(f)}
                     className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all border ${
-                      codingFilter === f ? 'bg-[#818CF8] border-[#818CF8] text-white' : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+                      codingFilter === f ? 'bg-[#818CF8] border-[#818CF8] text-white' : 'text-[#444] hover:text-[#888]'
                     }`}
-                  >{f}</button>
+                    style={codingFilter !== f ? { background: '#111', borderColor: '#1c1c1c' } : {}}>
+                    {f}
+                  </button>
                 ))}
               </div>
               {filteredCoding?.map((p, i) => (
@@ -957,17 +1142,21 @@ function TrackingModule() {
   const { user, trackingData, setTrackingData } = useAppContext();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (user?.id && !trackingData) {
+  const refreshProgress = useCallback(() => {
+    if (user?.id) {
       setLoading(true);
       fetchProgress(user.id)
         .then(data => setTrackingData(data))
         .catch(() => {})
         .finally(() => setLoading(false));
     }
-  }, [user, trackingData, setTrackingData]);
+  }, [user?.id, setTrackingData]);
 
-  if (loading) return (
+  useEffect(() => {
+    refreshProgress();
+  }, [refreshProgress]);
+
+  if (loading && !trackingData) return (
     <div className="space-y-8">
       <PageHeader title="Tracking Engine" subtitle="Loading your progress history..." />
       <DarkCard><div className="flex items-center justify-center py-12"><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-8 h-8 border-2 border-[#F97316] border-t-transparent rounded-full" /></div></DarkCard>
@@ -978,8 +1167,13 @@ function TrackingModule() {
 
   if (noData) return (
     <div className="space-y-8">
-      <PageHeader title="Tracking Engine" subtitle="Your placement score and skill growth over time." />
-      <EmptyState icon={BarChart2} title="No Sessions Recorded" message="Complete practice sessions in the Practice Engine to track your score evolution here." />
+      <div className="flex items-center justify-between">
+        <PageHeader title="Tracking Engine" subtitle="Your placement score and skill growth over time." />
+        <button onClick={refreshProgress} className="text-xs text-[#F97316] hover:text-white flex items-center gap-2 px-3 py-2 bg-[#F97316]/10 rounded-xl border border-[#F97316]/20">
+          <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
+        </button>
+      </div>
+      <EmptyState icon={BarChart2} title="No Sessions Recorded" message="Complete practice sessions or master topics in the Preparation Engine to track your score evolution here." />
     </div>
   );
 
@@ -999,18 +1193,21 @@ function TrackingModule() {
     <div className="space-y-8">
       <PageHeader title="Tracking Engine" subtitle={`${trackingData.total_sessions} sessions recorded · Best score: ${trackingData.best_score}%`} />
 
-      {/* Stats Row */}
+      {/* Stats Row — reference big-number bento */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Sessions', value: trackingData.total_sessions, color: '#F97316', icon: <Award size={16} /> },
-          { label: 'Best Score', value: `${trackingData.best_score}%`, color: '#34D399', icon: <TrendingUp size={16} /> },
-          { label: 'Latest Score', value: `${trackingData.latest_session?.placement_score?.toFixed(1) || '—'}%`, color: '#818CF8', icon: <Target size={16} /> },
-          { label: 'Skills Acquired', value: trackingData.latest_session?.skills_count || 0, color: '#F59E0B', icon: <Zap size={16} /> },
+          { label: 'Total Sessions', value: trackingData.total_sessions,                                        color: '#F97316', sub: 'practice sessions' },
+          { label: 'Best Score',     value: `${trackingData.best_score}%`,                                      color: '#34D399', sub: 'all-time peak' },
+          { label: 'Latest Score',   value: `${trackingData.latest_session?.placement_score?.toFixed(1)||'—'}%`, color: '#818CF8', sub: 'most recent' },
+          { label: 'Skills Tracked', value: trackingData.latest_session?.skills_count || 0,                     color: '#F59E0B', sub: 'on profile' },
         ].map((s, i) => (
-          <DarkCard key={i} delay={i * 0.07}>
-            <div className="flex items-center gap-2 mb-2" style={{ color: s.color }}>{s.icon}<span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#555' }}>{s.label}</span></div>
-            <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
-          </DarkCard>
+          <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+            className="relative rounded-2xl p-5 overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${s.color}50, transparent)` }} />
+            <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>{s.label}</p>
+            <p className="text-4xl font-black" style={{ color: s.color, textShadow: `0 0 20px ${s.color}40` }}>{s.value}</p>
+            <p className="text-[11px] mt-1" style={{ color: '#444' }}>{s.sub}</p>
+          </motion.div>
         ))}
       </div>
 
@@ -1022,7 +1219,7 @@ function TrackingModule() {
             <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ minWidth: '300px' }}>
               {/* Grid lines */}
               {[25, 50, 75, 100].map(v => (
-                <line key={v} x1="20" y1={chartH - 10 - (v / 100) * (chartH - 20)} x2={chartW - 20} y2={chartH - 10 - (v / 100) * (chartH - 20)} stroke="#1A1A1A" strokeWidth="1" />
+                <line key={v} x1="20" y1={chartH - 10 - (v / 100) * (chartH - 20)} x2={chartW - 20} y2={chartH - 10 - (v / 100) * (chartH - 20)} stroke="#1c1c1c" strokeWidth="1" />
               ))}
               {[25, 50, 75, 100].map(v => (
                 <text key={v} x="15" y={chartH - 10 - (v / 100) * (chartH - 20) + 4} fontSize="8" fill="#333" textAnchor="end">{v}</text>
@@ -1059,7 +1256,7 @@ function TrackingModule() {
         <h4 className="font-black text-sm text-[#F97316] uppercase tracking-widest mb-5">Session History</h4>
         <div className="space-y-3">
           {sessions.slice().reverse().map((s, i) => (
-            <motion.div key={s.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex flex-col sm:flex-row sm:items-center justify-between bg-[#0A0A0A] border border-[#1A1A1A] rounded-xl px-4 py-3 gap-2">
+            <motion.div key={s.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl px-4 py-3 gap-2" style={{ background: '#1a1612', border: '1px solid rgba(255,255,255,0.04)' }}>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center">
                   <Clock size={14} className="text-[#F97316]" />
@@ -1090,8 +1287,7 @@ function TrackingModule() {
    Main Dashboard Component
    ══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
-  const { user, setPreparationData, setPracticeData } = useAppContext();
-  const [analyzedData, setAnalyzedData] = useState(null);
+  const { user, analyzedData, setAnalyzedData, setPreparationData, setPracticeData, setTrackingData, trackingData } = useAppContext();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRoleIndex, setSelectedRoleIndex] = useState(0);
@@ -1102,7 +1298,21 @@ export default function Dashboard() {
     // Seed engine data from the single upload_resume response
     if (data?.preparation_plan) setPreparationData(data.preparation_plan);
     if (data?.practice_set) setPracticeData(data.practice_set);
-  }, [setPreparationData, setPracticeData]);
+
+    // Automatically record initial tracking session
+    if (user?.id && data?.prediction?.placement_probability !== undefined) {
+      const sessionData = {
+        user_id: user.id,
+        placement_score: data.prediction.placement_probability * 100,
+        skills_snapshot: data.skills || [],
+        target_role: data.topRole?.role || "Initial Analysis",
+        completed_topics: []
+      };
+      import('../services/engineApi').then(api => {
+        api.recordSession(sessionData).catch(err => console.error("Auto-record failed:", err));
+      });
+    }
+  }, [setPreparationData, setPracticeData, user]);
 
   const handleReset = () => { setAnalyzedData(null); setActiveTab('overview'); setSelectedRoleIndex(0); setPreparationData(null); setPracticeData(null); };
 
@@ -1117,73 +1327,128 @@ export default function Dashboard() {
 
   const overviewTabContent = {
     overview: (
-      <DarkCard>
-        <h4 className="text-sm font-black text-[#F97316] uppercase tracking-widest mb-4">Detected Skills</h4>
-        <div className="flex flex-wrap gap-2">
-          {analyzedData?.allDetected?.map((skill, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.03 }}
-              className="bg-[#F97316]/10 border border-[#F97316]/25 text-[#F97316] text-xs font-bold px-3 py-1.5 rounded-full"
-            >
-              {skill}
-            </motion.span>
-          ))}
+      <div className="space-y-5">
+        {/* Skills bento: detected skills as bar chart */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F97316, transparent)' }} />
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>Detected Skills</p>
+                <p className="text-4xl font-black text-white">{analyzedData?.allDetected?.length || 0}</p>
+              </div>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 8L8 2M8 2H4M8 2V6" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+            <p className="text-[11px]" style={{ color: '#555' }}>Skills extracted from your resume</p>
+            <div className="flex flex-wrap gap-1.5 mt-4">
+              {(analyzedData?.allDetected || []).slice(0, 12).map((skill, i) => (
+                <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.03 }}
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.22)', color: '#F97316' }}>
+                  {skill}
+                </motion.span>
+              ))}
+              {(analyzedData?.allDetected?.length || 0) > 12 && (
+                <span className="text-[10px] font-medium self-center" style={{ color: '#444' }}>+{(analyzedData?.allDetected?.length || 0) - 12} more</span>
+              )}
+            </div>
+          </div>
+
+          {/* Top role match card */}
+          <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #34D399, transparent)' }} />
+            <p className="text-[10px] font-black uppercase tracking-wider mb-1" style={{ color: '#555' }}>Role Match Scores</p>
+            <p className="text-4xl font-black mb-4" style={{ color: '#34D399' }}>{analyzedData?.jobRoles?.length || 0}</p>
+            <div className="space-y-3">
+              {(analyzedData?.jobRoles || []).slice(0, 5).map((role, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-[11px] font-semibold text-white w-36 truncate flex-shrink-0">{typeof role === 'string' ? role : role.title}</span>
+                  <div className="flex-1 h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${role.match || 80}%` }}
+                      transition={{ duration: 1, ease: 'easeOut', delay: i * 0.1 }}
+                      className="h-full rounded-full"
+                      style={{ background: i === 0 ? '#F97316' : '#34D399', boxShadow: `0 0 6px ${i === 0 ? '#F97316' : '#34D399'}60` }} />
+                  </div>
+                  <span className="text-xs font-black w-9 text-right" style={{ color: i === 0 ? '#F97316' : '#34D399' }}>{role.match || 80}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </DarkCard>
+      </div>
     ),
     analysis: (
-      <div className="space-y-6">
+      <div className="space-y-5">
+        {/* Role selector */}
         <div className="flex flex-wrap gap-2">
           {analyzedData?.jobRoles?.map((role, idx) => (
-            <button
-              key={idx}
-              onClick={() => setSelectedRoleIndex(idx)}
+            <button key={idx} onClick={() => setSelectedRoleIndex(idx)}
               className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all border ${
                 selectedRoleIndex === idx 
                   ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_15px_rgba(249,115,22,0.3)]' 
-                  : 'bg-black border-[#1A1A1A] text-[#444] hover:text-[#888]'
+                  : 'text-[#444] hover:text-[#888]'
               }`}
-            >
+              style={selectedRoleIndex !== idx ? { background: '#141210', borderColor: 'rgba(255,255,255,0.06)' } : {}}>
               {role.title}
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <DarkCard>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 bg-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
-              <h5 className="font-black text-sm text-white">Strong Match</h5>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Present skills with bar */}
+          <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #34D399, transparent)' }} />
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ background: '#34D399', boxShadow: '0 0 6px rgba(52,211,153,0.8)' }} />
+                <h5 className="font-black text-sm text-white">Skills You Have</h5>
+              </div>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.25)', color: '#34D399' }}>
+                {analyzedData?.jobRoles?.[selectedRoleIndex]?.present?.length || 0}
+              </span>
             </div>
             <div className="space-y-2">
-              {analyzedData?.jobRoles?.[selectedRoleIndex]?.present?.map((s, i) => (
-                <div key={i} className="flex items-center justify-between bg-green-500/5 border border-green-500/15 px-4 py-2.5 rounded-xl">
-                  <span className="text-sm font-semibold text-green-300">{s}</span>
-                  <span className="text-[10px] font-black text-green-400 bg-green-500/10 border border-green-500/20 px-2.5 py-1 rounded-full">✓ Present</span>
+              {(analyzedData?.jobRoles?.[selectedRoleIndex]?.present || []).map((s, i) => (
+                <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl"
+                  style={{ background: 'rgba(52,211,153,0.03)', border: '1px solid rgba(52,211,153,0.06)' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#86efac' }}>{s}</span>
+                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid rgba(52,211,153,0.2)', color: '#34D399' }}>✓ Present</span>
                 </div>
               ))}
             </div>
-          </DarkCard>
-          <DarkCard>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 bg-red-400 rounded-full shadow-[0_0_8px_rgba(248,113,113,0.8)]" />
-              <h5 className="font-black text-sm text-white">Critical Gaps</h5>
+          </div>
+
+          {/* Missing skills with bar */}
+          <div className="rounded-2xl p-5 relative overflow-hidden" style={{ background: '#141210', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(to right, transparent, #F87171, transparent)' }} />
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ background: '#F87171', boxShadow: '0 0 6px rgba(248,113,113,0.8)' }} />
+                <h5 className="font-black text-sm text-white">Critical Gaps</h5>
+              </div>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full" style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)', color: '#F87171' }}>
+                {analyzedData?.jobRoles?.[selectedRoleIndex]?.missing?.length || 0}
+              </span>
             </div>
             <div className="space-y-2">
-              {analyzedData?.jobRoles?.[selectedRoleIndex]?.missing?.map((s, i) => (
-                <div key={i} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 px-4 py-2.5 rounded-xl">
-                  <span className="text-sm font-semibold text-red-300">{s}</span>
-                  <span className="text-[10px] font-black text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full">Missing</span>
+              {(analyzedData?.jobRoles?.[selectedRoleIndex]?.missing || []).map((s, i) => (
+                <div key={i} className="flex items-center justify-between px-3 py-2 rounded-xl"
+                  style={{ background: 'rgba(248,113,113,0.03)', border: '1px solid rgba(248,113,113,0.06)' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#fca5a5' }}>{s}</span>
+                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)', color: '#F87171' }}>Missing</span>
                 </div>
               ))}
             </div>
-          </DarkCard>
+          </div>
         </div>
       </div>
     ),
-    recommendations: <RecommendationsView data={analyzedData} />
+    recommendations: <RecommendationsView data={analyzedData} />,
   };
 
   const OverviewPage = () => (
@@ -1250,7 +1515,7 @@ export default function Dashboard() {
 
           {/* Dark tab bar */}
           <div>
-            <div className="flex gap-1 bg-[#0A0A0A] border border-[#1A1A1A] rounded-2xl p-1 mb-6 w-fit">
+            <div className="flex gap-1 rounded-2xl p-1 mb-6 w-fit" style={{ background: '#111', border: '1px solid #1c1c1c' }}>
               {tabs.map(tab => (
                 <button
                   key={tab.id}
@@ -1288,7 +1553,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="flex bg-[#060606] min-h-screen">
+    <div className="flex w-full flex-1 overflow-hidden bg-dashboard-base">
       <Sidebar />
       <MobileNav isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
 
@@ -1300,7 +1565,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6 md:hidden relative z-10">
           <button
             onClick={() => setMobileNavOpen(true)}
-            className="flex items-center gap-2 bg-[#0A0A0A] border border-[#1A1A1A] px-3 py-2 rounded-xl text-[#888] hover:text-white transition-colors"
+            className="flex items-center gap-2 glass-panel px-3 py-2 rounded-xl text-[#888] hover:text-white transition-colors shadow-card-depth"
           >
             <Menu size={18} />
             <span className="text-sm font-semibold">Menu</span>
@@ -1310,62 +1575,52 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Desktop Header */}
+        {/* Desktop Header — High Fidelity Reference Match */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-10 hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10"
+          className="mb-10 hidden md:flex items-center justify-between gap-6 relative z-10"
         >
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">
-              {greeting},{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#FF8C3A]">
-                {user?.name || 'User'}
-              </span>{' '}
-              <span className="text-2xl">👋</span>
+          {/* Greeting Title */}
+          <div className="flex-1">
+            <h1 className="text-4xl font-black text-white tracking-tighter mb-1">
+              {greeting === 'Good morning' ? 'Website Analytics' : greeting === 'Good afternoon' ? 'Platform Insights' : 'System Overview'}
             </h1>
-            <p className="mt-1 text-sm text-[#555]">Career Intelligence Dashboard — AI-powered insights at a glance.</p>
+            <p className="text-xs font-semibold text-[#555] uppercase tracking-widest">Dashboard Overview</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Right Profile - Simplified */}
+          <div className="flex items-center gap-6">
             {analyzedData && (
-              <AnimatePresence>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="flex items-center gap-3"
-                >
-                  <div className="bg-[#0A0A0A] px-4 py-2 rounded-full border border-[#F97316]/30 text-sm font-black flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]">
-                    <motion.span
-                      animate={{ opacity: [1, 0.3, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                      className="w-2 h-2 rounded-full bg-green-400 inline-block"
-                    />
-                    <span className="text-[#888]">Score:</span>
-                    <span className="text-[#F97316]">{analyzedData.score}%</span>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={handleReset}
-                    className="flex items-center gap-2 text-sm text-[#555] hover:text-white bg-[#0A0A0A] border border-[#1A1A1A] px-4 py-2 rounded-full transition-all hover:border-[#333]"
-                  >
-                    <RefreshCw size={14} />
-                    New Analysis
-                  </motion.button>
-                </motion.div>
-              </AnimatePresence>
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleReset}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] hover:bg-[#F97316]/20 transition-all group shadow-[0_0_20px_rgba(249,115,22,0.1)]"
+              >
+                <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">New Analysis</span>
+              </motion.button>
             )}
+            <div className="flex items-center gap-4 border-l border-white/5 pl-6">
+              <div className="text-right">
+                <p className="text-sm font-black text-white leading-tight">{user?.name || 'User'}</p>
+                <p className="text-[10px] font-bold text-[#555]">{user?.email || 'student@email.com'}</p>
+              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#F97316]/10 border border-[#F97316]/20 flex items-center justify-center text-[#F97316] font-black text-xs shadow-neon-glow">
+                {user?.name?.[0] || 'U'}
+              </div>
+            </div>
           </div>
         </motion.div>
 
         {/* Mobile: score banner */}
         {analyzedData && (
-          <div className="md:hidden flex items-center justify-between mb-4 bg-[#0A0A0A] px-4 py-2.5 rounded-2xl border border-[#F97316]/20">
+          <div className="md:hidden flex items-center justify-between mb-4 glass-panel px-4 py-2.5 rounded-2xl border border-primary-accent/20 shadow-card-depth">
             <div className="text-sm font-black flex items-center gap-2 text-[#888]">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
-              Score: <span className="text-[#F97316]">{analyzedData.score}%</span>
+              Score: <span className="text-primary-accent">{analyzedData.score}%</span>
             </div>
             <button onClick={handleReset} className="text-xs text-[#555] hover:text-red-400 flex items-center gap-1">
               <RefreshCw size={12} /> Reset

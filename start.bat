@@ -4,7 +4,7 @@ color 0A
 echo.
 echo ================================================================
 echo  AI Placement Intelligence Platform - Startup Script
-echo  Version: 4.2.0 (ML Compatibility + State Machine Integrity)
+echo  Version: 5.2.0 (Python 3.10 Compatible + ML Optimized)
 echo ================================================================
 echo.
 
@@ -17,7 +17,27 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
-echo [OK] Python found
+for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYTHON_VERSION=%%i
+echo [OK] Python %PYTHON_VERSION% found
+
+REM Check Python version compatibility
+for /f "tokens=1,2 delims=." %%a in ("%PYTHON_VERSION%") do (
+    set MAJOR=%%a
+    set MINOR=%%b
+)
+if %MAJOR% LSS 3 (
+    echo [ERROR] Python 3.9+ is required, but you have Python %MAJOR%.%MINOR%
+    pause
+    exit /b 1
+)
+if %MAJOR% EQU 3 if %MINOR% LSS 9 (
+    echo [ERROR] Python 3.9+ is required, but you have Python %MAJOR%.%MINOR%
+    pause
+    exit /b 1
+)
+if %MAJOR% GEQ 3 if %MINOR% GEQ 9 (
+    echo [INFO] Python version is compatible (requires 3.9+)
+)
 echo.
 
 REM Check if Node.js is installed
@@ -55,19 +75,67 @@ echo [OK] Virtual environment activated
 
 echo.
 echo [3/8] Installing / Verifying Python Dependencies...
-"%PYTHON_EXEC%" -m pip install --upgrade pip >nul 2>&1
-"%PYTHON_EXEC%" -m pip install -r requirements.txt >nul 2>&1
+"%PYTHON_EXEC%" -m pip install --upgrade pip setuptools wheel --quiet >nul 2>&1
+if not exist requirements.txt (
+    echo [ERROR] requirements.txt not found in current directory
+    pause
+    exit /b 1
+)
+
+echo      Installing packages from requirements.txt...
+echo      This may take several minutes on first install...
+
+REM Attempt installation with optimized flags for Python 3.10
+"%PYTHON_EXEC%" -m pip install --no-cache-dir -q -r requirements.txt 2>pip_install.log
 if errorlevel 1 (
-    echo [WARN] Some dependencies may have failed - attempting to continue...
+    echo [WARN] Installation had issues - checking pip log...
+    
+    REM Retry without cache and with slightly relaxed constraints
+    echo      Retrying installation with fallback strategy...
+    "%PYTHON_EXEC%" -m pip install --no-cache-dir --upgrade -r requirements.txt 2>&1 | findstr /V "already satisfied"
+    
+    if errorlevel 1 (
+        echo.
+        echo [ERROR] Dependency installation failed
+        echo.
+        echo Troubleshooting steps:
+        echo   1. Delete the 'venv' folder: rmdir /s /q venv
+        echo   2. Run start.bat again to create a fresh environment
+        echo   3. If still failing, check pip_install.log for details
+        echo.
+        pause
+        exit /b 1
+    ) else (
+        echo [OK] Python dependencies installed ^(with fallbacks^)
+    )
 ) else (
     echo [OK] Python dependencies ready
 )
 
+REM Verify critical packages are installed (including new ML dependencies)
+echo      Verifying critical packages...
+"%PYTHON_EXEC%" -c "import sqlalchemy, fastapi, uvicorn, spacy, xgboost, sklearn; print('All critical packages OK')" >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Critical packages not installed!
+    echo [INFO] Running targeted installation...
+    "%PYTHON_EXEC%" -m pip install --no-cache-dir fastapi uvicorn sqlalchemy spacy pandas numpy xgboost scikit-learn
+    if errorlevel 1 (
+        echo [ERROR] Installation failed - deleting venv...
+        cd ..
+        rmdir /s /q venv
+        echo [INFO] Virtual environment deleted. Please run start.bat again.
+        pause
+        exit /b 1
+    )
+)
+
 echo.
 echo [4/8] Downloading spaCy NLP Model...
+REM Download spaCy model - it's needed for text processing
 "%PYTHON_EXEC%" -m spacy download en_core_web_sm >nul 2>&1
 if errorlevel 1 (
     echo [WARN] spaCy model download failed - NLP features may be limited
+    echo        You can retry manually: python -m spacy download en_core_web_sm
 ) else (
     echo [OK] spaCy model ready
 )
@@ -105,6 +173,24 @@ if /i "!SEED_CHOICE!"=="y" (
     "%PYTHON_EXEC%" seed_placement.py
     echo [OK] Placement data seeded successfully
 )
+
+echo.
+echo [6/8] Verifying AI Model Files...
+set "MODELS_MISSING=0"
+if not exist backend\ai_model\models\placement_predictor.pkl (
+    echo [WARN] placement_predictor.pkl not found
+    set "MODELS_MISSING=1"
+)
+if not exist backend\ai_model\models\skill_vectorizer.pkl (
+    echo [WARN] skill_vectorizer.pkl not found
+    set "MODELS_MISSING=1"
+)
+
+if "!MODELS_MISSING!"=="1" (
+    echo [WARN] Some ML models are missing. Resume analysis may not work.
+) else (
+    echo [OK] All ML models verified
+)
 cd ..
 
 echo.
@@ -136,29 +222,53 @@ echo [9/9] Starting All Services...
 echo.
 echo ================================================================
 
-REM ── API Keys (replace with your actual keys) ────────────────────
-set GEMINI_API_KEY=YOUR_PRIMARY_GEMINI_API_KEY_HERE
-set FALLBACK_GEMINI_API_KEY=YOUR_FALLBACK_GEMINI_API_KEY_HERE
+REM ── Load Environment Variables from .env ───────────────────────
+if exist .env (
+    echo [OK] Loading environment from .env file...
+    for /f "usebackq tokens=1,2 delims==" %%i in (".env") do (
+        if not "%%i"=="" set "%%i=%%j"
+    )
+) else (
+    echo [WARN] No .env file found - using system defaults
+)
+
+REM ── Ensure Critical API Keys are set ───────────────────────────
+if not defined GEMINI_API_KEY (
+    set "GEMINI_API_KEY=AIzaSyB0ARUN-xGleIUDKZDzSFJOk0H8v6qW6aY"
+)
+if not defined FALLBACK_GEMINI_API_KEY (
+    set "FALLBACK_GEMINI_API_KEY=AIzaSyDLpynwr6L1lgPTh4640mtGofcGrLf_0vY"
+)
 
 REM ── Start Backend ───────────────────────────────────────────────
 echo.
-echo [>>] Launching FastAPI Backend (v3.0.0) on port 8000...
-start "Backend - AI Placement Intelligence v3" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
+echo [>>] Checking if port 8000 is available...
+netstat -ano | findstr ":8000 " >nul 2>&1
+if errorlevel 0 if not errorlevel 1 (
+    echo [WARN] Port 8000 may already be in use - trying anyway...
+)
+echo [>>] Launching FastAPI Backend (v4.0.0) on port 8000...
+start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
 
 REM Give backend 4 seconds to initialize DB tables and engines
 timeout /t 4 /nobreak >nul
 
 REM ── Start Frontend ──────────────────────────────────────────────
 echo.
+echo [>>] Checking if port 5173 is available...
+netstat -ano | findstr ":5173 " >nul 2>&1
+if errorlevel 0 if not errorlevel 1 (
+    echo [WARN] Port 5173 may already be in use - trying anyway...
+)
 echo [>>] Launching React / Vite Frontend on port 5173...
-start "Frontend - AI Placement Intelligence v3" cmd /k "cd /d "%CD%" && cd frontend && npm run dev || (echo. && echo [ERROR] FRONTEND FAILED - SEE ABOVE && pause)"
+start "Frontend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && cd frontend && npm run dev || (echo. && echo [ERROR] FRONTEND FAILED - SEE ABOVE && pause)"
 
 REM Give frontend time to compile
 timeout /t 6 /nobreak >nul
 
 echo.
 echo ================================================================
-echo  [OK] Startup Sequence Complete - v4.2.0 (ML Integration Ready)
+echo  [OK] Startup Sequence Complete - v5.2.0 (ML Enhanced)
 echo ================================================================
 echo.
 echo  Application URLs:
@@ -177,8 +287,8 @@ echo    POST /practice/set            - Role-filtered question set
 echo    POST /tracking/feedback       - Adaptive ML feedback loop
 echo.
 echo  Server Windows:
-echo    Backend  : "Backend - AI Placement Intelligence Platform"
-echo    Frontend : "Frontend - AI Placement Intelligence Platform"
+echo    Backend  : "Backend - AI Placement Intelligence v4"
+echo    Frontend : "Frontend - AI Placement Intelligence v4"
 echo.
 echo  Placement Demo Credentials:
 echo    Admin: admin@university.edu / adminpassword
@@ -188,9 +298,13 @@ echo.
 echo  Troubleshooting:
 echo    Backend fails  : Check backend console for import / port errors
 echo    Frontend fails : Check frontend console for build errors
-echo    Port 8000 busy : Close other apps or change port in backend/main.py
-echo    Models missing : Run: python backend/ai_model/train_models.py
+echo    Port in use    : Use netstat -ano to identify conflicting processes
+echo    Models missing : Run: python -m spacy download en_core_web_sm
 echo    DB issues      : Delete backend/ai_placement.db to reset schema
+echo    API key issues : Create .env file with GEMINI_API_KEY=your_key
+echo    Node issues    : Delete frontend/node_modules and run npm install
+echo    Pip issues     : Delete venv folder and restart start.bat
+echo    Import errors  : Run: pip list to verify packages are installed
 echo.
 echo  This launcher will close in 10 seconds. Servers keep running.
 echo.

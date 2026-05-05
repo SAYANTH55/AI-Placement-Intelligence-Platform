@@ -154,7 +154,8 @@ export default function UploadBox({ onAnalyzeComplete }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="relative bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-8 overflow-hidden"
+      className="relative rounded-[1.5rem] p-8 overflow-hidden"
+      style={{ background: '#111', border: '1px solid #1c1c1c', boxShadow: '0 4px 24px rgba(0,0,0,0.6)' }}
     >
       {/* Top neon accent */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
@@ -222,7 +223,8 @@ export default function UploadBox({ onAnalyzeComplete }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="border border-[#1A1A1A] rounded-2xl p-5 bg-[#050505]"
+            className="border rounded-2xl p-5"
+            style={{ background: '#0d0d0d', borderColor: '#1c1c1c' }}
           >
             {/* File header */}
             <div className="flex items-center justify-between mb-5">

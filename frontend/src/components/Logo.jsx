@@ -58,10 +58,10 @@ const Logo = ({
     >
       <LogoIcon size={iconSize} />
       <div className="flex items-center gap-1.5">
-        <span className={`font-semibold tracking-tight ${primaryText}`} style={{ fontFamily: 'Poppins, sans-serif', color: '#E36B13' }}>
+        <span className={`font-black tracking-tight ${primaryText}`} style={{ color: '#E36B13' }}>
           AI Placement
         </span>
-        <span className={`font-medium ${secondaryText} transition-colors group-hover:opacity-100`} style={{ fontFamily: 'Inter, sans-serif', color: '#E36B13', opacity: 0.7 }}>
+        <span className={`font-semibold ${secondaryText} transition-colors group-hover:opacity-100`} style={{ color: '#E36B13', opacity: 0.7 }}>
           Intelligence Platform
         </span>
       </div>

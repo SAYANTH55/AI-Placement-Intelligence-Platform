@@ -2,14 +2,18 @@ import os
 import json
 import logging
 import google.generativeai as genai
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
-# Set environment keys natively grabbed from start.bat
+# Load environment variables from .env file
+load_dotenv()
+
+# Set environment keys
 PRIMARY_KEY = os.environ.get("GEMINI_API_KEY", "")
 FALLBACK_KEY = os.environ.get("FALLBACK_GEMINI_API_KEY", "")
 
-# Attempt primary
+# Attempt primary configuration
 if PRIMARY_KEY:
     genai.configure(api_key=PRIMARY_KEY)
 
@@ -22,7 +26,7 @@ def configure_fallback():
 
 def get_gemini_model():
     return genai.GenerativeModel(
-        'gemini-1.5-flash',
+        'gemini-1.5-flash-latest',
         generation_config={
             "response_mime_type": "application/json",
             "temperature": 0.2
@@ -90,7 +94,7 @@ def analyze_with_llm(parsed_data: dict) -> dict:
                 
         return result
     except Exception as e:
-        logger.warning(f"LLM analyze_with_llm failed with primary key: {e}")
+        logger.error(f"LLM analyze_with_llm primary failure: {str(e)}", exc_info=True)
         if configure_fallback():
             try:
                 model = get_gemini_model()
@@ -101,7 +105,7 @@ def analyze_with_llm(parsed_data: dict) -> dict:
                         result[key] = safe_fallback[key]
                 return result
             except Exception as inner_e:
-                logger.error(f"LLM Fallback completely failed: {inner_e}")
+                logger.error(f"LLM analyze_with_llm fallback failure: {str(inner_e)}", exc_info=True)
         return safe_fallback
 
 
@@ -163,7 +167,7 @@ def generate_career_insights(structured_data: dict) -> dict:
                 
         return result
     except Exception as e:
-        logger.warning(f"LLM generate_career_insights failed with primary key: {e}")
+        logger.error(f"LLM generate_career_insights primary failure: {str(e)}", exc_info=True)
         if configure_fallback():
             try:
                 model = get_gemini_model()
@@ -174,5 +178,5 @@ def generate_career_insights(structured_data: dict) -> dict:
                         result[key] = safe_fallback[key]
                 return result
             except Exception as inner_e:
-                logger.error(f"LLM Fallback completely failed: {inner_e}")
+                logger.error(f"LLM generate_career_insights fallback failure: {str(inner_e)}", exc_info=True)
         return safe_fallback

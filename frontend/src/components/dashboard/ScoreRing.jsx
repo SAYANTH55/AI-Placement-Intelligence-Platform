@@ -48,9 +48,19 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
                         }}
                     />
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-black text-white leading-none">{cappedScore}</span>
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Placement Score</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
+                    <span 
+                        className="font-black text-white leading-none" 
+                        style={{ fontSize: Math.max(size * 0.28, 14) }}
+                    >
+                        {cappedScore}
+                    </span>
+                    <span 
+                        className="font-bold text-gray-500 uppercase tracking-tight text-center leading-tight mt-1" 
+                        style={{ fontSize: Math.max(size * 0.09, 7) }}
+                    >
+                        Placement<br/>Score
+                    </span>
                 </div>
             </div>
             

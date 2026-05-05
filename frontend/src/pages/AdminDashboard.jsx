@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext';
 import {
     LayoutDashboard, Briefcase, Users, FileText, MoreHorizontal,
-    LogOut, Shield
+    LogOut, Shield, Search, Bell, Plus, Grid, Calendar
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -42,69 +42,35 @@ export default function AdminDashboard() {
         item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
 
     return (
-        <div className="flex h-screen bg-[#060606] text-white overflow-hidden font-['Inter']">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-[#141414] bg-[#080808] flex flex-col p-6 shrink-0">
-                {/* Brand */}
-                <div className="mb-10 flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gradient-to-br from-[#F97316] to-[#F59E0B] rounded-xl flex items-center justify-center font-black text-white shadow-[0_0_20px_rgba(249,115,22,0.4)]">
-                        <Shield size={18} />
-                    </div>
-                    <div>
-                        <h1 className="font-black text-sm tracking-tight">Admin Panel</h1>
-                        <p className="text-[10px] text-[#444] font-bold uppercase tracking-wider">Placement Intel</p>
-                    </div>
-                </div>
+        <div className="flex w-full flex-1 bg-dashboard-base text-white overflow-hidden font-['Inter'] relative">
+            
+            {/* Massive Background Glowing Orbs */}
+            <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-[#FF4D26] opacity-[0.12] blur-[180px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-[#FF4D26] opacity-[0.08] blur-[200px] rounded-full pointer-events-none" />
+            <div className="absolute top-[40%] right-[20%] w-[500px] h-[500px] bg-[#FF4D26] opacity-[0.05] blur-[150px] rounded-full pointer-events-none" />
 
-                {/* Navigation */}
-                <nav className="flex-1 space-y-1">
-                    <p className="text-[9px] uppercase tracking-widest text-[#333] font-bold mb-3 px-4">Navigation</p>
-                    {menuItems.map((item, idx) => (
-                        <motion.div key={item.name} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}>
-                            <Link
-                                to={item.path}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                                    isActive(item)
-                                    ? 'bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/20 shadow-[0_0_15px_rgba(249,115,22,0.05)]'
-                                    : 'text-[#555] hover:text-white hover:bg-white/5 border border-transparent'
-                                }`}
-                            >
-                                {item.icon}
-                                {item.name}
-                                {isActive(item) && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#F97316] shadow-[0_0_6px_rgba(249,115,22,0.6)]" />}
-                            </Link>
-                        </motion.div>
+            {/* Content */}
+            <main className="flex-1 overflow-y-auto p-8 relative z-10 w-full h-full">
+
+
+                {/* Sub-Navigation Tabs */}
+                <nav className="flex items-center gap-2 mb-8 w-full max-w-[1600px] mx-auto px-4 overflow-x-auto pb-2 scrollbar-hide">
+                    {menuItems.map((item) => (
+                        <Link
+                            key={item.name}
+                            to={item.path}
+                            className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                                isActive(item)
+                                ? 'glass-panel text-primary-accent border-white/10 shadow-card-depth'
+                                : 'text-secondary-muted hover:text-white hover:bg-white/[0.04]'
+                            }`}
+                        >
+                            {item.name}
+                        </Link>
                     ))}
                 </nav>
 
-                {/* User section */}
-                <div className="pt-6 border-t border-[#141414]">
-                    <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-white/[0.02] border border-[#141414]">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#F97316] to-[#F59E0B] flex items-center justify-center font-black text-xs shadow-[0_0_10px_rgba(249,115,22,0.3)]">
-                            {user?.name?.[0] || 'A'}
-                        </div>
-                        <div className="overflow-hidden flex-1">
-                            <p className="text-xs font-black truncate">{user?.name}</p>
-                            <p className="text-[10px] text-[#444] font-bold">Super Admin</p>
-                        </div>
-                    </div>
-                    <button onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 text-[#555] hover:text-red-400 transition-colors text-sm font-bold w-full rounded-xl hover:bg-red-500/5">
-                        <LogOut size={16} /> Logout
-                    </button>
-                </div>
-            </aside>
-
-            {/* Content */}
-            <main className="flex-1 overflow-y-auto p-10 relative">
-                <div className="absolute top-0 right-0 pointer-events-none">
-                    <div className="w-96 h-96 bg-[#F97316]/5 blur-[120px] rounded-full" />
-                </div>
-                <div className="absolute bottom-0 left-1/4 pointer-events-none">
-                    <div className="w-64 h-64 bg-[#818CF8]/3 blur-[100px] rounded-full" />
-                </div>
-
-                <div className="relative z-10 max-w-6xl mx-auto">
+                <div className="relative z-10 w-full max-w-[1600px] mx-auto px-4">
                     <Routes>
                         <Route path="/" element={<DashboardStats />} />
                         <Route path="/drives" element={<DrivesManagement />} />

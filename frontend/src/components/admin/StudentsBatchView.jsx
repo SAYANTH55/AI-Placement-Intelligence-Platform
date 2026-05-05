@@ -41,15 +41,15 @@ export default function StudentsBatchView() {
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight">Student Batches</h1>
-                        <p className="text-xs text-[#555] mt-1">Track student application status across placement drives</p>
+                        <h1 className="text-2xl font-black tracking-tight text-white">Student Batches</h1>
+                        <p className="text-xs text-secondary-muted mt-1">Track student application status across placement drives</p>
                     </div>
                     <div className="flex gap-2">
-                        <select className="bg-[#08080A] border border-[#181818] p-2.5 rounded-xl text-xs text-white outline-none focus:border-[#F97316]"
+                        <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none focus:border-primary-accent"
                             value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
                             {batches.map(b => <option key={b} value={b}>Batch {b}</option>)}
                         </select>
-                        <select className="bg-[#08080A] border border-[#181818] p-2.5 rounded-xl text-xs text-white outline-none focus:border-[#F97316]"
+                        <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none focus:border-primary-accent"
                             value={selectedDrive} onChange={e => setSelectedDrive(e.target.value)}>
                             {drives.map(d => <option key={d.id} value={d.id}>{d.company_name}</option>)}
                         </select>
@@ -60,91 +60,91 @@ export default function StudentsBatchView() {
             {/* Batch summary cards */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
                 className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-[#08080A] border border-[#181818] rounded-2xl p-5">
+                <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-white/20">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-[#818CF8]/10 rounded-lg"><Users size={16} className="text-[#818CF8]" /></div>
-                        <p className="text-[10px] uppercase tracking-widest text-[#555] font-bold">Total Students</p>
+                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg"><Users size={16} className="text-white" /></div>
+                        <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">Total Students</p>
                     </div>
-                    <p className="text-2xl font-black">{filtered.length}</p>
+                    <p className="text-2xl font-black text-white">{filtered.length}</p>
                 </div>
-                <div className="bg-[#08080A] border border-[#181818] rounded-2xl p-5">
+                <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-primary-accent">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-[#34D399]/10 rounded-lg"><GraduationCap size={16} className="text-[#34D399]" /></div>
-                        <p className="text-[10px] uppercase tracking-widest text-[#555] font-bold">Applied</p>
+                        <div className="p-2 bg-primary-accent/10 border border-primary-accent/20 rounded-lg"><GraduationCap size={16} className="text-primary-accent" /></div>
+                        <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">Applied</p>
                     </div>
-                    <p className="text-2xl font-black text-[#34D399]">{appliedCount}</p>
+                    <p className="text-2xl font-black text-primary-accent">{appliedCount}</p>
                 </div>
-                <div className="bg-[#08080A] border border-[#181818] rounded-2xl p-5">
+                <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-white/10">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-[#EF4444]/10 rounded-lg"><Users size={16} className="text-[#EF4444]" /></div>
-                        <p className="text-[10px] uppercase tracking-widest text-[#555] font-bold">Not Applied</p>
+                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg"><Users size={16} className="text-tertiary-muted" /></div>
+                        <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">Not Applied</p>
                     </div>
-                    <p className="text-2xl font-black text-[#EF4444]">{notAppliedCount}</p>
+                    <p className="text-2xl font-black text-tertiary-muted">{notAppliedCount}</p>
                 </div>
             </motion.div>
 
             {/* Application rate bar */}
             {filtered.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                    className="bg-[#08080A] border border-[#181818] rounded-2xl p-5">
+                    className="glass-panel shadow-card-depth rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs font-bold text-[#888]">Application Rate</p>
-                        <p className="text-xs font-black text-[#F97316]">{Math.round((appliedCount / filtered.length) * 100)}%</p>
+                        <p className="text-xs font-bold text-tertiary-muted">Application Rate</p>
+                        <p className="text-xs font-black text-primary-accent">{Math.round((appliedCount / filtered.length) * 100)}%</p>
                     </div>
-                    <div className="w-full h-2 bg-[#141414] rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-white/5 border border-white/5 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(appliedCount / filtered.length) * 100}%` }}
                             transition={{ duration: 1, ease: 'easeOut' }}
-                            className="h-full bg-gradient-to-r from-[#F97316] to-[#34D399] rounded-full"
+                            className="h-full bg-neon-gradient shadow-neon-glow rounded-full"
                         />
                     </div>
                 </motion.div>
             )}
 
             {/* Search */}
-            <div className="flex items-center gap-2 bg-[#08080A] border border-[#181818] rounded-xl px-4">
-                <Search size={14} className="text-[#555]" />
-                <input type="text" placeholder="Search students..." className="bg-transparent border-none outline-none text-xs text-white p-3 w-full"
+            <div className="flex items-center gap-2 glass-search shadow-card-depth rounded-xl px-4">
+                <Search size={14} className="text-tertiary-muted" />
+                <input type="text" placeholder="Search students..." className="bg-transparent border-none outline-none text-xs text-white p-3 w-full placeholder-tertiary-muted"
                     value={search} onChange={e => setSearch(e.target.value)} />
             </div>
 
             {/* Table */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                className="bg-[#08080A] border border-[#181818] rounded-3xl overflow-hidden">
+                className="glass-panel shadow-card-depth rounded-3xl overflow-hidden">
                 <table className="w-full text-left text-xs">
                     <thead>
-                        <tr className="border-b border-[#141414] bg-[#0A0A0C]">
-                            <th className="px-6 py-4 font-black uppercase tracking-widest text-[#555]">Student</th>
-                            <th className="px-6 py-4 font-black uppercase tracking-widest text-[#555]">Contact</th>
-                            <th className="px-6 py-4 font-black uppercase tracking-widest text-[#555]">Status</th>
+                        <tr className="border-b border-white/5 bg-white/[0.02]">
+                            <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Student</th>
+                            <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Contact</th>
+                            <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Status</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#141414]">
+                    <tbody className="divide-y divide-white/5">
                         {loading ? (
-                            <tr><td colSpan="3" className="px-6 py-20 text-center text-[#555]">
-                                <div className="flex items-center justify-center gap-3"><div className="w-5 h-5 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" /> Syncing batch...</div>
+                            <tr><td colSpan="3" className="px-6 py-20 text-center text-secondary-muted">
+                                <div className="flex items-center justify-center gap-3"><div className="w-5 h-5 border-2 border-primary-accent border-t-transparent rounded-full animate-spin" /> Syncing batch...</div>
                             </td></tr>
                         ) : filtered.length === 0 ? (
-                            <tr><td colSpan="3" className="px-6 py-20 text-center text-[#444]">No students found</td></tr>
+                            <tr><td colSpan="3" className="px-6 py-20 text-center text-tertiary-muted">No students found</td></tr>
                         ) : filtered.map((s, idx) => (
                             <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.02 }}
-                                className="hover:bg-white/[0.02] transition-colors">
+                                className="hover:bg-white/[0.05] transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F97316]/30 to-[#818CF8]/30 flex items-center justify-center text-[10px] font-black text-white border border-white/10">
+                                        <div className="w-8 h-8 rounded-full bg-[#FF4D26]/20 border border-[#FF4D26]/50 flex items-center justify-center text-[10px] font-black text-white">
                                             {s.name?.[0] || '?'}
                                         </div>
                                         <div>
                                             <p className="font-bold text-white">{s.name}</p>
-                                            <p className="text-[10px] text-[#444]">{s.email}</p>
+                                            <p className="text-[10px] text-tertiary-muted">{s.email}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <div className="flex items-center gap-4 text-[#555]">
-                                        <Mail size={14} className="hover:text-[#F97316] cursor-pointer transition-colors" />
-                                        <Phone size={14} className="hover:text-[#F97316] cursor-pointer transition-colors" />
+                                    <div className="flex items-center gap-4 text-secondary-muted">
+                                        <Mail size={14} className="hover:text-primary-accent cursor-pointer transition-colors" />
+                                        <Phone size={14} className="hover:text-primary-accent cursor-pointer transition-colors" />
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">

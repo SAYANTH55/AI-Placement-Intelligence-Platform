@@ -38,8 +38,8 @@ class ResumeAnalyzer:
         for key, filename in self.model_files.items():
             path = os.path.join(self.models_dir, filename)
             if not os.path.exists(path):
-                logger.error(f"CRITICAL: Model file missing: {path}")
-                logger.error("Please ensure the .pkl files are manually placed in backend/ai_model/models/resume_analyzer/")
+                logger.warning(f"Model file missing: {filename} at {path}")
+                logger.warning(f"Note: {filename} is required for advanced resume analysis features.")
                 self.models[key] = None
                 success = False
                 continue

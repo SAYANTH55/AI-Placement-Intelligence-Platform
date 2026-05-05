@@ -111,7 +111,7 @@ def migrate():
 
     conn.commit()
     conn.close()
-    print("[MIGRATE] ✅ Migration completed successfully!")
+    print("[MIGRATE] Migration completed successfully!")
 
 
 if __name__ == "__main__":

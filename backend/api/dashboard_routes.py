@@ -10,7 +10,11 @@ router = APIRouter(prefix="/admin", tags=["Admin Dashboard Analytics"])
 @router.get("/stats")
 async def get_stats(db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr"]))):
     try:
-        return {"status": "success", "data": DashboardService.get_overall_stats(db)}
+        stats = DashboardService.get_overall_stats(db)
+        stats["monthly_apps"] = DashboardService.get_monthly_apps(db)
+        stats["batch_stats"] = DashboardService.get_batch_stats(db)
+        stats["recent_activity"] = DashboardService.get_recent_activity(db)
+        return {"status": "success", "data": stats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

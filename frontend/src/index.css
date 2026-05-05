@@ -1,10 +1,8 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@700;800&family=Poppins:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
   --font-inter: "Inter", sans-serif;
-  --font-poppins: "Poppins", sans-serif;
-  --font-sora: "Sora", sans-serif;
 
   --color-primary: #F97316;
   --color-accent: #FFA559;
@@ -36,14 +34,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3 {
-    font-family: 'Sora', sans-serif;
-    font-weight: 700;
-  }
-
-  h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', sans-serif;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -149,6 +143,132 @@
 
   .group:hover .animate-scroll {
     animation-play-state: paused;
+  }
+
+  /* ────────────────────────────────────────────────
+     DARK CUSTOM SCROLLBAR — syncs with deep-space theme
+  ──────────────────────────────────────────────── */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #0c0c0c;
+  }
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  *::-webkit-scrollbar-track {
+    background: #0d0907;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #2c2017;
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: #3d2e20;
+  }
+
+  /* ────────────────────────────────────────────────
+     NEW DASHBOARD DESIGN SYSTEM (REFERENCE MATCH)
+  ──────────────────────────────────────────────── */
+
+  /* Main dashboard background — warm near-black with top-right ambient glow */
+  .bg-dashboard-base {
+    background:
+      radial-gradient(ellipse at 88% 5%,  rgba(249,115,22,0.18) 0%, transparent 45%),
+      radial-gradient(ellipse at 75% 0%,  rgba(200,60,10,0.12)  0%, transparent 55%),
+      #090705;
+    position: relative;
+  }
+
+  /* Sidebar background — same warm base, slightly offset glow */
+  .bg-sidebar-surface {
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.07) 0%, transparent 60%),
+      #08060400;
+  }
+
+  /* Primary orange accent */
+  .text-primary-accent   { color: #F97316; }
+  .bg-primary-accent     { background-color: #F97316; }
+  .border-primary-accent { border-color: #F97316; }
+
+  /* Muted text layers */
+  .text-secondary-muted { color: #888; }
+  .text-tertiary-muted  { color: #444; }
+
+  /* Neon glow for orange elements */
+  .shadow-neon-glow {
+    box-shadow: 0 0 24px rgba(249,115,22,0.25), 0 0 60px rgba(249,115,22,0.1);
+  }
+
+  /* Depth shadow for cards */
+  .shadow-card-depth {
+    box-shadow: 0 4px 32px rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+
+  /* ── Reference card surface: warm dark, borderless illusion ── */
+  .glass-panel {
+    background: #141210;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+
+  /* ── card-dark: row/nested surface ── */
+  .card-dark {
+    background: #1a1612;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 18px;
+  }
+
+  /* ── glass-search: input / search field surfaces ── */
+  .glass-search {
+    background: #100e0b;
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #e5e5e5;
+  }
+  .glass-search::placeholder { color: #444; }
+  .glass-search:focus { border-color: #F97316; outline: none; }
+
+  /* ── Neon gradient button ── */
+  .bg-neon-gradient {
+    background: linear-gradient(135deg, #F97316 0%, #FF6B00 100%);
+  }
+
+  /* ── Status badges ── */
+  .badge-live {
+    background: rgba(52, 211, 153, 0.12);
+    color: #34D399;
+    border: 1px solid rgba(52, 211, 153, 0.25);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-ready {
+    background: rgba(129, 140, 248, 0.12);
+    color: #818CF8;
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-loaded {
+    background: rgba(249, 115, 22, 0.12);
+    color: #F97316;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 }
 
