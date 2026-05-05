@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(BASE_DIR, "..")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from api import endpoints, auth, resume_routes, engine_routes, learning_routes, outcome_routes
 from database.db import engine
 from database import models
@@ -33,7 +34,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes
+from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes, company_routes, department_routes, placement_update_routes, application_profile_routes
+
+os.makedirs(os.path.join(BASE_DIR, "uploads/resumes"), exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "uploads")), name="uploads")
 
 # Include routers
 app.include_router(endpoints.router, tags=["resume-analysis"])
@@ -45,8 +49,12 @@ app.include_router(outcome_routes.router, tags=["outcomes"])
 app.include_router(pr_routes.router)
 app.include_router(drive_routes.router)
 app.include_router(application_routes.router)
+app.include_router(application_profile_routes.router)
 app.include_router(round_routes.router)
 app.include_router(dashboard_routes.router)
+app.include_router(company_routes.router)
+app.include_router(department_routes.router)
+app.include_router(placement_update_routes.router)
 
 
 @app.get("/")

@@ -46,8 +46,8 @@ export default function Login() {
       setUser(userData);
 
       if (userData.role === 'admin') navigate('/admin');
-      else if (userData.role === 'pr') navigate('/pr');
-      else if (userData.role === 'student') navigate('/student');
+      else if (userData.role === 'pr') navigate('/admin');
+      else if (userData.role === 'student') navigate('/dashboard/placement');
       else navigate('/dashboard');
     } catch (err) {
       console.error("Login attempt failed:", err);

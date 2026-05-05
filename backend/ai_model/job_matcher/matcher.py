@@ -59,6 +59,28 @@ def calculate_role_matches(extracted_skills, target_role=None):
     return matches
 
 
+def calculate_jd_match(extracted_skills, job_description):
+    """
+    Compares extracted skills against a specific Job Description text.
+    Returns a score from 0-100.
+    """
+    if not job_description or not extracted_skills:
+        return 0
+        
+    # Simple keyword extraction from JD for now (could be LLM based)
+    jd_words = set(job_description.lower().split())
+    
+    match_count = 0
+    for skill in extracted_skills:
+        if skill.lower() in jd_words:
+            match_count += 1
+            
+    # Calculate a simple ratio with a cap
+    # We assume a good JD might have 10-15 key skills mentioned
+    score = (match_count / 12) * 100
+    return round(min(score, 100), 2)
+
+
 def get_job_fits_with_diversity(extracted_skills):
     """
     Enhanced version that includes skill diversity scoring (FIX 4 foundation)

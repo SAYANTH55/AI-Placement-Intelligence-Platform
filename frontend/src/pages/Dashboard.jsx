@@ -13,6 +13,8 @@ import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Z
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
 import OutcomeTracker from '../components/dashboard/OutcomeTracker';
+import PlacementEngine from './PlacementEngine';
+import MyProfile from './MyProfile';
 
 /* ── Shared dark card ── */
 function DarkCard({ children, className = '', delay = 0, glow = false }) {
@@ -1377,23 +1379,26 @@ export default function Dashboard() {
             <Route path="/" element={<ModulesHub />} />
             
             {/* Module 1: Profile Intelligence */}
-            <Route path="/profile" element={<OverviewPage />} />
-            <Route path="/analysis" element={<AnalysisPage data={analyzedData} />} />
-            <Route path="/skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
-            <Route path="/score" element={<ScorePage data={analyzedData} />} />
-            <Route path="/recommendations" element={<RecommendationsPage data={analyzedData} />} />
+            <Route path="profile" element={<OverviewPage />} />
+            <Route path="analysis" element={<AnalysisPage data={analyzedData} />} />
+            <Route path="skills" element={<SkillsPage data={analyzedData} selectedRoleIndex={selectedRoleIndex} setSelectedRoleIndex={setSelectedRoleIndex} />} />
+            <Route path="score" element={<ScorePage data={analyzedData} />} />
+            <Route path="recommendations" element={<RecommendationsPage data={analyzedData} />} />
             
             {/* Module 2: Preparation Engine */}
-            <Route path="/preparation" element={<PreparationModule />} />
+            <Route path="preparation" element={<PreparationModule />} />
             
             {/* Module 3: Practice Engine */}
-            <Route path="/practice" element={<PracticeModule />} />
+            <Route path="practice" element={<PracticeModule />} />
 
             {/* Module 4: Tracking Engine */}
-            <Route path="/tracking" element={<TrackingModule />} />
+            <Route path="tracking" element={<TrackingModule />} />
 
             {/* Module 5: Placement Engine */}
-            <Route path="/placement" element={<PlacementModule />} />
+            <Route path="placement" element={<PlacementEngine />} />
+
+            {/* Profile Management */}
+            <Route path="my-profile" element={<MyProfile />} />
             
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>

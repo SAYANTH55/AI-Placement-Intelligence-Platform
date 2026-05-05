@@ -2,20 +2,23 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 import csv
 import io
 
 from database.db import get_db
 from placement.application_service import ApplicationService
 from placement.auth_depends import get_current_user, require_role
-from database.models import User, Student, Application, RoundResult
+from database.models import User, Student, Application, RoundResult, Drive
+from ai_model.job_matcher.matcher import calculate_jd_match
 
 router = APIRouter(prefix="/application", tags=["Application System"])
 
 class ApplyRequest(BaseModel):
     drive_id: int
     resume_path: str
+    ai_match_score: Optional[float] = None
+    form_responses: Optional[dict] = None
 
 class UpdateRoundRequest(BaseModel):
     application_id: int
@@ -33,6 +36,35 @@ class BulkRoundUpdateRequest(BaseModel):
     round_number: int | None = None
     status: str
 
+
+@router.get("/match_score/{drive_id}")
+async def get_match_score(drive_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    try:
+        drive = db.query(Drive).filter(Drive.id == drive_id).first()
+        if not drive:
+            raise HTTPException(status_code=404, detail="Drive not found")
+            
+        student_profile = current_user.student_profile
+        if not student_profile or not student_profile.profile_data:
+            return {"status": "success", "score": 0, "message": "No student profile found"}
+            
+        # Extract skills from profile_data
+        # profile_data structure is roughly {"skills": [{"name": "Python", ...}, ...]}
+        skills_objs = student_profile.profile_data.get("skills", [])
+        user_skills = []
+        if isinstance(skills_objs, list):
+            for s in skills_objs:
+                if isinstance(s, dict) and "name" in s:
+                    user_skills.append(s["name"])
+                elif isinstance(s, str):
+                    user_skills.append(s)
+        
+        score = calculate_jd_match(user_skills, drive.job_description or drive.description)
+        return {"status": "success", "score": score}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/apply")
 async def apply_to_drive(request: ApplyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
@@ -40,7 +72,7 @@ async def apply_to_drive(request: ApplyRequest, db: Session = Depends(get_db), c
         if not student_profile:
              raise HTTPException(status_code=400, detail="User has no student profile")
              
-        app = ApplicationService.apply_to_drive(db, student_profile.id, request.drive_id, request.resume_path)
+        app = ApplicationService.apply_to_drive(db, student_profile.id, request.drive_id, request.resume_path, ai_match_score=request.ai_match_score, form_responses=request.form_responses)
         return {"status": "success", "application_id": app.id}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -64,9 +96,10 @@ async def get_my_applications(db: Session = Depends(get_db), current_user: User 
                 "id": a.id,
                 "drive_id": a.drive_id,
                 "company_name": a.drive.company_name,
-                "role": a.drive.role,
+                "ai_match_score": a.ai_match_score,
                 "status": a.status,
-                "current_round": a.current_round,
+                "form_responses": a.form_responses,
+                "created_at": a.created_at,
                 "rounds": [
                     {"round_name": r.round.round_name, "status": r.status} for r in results
                 ]
@@ -114,6 +147,8 @@ async def get_drive_applications(
                 "student_email": a.student.user.email,
                 "student_batch": a.student.batch,
                 "resume_url": a.resume_url,
+                "ai_match_score": a.ai_match_score,
+                "form_responses": a.form_responses,
                 "status": a.status,
                 "final_status": a.final_status,
                 "current_round": a.current_round,

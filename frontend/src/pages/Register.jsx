@@ -17,7 +17,9 @@ export default function Register() {
     phoneNumber: '',
     password: '',
     confirmPassword: '',
-    source: ''
+    source: '',
+    course: '',
+    department_id: ''
   });
 
   // Ensure all fields are blank on initial load, counteracting aggressive browser auto-fill
@@ -59,10 +61,27 @@ export default function Register() {
   const [countrySearch, setCountrySearch] = useState('');
   
   const [isSourceOpen, setIsSourceOpen] = useState(false);
-  
+  const [departments, setDepartments] = useState([]);
+  const [isDeptOpen, setIsDeptOpen] = useState(false);
+  const [isCourseOpen, setIsCourseOpen] = useState(false);
+
   const countryRef = useRef(null);
   const sourceRef = useRef(null);
+  const deptRef = useRef(null);
+  const courseRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDepts = async () => {
+      try {
+        const res = await API.get('/department/all');
+        setDepartments(res.data.data);
+      } catch (err) {
+        console.error("Failed to load departments");
+      }
+    };
+    fetchDepts();
+  }, []);
 
   // Handle outside clicks for custom dropdowns
   useEffect(() => {
@@ -72,6 +91,12 @@ export default function Register() {
       }
       if (sourceRef.current && !sourceRef.current.contains(event.target)) {
         setIsSourceOpen(false);
+      }
+      if (deptRef.current && !deptRef.current.contains(event.target)) {
+        setIsDeptOpen(false);
+      }
+      if (courseRef.current && !courseRef.current.contains(event.target)) {
+        setIsCourseOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -113,6 +138,14 @@ export default function Register() {
     }
     if (!formData.source) {
       setError('Please tell us where you heard about us.');
+      return;
+    }
+    if (!formData.course) {
+      setError('Please select your academic course.');
+      return;
+    }
+    if (!formData.department_id) {
+      setError('Please select your department.');
       return;
     }
 
@@ -397,6 +430,75 @@ export default function Register() {
                   </div>
                 )}
               </div>
+
+              {/* Course Selection */}
+              <div className="md:col-span-1 relative" ref={courseRef}>
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Academic Course</label>
+                <button
+                  type="button"
+                  onClick={() => setIsCourseOpen(!isCourseOpen)}
+                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
+                >
+                  <span className={formData.course ? 'text-gray-900' : 'text-gray-400'}>
+                    {formData.course || 'Select Course'}
+                  </span>
+                  <ChevronDown size={18} className={`text-gray-400 transition-transform ${isCourseOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isCourseOpen && (
+                  <div className="absolute top-full mt-2 left-0 w-full bg-white border border-gray-50 rounded-3xl shadow-2xl z-[60] py-3 animate-scale-in origin-top overflow-hidden">
+                    {['MCA', 'MSAIM'].map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, course: c }));
+                          setIsCourseOpen(false);
+                        }}
+                        className="w-full text-left px-6 py-3 hover:bg-orange-50 transition-all font-bold text-sm text-gray-700"
+                      >
+                        {c === 'MSAIM' ? 'MSc AI/ML' : c}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Department Selection */}
+              <div className="md:col-span-1 relative" ref={deptRef}>
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Department</label>
+                <button
+                  type="button"
+                  onClick={() => setIsDeptOpen(!isDeptOpen)}
+                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
+                >
+                  <span className={formData.department_id ? 'text-gray-900' : 'text-gray-400'}>
+                    {departments.find(d => d.id === formData.department_id)?.name || 'Select Dept'}
+                  </span>
+                  <ChevronDown size={18} className={`text-gray-400 transition-transform ${isDeptOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isDeptOpen && (
+                  <div className="absolute top-full mt-2 left-0 w-full bg-white border border-gray-50 rounded-3xl shadow-2xl z-[60] py-3 animate-scale-in origin-top overflow-hidden">
+                    <div className="max-h-48 overflow-y-auto custom-scrollbar">
+                      {departments.length === 0 ? (
+                        <div className="px-6 py-3 text-xs text-gray-400 italic font-medium">No departments found...</div>
+                      ) : departments.map((d) => (
+                        <button
+                          key={d.id}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({ ...prev, department_id: d.id }));
+                            setIsDeptOpen(false);
+                          }}
+                          className="w-full text-left px-6 py-3 hover:bg-orange-50 transition-all font-bold text-sm text-gray-700"
+                        >
+                          {d.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
             </div>
 
             {/* Submit Button */}

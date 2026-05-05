@@ -1,19 +1,36 @@
 from sqlalchemy.orm import Session
 from database.models import Drive, Round
 from datetime import datetime
+from typing import Optional
 from placement.event_bus import EventBus, EVENT_NEW_DRIVE
 
 class DriveService:
     @staticmethod
-    def create_drive(db: Session, company_name: str, role: str, description: str, eligibility_criteria: str, deadline: datetime, user_id: int, rounds_data: list[dict] | None = None) -> Drive:
+    def create_drive(
+        db: Session, company_name: str, role: str, description: str,
+        eligibility_criteria: str, deadline: datetime, user_id: int,
+        rounds_data: list[dict] | None = None,
+        job_description: str | None = None,
+        ctc: str | None = None,
+        course: str = "ALL",
+        company_id: int | None = None,
+        department_id: int | None = None,
+        application_form_fields: list[str] | None = None
+    ) -> Drive:
         drive = Drive(
             company_name=company_name,
+            company_id=company_id,
             role=role,
             description=description,
+            job_description=job_description,
             eligibility_criteria=eligibility_criteria,
+            ctc=ctc,
+            course=course,
+            department_id=department_id,
             deadline=deadline,
             created_by=user_id,
-            status="open"
+            status="open",
+            application_form_fields=application_form_fields
         )
         db.add(drive)
         db.flush()
@@ -49,12 +66,15 @@ class DriveService:
             db.commit()
 
     @staticmethod
-    def get_drives(db: Session, active_only: bool = False) -> list[Drive]:
+    def get_drives(db: Session, active_only: bool = False, course: Optional[str] = None) -> list[Drive]:
         DriveService.close_expired_drives(db)
-        query = db.query(Drive)
+        query = db.query(Drive).filter(Drive.status != "archived")
         if active_only:
             query = query.filter(Drive.status == "open")
-        return query.all()
+        # Course filtering: if course is specified, show drives for that course + ALL
+        if course and course != "ALL":
+            query = query.filter(Drive.course.in_([course, "ALL"]))
+        return query.order_by(Drive.deadline.desc()).all()
 
     @staticmethod
     def get_drive(db: Session, drive_id: int) -> Drive:

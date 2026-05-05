@@ -15,7 +15,7 @@ class ApplicationService:
             db.add(round_result)
 
     @staticmethod
-    def apply_to_drive(db: Session, student_id: int, drive_id: int, resume_path: str) -> Application:
+    def apply_to_drive(db: Session, student_id: int, drive_id: int, resume_path: str, ai_match_score: float | None = None, form_responses: dict | None = None) -> Application:
         student = db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise ValueError("Student profile not found")
@@ -24,7 +24,11 @@ class ApplicationService:
         if not drive:
             raise ValueError("Drive not found")
         if len(drive.rounds) == 0:
-            raise ValueError("Drive must have at least one round configured before applications are accepted.")
+            from database.models import Round
+            default_round = Round(drive_id=drive_id, round_number=1, round_name="Aptitude / Screening")
+            db.add(default_round)
+            db.flush()
+            db.refresh(drive)
             
         existing = db.query(Application).filter(Application.student_id == student_id, Application.drive_id == drive_id).first()
         if existing:
@@ -34,7 +38,9 @@ class ApplicationService:
             student_id=student_id,
             drive_id=drive_id,
             resume_path=resume_path,
-            status="Applied"
+            ai_match_score=ai_match_score,
+            status="Applied",
+            form_responses=form_responses
         )
         db.add(app)
         db.flush()

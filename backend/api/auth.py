@@ -15,8 +15,8 @@ from sqlalchemy import func
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.email_service import send_otp_email
 from database.db import get_db
-from database.models import User, PR
-from placement.auth_depends import create_access_token
+from database.models import User, PR, Student
+from placement.auth_depends import create_access_token, require_role
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -40,6 +40,16 @@ class RegisterRequest(BaseModel):
     password: str
     phoneNumber: str
     source: str
+    course: str | None = None  # MCA, MSAIM
+    department_id: int | None = None
+    # role is always 'student' for self-registration
+
+class CreateStaffRequest(BaseModel):
+    fullName: str
+    email: str
+    password: str
+    role: str  # 'pr' or 'admin'
+    department_id: int | None = None
 
 class VerifyOTPRequest(BaseModel):
     identifier: str
@@ -71,14 +81,16 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     if not pwd_context.verify(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
         
-    token = create_access_token({"sub": str(user.id), "role": user.role})
+    token = create_access_token({"sub": str(user.id), "role": user.role, "course": user.course, "department_id": user.department_id})
 
     # Build the base user payload
     user_payload = {
         "id": user.id,
         "email": user.email,
         "name": user.name,
-        "role": user.role
+        "role": user.role,
+        "course": user.course,
+        "department_id": user.department_id
     }
 
     # For PR users, attach their pr_id so the frontend can call /pr/{pr_id}/students
@@ -113,15 +125,103 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
         name=request.fullName,
         email=email,
         phone=request.phoneNumber,
-        password=hashed_password
+        password=hashed_password,
+        course=request.course,
+        department_id=request.department_id,
+        role="student"  # self-registration always creates student accounts
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     
-    print(f"[DEBUG] User {new_user.email} successfully registered with ID {new_user.id}")
+    # Create empty student profile to allow applications
+    new_student = Student(
+        user_id=new_user.id,
+        batch="2024", # Default batch
+        cgpa=0.0,
+        profile_data={"skills": [], "experience": ""}
+    )
+    db.add(new_student)
+    db.commit()
     
+    print(f"[DEBUG] Student {new_user.email} registered with ID {new_user.id}")
     return {"message": "Registration successful"}
+
+
+@router.post("/admin/create-staff")
+async def create_staff(
+    request: CreateStaffRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role(["admin"]))
+):
+    """Admin-only: create a Placement Officer (pr) or Admin account."""
+    email = request.email.lower().strip()
+    if request.role not in ("pr", "admin"):
+        raise HTTPException(status_code=400, detail="Role must be 'pr' or 'admin'")
+
+    if db.query(User).filter(User.email == email).first():
+        raise HTTPException(status_code=400, detail="Email already in use")
+
+    hashed = pwd_context.hash(request.password)
+    new_user = User(
+        name=request.fullName,
+        email=email,
+        phone=None,
+        password=hashed,
+        role=request.role,
+        department_id=request.department_id
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    if request.role == "pr":
+        new_pr = PR(user_id=new_user.id, department_id=request.department_id)
+        db.add(new_pr)
+        db.commit()
+
+    return {"message": f"{request.role.upper()} account created", "user_id": new_user.id}
+
+@router.get("/admin/staff")
+async def get_staff(db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin"]))):
+    """Admin-only: fetch all PR and Admin accounts."""
+    staff = db.query(User).filter(User.role.in_(["pr", "admin"])).all()
+    result = []
+    for s in staff:
+        dept_name = s.department.name if getattr(s, 'department', None) else "Global Access"
+        result.append({
+            "id": s.id,
+            "name": s.name,
+            "email": s.email,
+            "role": s.role,
+            "department": dept_name,
+            "created_at": s.created_at
+        })
+    return {"status": "success", "data": result}
+
+@router.delete("/admin/staff/{user_id}")
+async def delete_staff(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin"]))):
+    """Admin-only: soft delete a PR or Admin account."""
+    from database.models import PR, Student
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if target_user.role not in ["pr", "admin"]:
+        raise HTTPException(status_code=400, detail="Can only delete staff accounts")
+    if target_user.id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+
+    if target_user.role == "pr":
+        pr_profile = db.query(PR).filter(PR.user_id == user_id).first()
+        if pr_profile:
+            db.query(Student).filter(Student.pr_id == pr_profile.id).update({"pr_id": None})
+            db.delete(pr_profile)
+    
+    # Soft delete
+    target_user.role = "deactivated"
+    target_user.password = "deactivated"
+    db.commit()
+    return {"status": "success", "message": "Staff account deactivated and access revoked."}
 
 @router.post("/forgot-password")
 async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):

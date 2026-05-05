@@ -6,7 +6,9 @@ from .db import Base
 
 APPLICATION_STATUSES = ["Applied", "In Progress", "Rejected", "Placed"]
 ROUND_STATUSES = ["Pending", "Pass", "Fail"]
-DRIVE_STATUSES = ["open", "closed"]
+DRIVE_STATUSES = ["open", "closed", "archived"]
+COURSE_OPTIONS = ["MCA", "MSAIM", "ALL"]
+UPDATE_TYPES = ["test", "workshop", "announcement"]
 EVENT_TYPES = ["new_drive_created", "application_created", "round_updated", "final_result"]
 
 class User(Base):
@@ -17,12 +19,15 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     phone = Column(String, unique=True, index=True)
     password = Column(String)  # Hashed password
-    role = Column(String, default="student") # student, pr, admin
+    role = Column(String, default="student") # student, pr, dept_admin, admin
+    course = Column(String, nullable=True)  # MCA, MSAIM — for students
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
     resume_analyses = relationship("ResumeAnalysis", back_populates="user")
     otp_records = relationship("OTPRecord", back_populates="user")
+    department = relationship("Department", back_populates="users")
 
 
 class ResumeAnalysis(Base):
@@ -141,6 +146,7 @@ class Student(Base):
     user = relationship("User", back_populates="student_profile")
     pr = relationship("PR", back_populates="assigned_students")
     applications = relationship("Application", back_populates="student")
+    application_profile = relationship("StudentApplicationProfile", back_populates="student", uselist=False, cascade="all, delete-orphan")
 
 class PR(Base):
     """Placement Representatives managing student batches"""
@@ -159,14 +165,22 @@ class Drive(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     company_name = Column(String, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)
     role = Column(String)
     description = Column(String)
+    job_description = Column(Text, nullable=True)  # Full JD text for AI matching
     eligibility_criteria = Column(String)
+    ctc = Column(String, nullable=True)  # CTC / salary info
+    course = Column(String, default="ALL")  # MCA, MSAIM, ALL — controls visibility
+    department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
     created_by = Column(Integer, ForeignKey("users.id"))
     deadline = Column(DateTime(timezone=True))
-    status = Column(String, default="open") # open / closed
+    status = Column(String, default="open") # open / closed / archived
+    application_form_fields = Column(JSON, nullable=True) # list of field keys to collect
     
     creator = relationship("User")
+    company = relationship("Company", back_populates="drives")
+    department = relationship("Department", back_populates="drives")
     rounds = relationship("Round", back_populates="drive", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="drive")
 
@@ -191,8 +205,10 @@ class Application(Base):
     student_id = Column(Integer, ForeignKey("placement_students.id"))
     drive_id = Column(Integer, ForeignKey("placement_drives.id"))
     resume_path = Column(String)
+    ai_match_score = Column(Float, nullable=True)  # AI match score against drive JD (0-100)
     status = Column(String, default="Applied")  # Applied / In Progress / Rejected / Placed
     final_status = Column(String, nullable=True)
+    form_responses = Column(JSON, nullable=True) # stores the student's dynamic form answers
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
@@ -290,7 +306,76 @@ class AuditLog(Base):
     
     user = relationship("User")
 
+# ── New Placement Engine tables ──
+
+class Department(Base):
+    """Academic departments (created by admin)"""
+    __tablename__ = "departments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)  # e.g. "MCA Wing", "MSc AI/ML Wing"
+    level = Column(String, nullable=True)  # UG / PG
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    users = relationship("User", back_populates="department")
+    drives = relationship("Drive", back_populates="department")
+
+
+class Company(Base):
+    """Master company list, reused across drives"""
+    __tablename__ = "companies"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    initials = Column(String, nullable=True)  # e.g. "GOOG"
+    website = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    drives = relationship("Drive", back_populates="company")
+
+
+class PlacementUpdate(Base):
+    """Tests, workshops, announcements from placement cell"""
+    __tablename__ = "placement_updates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    update_type = Column(String, default="announcement")  # test, workshop, announcement
+    title = Column(String)
+    description = Column(Text, nullable=True)
+    course = Column(String, default="ALL")  # MCA, MSAIM, ALL
+    action_label = Column(String, nullable=True)  # e.g. "Register Now"
+    action_url = Column(String, nullable=True)
+    posted_by = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    poster = relationship("User")
+
+
 # Update User model to include relationships
 User.student_profile = relationship("Student", back_populates="user", uselist=False)
 User.pr_profile = relationship("PR", back_populates="user", uselist=False)
 User.outcomes = relationship("PlacementOutcome", back_populates="user")
+
+
+class StudentApplicationProfile(Base):
+    """Dedicated table for student application profile data (separate from AI engine profile_data)"""
+    __tablename__ = "student_application_profiles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), unique=True, nullable=False)
+
+    roll_no = Column(String, nullable=True)
+    personal_email = Column(String, nullable=True)
+    university_email = Column(String, nullable=True)
+    class_name = Column(String, nullable=True)
+    course = Column(String, nullable=True)
+    backlog_history = Column(Text, nullable=True)
+    experience = Column(Text, nullable=True)
+    projects = Column(Text, nullable=True)
+    github = Column(String, nullable=True)
+    linkedin = Column(String, nullable=True)
+    resume_url = Column(String, nullable=True)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    student = relationship("Student", back_populates="application_profile")
+

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
-import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap, Sparkles, ChevronDown, TrendingUp, BarChart2 } from 'lucide-react';
+import { LayoutDashboard, FileText, Target, Activity, Briefcase, LogOut, Zap, Sparkles, ChevronDown, TrendingUp, BarChart2, User } from 'lucide-react';
 import Logo from '../Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,6 +27,11 @@ export default function Sidebar() {
     { name: 'Tracking Engine', path: '/dashboard/tracking', icon: <BarChart2 size={17} /> },
     { name: 'Placement Engine', path: '/dashboard/placement', icon: <Briefcase size={17} /> },
   ];
+
+  // Only students see the My Profile entry
+  if (user?.role === 'student') {
+    mainItems.push({ name: 'My Profile', path: '/dashboard/my-profile', icon: <User size={17} /> });
+  }
 
   const profileSubItems = [
     { name: 'Overview', path: '/dashboard/profile', icon: <Activity size={14} /> },

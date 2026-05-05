@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from sqlalchemy.orm import Session
 from database.db import SessionLocal, engine
-from database.models import Base, User, Student, PR, Drive, Round, Application, RoundResult, PlacementOutcome, PlacementNotification
+from database.models import Base, User, Student, PR, Drive, Round, Application, RoundResult, PlacementOutcome, PlacementNotification, Department, Company
 from api.auth import pwd_context
 
 def get_hash(pwd):
@@ -32,6 +32,15 @@ def seed():
         db.refresh(admin)
         print("Created Admin: admin@university.edu")
 
+        # 1.5 Create Departments
+        mca_dept = Department(name="MCA Wing", level="PG")
+        ai_dept = Department(name="MSc AI/ML Wing", level="PG")
+        db.add_all([mca_dept, ai_dept])
+        db.commit()
+        db.refresh(mca_dept)
+        db.refresh(ai_dept)
+        print("Created Departments: MCA, MSc AI/ML")
+
         # 2. Create PRs
         prs = []
         for i in range(1, 3):
@@ -39,7 +48,8 @@ def seed():
                 name=f"Placement Officer {i}",
                 email=f"pr{i}@university.edu",
                 password=get_hash("prpassword"),
-                role="pr"
+                role="pr",
+                department_id=mca_dept.id if i == 1 else ai_dept.id
             )
             db.add(pr_user)
             db.commit()
@@ -61,7 +71,9 @@ def seed():
                 name=f"Demo Student {i}",
                 email=f"student{i}@test.com",
                 password=get_hash("studentpassword"),
-                role="student"
+                role="student",
+                course="MCA" if i <= 10 else "MSAIM",
+                department_id=mca_dept.id if i <= 10 else ai_dept.id
             )
             db.add(user)
             db.commit()
@@ -96,10 +108,14 @@ def seed():
                 company_name=company,
                 role=roles[i % len(roles)],
                 description=f"Great opportunity at {company}",
+                job_description=f"We are looking for a {roles[i % len(roles)]} with expertise in {'Python, SQL' if i % 2 == 0 else 'Java, Cloud'}.",
                 eligibility_criteria="CGPA > 7.5",
+                ctc=f"{8 + i} LPA",
+                course="ALL" if i < 2 else ("MCA" if i == 2 else "MSAIM"),
                 created_by=admin.id,
                 deadline=datetime.now() + timedelta(days=7),
-                status="open" if i < 3 else "closed"
+                status="open" if i < 3 else "closed",
+                department_id=mca_dept.id if i == 2 else (ai_dept.id if i == 3 else None)
             )
             db.add(drive)
             db.commit()
