@@ -24,5 +24,10 @@ dataset/*.csv
 dataset/*.json
 !dataset/sample.csv
 models/*.h5
-models/*.pkl
+*.pkl
+*.xgb
+*.joblib
 *.db
+.env
+__pycache__/
+*.py[cod]

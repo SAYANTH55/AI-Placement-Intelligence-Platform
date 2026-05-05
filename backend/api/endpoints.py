@@ -19,6 +19,7 @@ from database.student_service import StudentService
 
 
 from utils.logger import platform_logger
+from ai_model.resume_parser.analyzer import analyze_resume
 
 router = APIRouter()
 
@@ -53,7 +54,11 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         raw_text = student_profile["metadata"]["raw_text"]
         detected_skills = [s["name"] for s in student_profile["skills"]]
         experience_str = f"{student_profile['experience']['years']} years"
-              # 2. Run LLM API and deterministic ML logic concurrently
+        
+        # 1.5 Call the new Custom ML Analyzer
+        custom_ml_analysis = analyze_resume(raw_text)
+        
+        # 2. Run LLM API and deterministic ML logic concurrently
         llm_context = {
             "text": raw_text,
             "skills": detected_skills,
@@ -186,7 +191,8 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
                 "preparation_plan": preparation_plan,
                 "practice_set": practice_set,
                 "trace_id": intel_profile.get("trace_id"),
-                "requires_verification": intel_profile.get("requires_verification", False)
+                "requires_verification": intel_profile.get("requires_verification", False),
+                "custom_ml_analysis": custom_ml_analysis
             }
         }
 
