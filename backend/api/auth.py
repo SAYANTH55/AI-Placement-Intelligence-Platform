@@ -50,6 +50,7 @@ class CreateStaffRequest(BaseModel):
     password: str
     role: str  # 'pr' or 'admin'
     department_id: int | None = None
+    batch: str | None = None  # Optional batch for PR
 
 class VerifyOTPRequest(BaseModel):
     identifier: str
@@ -90,7 +91,9 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
         "name": user.name,
         "role": user.role,
         "course": user.course,
-        "department_id": user.department_id
+        "department_id": user.department_id,
+        "first_login": user.first_login or False,
+        "roll_number": user.roll_number
     }
 
     # For PR users, attach their pr_id so the frontend can call /pr/{pr_id}/students
@@ -176,7 +179,7 @@ async def create_staff(
     db.refresh(new_user)
 
     if request.role == "pr":
-        new_pr = PR(user_id=new_user.id, department_id=request.department_id)
+        new_pr = PR(user_id=new_user.id, batch=request.batch or "")
         db.add(new_pr)
         db.commit()
 
@@ -347,3 +350,28 @@ async def reset_password(request: ResetPasswordRequest, db: Session = Depends(ge
         del otp_store[identifier]
         
     return {"message": "Password reset successfully. You can now login with your new password."}
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
+@router.post("/change-password")
+async def change_password(
+    request: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role(["student", "pr", "admin"]))
+):
+    """Change password (used for first-login flow and general password changes)."""
+    if not pwd_context.verify(request.current_password, current_user.password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    if len(request.new_password) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
+
+    current_user.password = pwd_context.hash(request.new_password)
+    current_user.first_login = False
+    db.commit()
+
+    return {"message": "Password changed successfully", "first_login": False}

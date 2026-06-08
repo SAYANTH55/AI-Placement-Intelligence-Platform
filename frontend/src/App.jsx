@@ -10,6 +10,7 @@ import LandingPage from './pages/LandingPage';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
+import ChangePassword from './pages/ChangePassword';
 import NotFound from './pages/NotFound';
 import EdgeGlow from './components/common/EdgeGlow';
 import { useAppContext } from './context/AppContext';
@@ -21,6 +22,8 @@ import StudentPlacementView from './components/placement/StudentPlacementView';
 const ProtectedRoute = ({ children }) => {
   const { user } = useAppContext();
   if (!user) return <Navigate to="/login" replace />;
+  // First-login redirect: force password change before any protected page
+  if (user.first_login) return <Navigate to="/change-password" replace />;
   return children;
 };
 
@@ -50,6 +53,7 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/change-password" element={user ? <ChangePassword /> : <Navigate to="/login" replace />} />
           <Route path="/admin/*" element={
             <ProtectedRoute>
               {(user?.role === 'admin' || user?.role === 'pr') ? <AdminDashboard /> : <Navigate to="/dashboard" replace />}

@@ -295,23 +295,27 @@ export default function PlacementEngine() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Course Filters */}
-          <div className="bg-[#0A0A0C] border border-[#181818] p-1 rounded-2xl flex items-center gap-1">
-            {['ALL', 'MCA', 'MSAIM'].map(c => (
-              <button
-                key={c}
-                onClick={() => setCourseFilter(c)}
-                className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
-                  courseFilter === c 
-                  ? 'bg-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]' 
-                  : 'text-[#555] hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {c === 'MSAIM' ? 'MSc AI/ML' : c}
-              </button>
-            ))}
+        { !isStudent && (
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Course Filters */}
+            <div className="bg-[#0A0A0C] border border-[#181818] p-1 rounded-2xl flex items-center gap-1">
+              {['ALL', 'MCA', 'MSAIM'].map(c => (
+                <button
+                  key={c}
+                  onClick={() => setCourseFilter(c)}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                    courseFilter === c 
+                    ? 'bg-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]' 
+                    : 'text-[#555] hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {c === 'MSAIM' ? 'MSc AI/ML' : c}
+                </button>
+              ))}
+            </div>
           </div>
+        )}
+
 
           {/* Action Buttons */}
           {isStaff && (
@@ -323,7 +327,7 @@ export default function PlacementEngine() {
             </button>
           )}
         </div>
-      </div>
+
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         {/* Main Content Area */}

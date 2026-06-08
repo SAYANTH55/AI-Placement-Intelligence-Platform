@@ -6,7 +6,7 @@ import { useAppContext } from '../../context/AppContext';
 
 export default function StaffManagement() {
     const { user } = useAppContext();
-    const [form, setForm] = useState({ fullName: '', email: '', password: '', role: 'pr', department_id: '' });
+    const [form, setForm] = useState({ fullName: '', email: '', password: '', role: 'pr', department_id: '', batch: '' });
     const [departments, setDepartments] = useState([]);
     const [staffList, setStaffList] = useState([]);
     const [loading, setLoading] = useState(false);

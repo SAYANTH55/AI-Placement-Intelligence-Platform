@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext';
 import {
     LayoutDashboard, Briefcase, Users, FileText, MoreHorizontal,
-    LogOut, Shield, Search, Bell, Plus, Grid, Calendar
+    LogOut, Shield, Search, Bell, Plus, Grid, Calendar, Link2, UserPlus
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -14,6 +14,8 @@ import StudentsBatchView from '../components/admin/StudentsBatchView';
 import ApplicationsManagement from '../components/admin/ApplicationsManagement';
 import AnnouncementsManagement from '../components/admin/AnnouncementsManagement';
 import StaffManagement from '../components/admin/StaffManagement';
+import StudentManagement from '../components/admin/StudentManagement';
+import PRMappings from '../components/admin/PRMappings';
 
 export default function AdminDashboard() {
     const { user, setUser } = useAppContext();
@@ -23,7 +25,9 @@ export default function AdminDashboard() {
     const menuItems = [
         { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={18} />, exact: true },
         { name: 'Manage Drives', path: '/admin/drives', icon: <Briefcase size={18} /> },
-        { name: 'Student Batch', path: '/admin/students', icon: <Users size={18} /> },
+        { name: 'Students', path: '/admin/students', icon: <UserPlus size={18} /> },
+        { name: 'PR Mappings', path: '/admin/pr-mappings', icon: <Link2 size={18} /> },
+        { name: 'Batch View', path: '/admin/batch-view', icon: <Users size={18} /> },
         { name: 'Applications', path: '/admin/applications', icon: <FileText size={18} /> },
         { name: 'Announcements', path: '/admin/announcements', icon: <MoreHorizontal size={18} /> },
     ];
@@ -74,7 +78,9 @@ export default function AdminDashboard() {
                     <Routes>
                         <Route path="/" element={<DashboardStats />} />
                         <Route path="/drives" element={<DrivesManagement />} />
-                        <Route path="/students" element={<StudentsBatchView />} />
+                        <Route path="/students" element={<StudentManagement />} />
+                        <Route path="/pr-mappings" element={<PRMappings />} />
+                        <Route path="/batch-view" element={<StudentsBatchView />} />
                         <Route path="/applications" element={<ApplicationsManagement />} />
                         <Route path="/announcements" element={<AnnouncementsManagement />} />
                         <Route path="/staff" element={<StaffManagement />} />

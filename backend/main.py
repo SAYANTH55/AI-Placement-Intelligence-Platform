@@ -6,8 +6,10 @@ load_dotenv(override=True)
 
 # Add backend directory and parent workspace root to sys.path so imports work from different launch contexts
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Add the repository root (one level up from backend) so `api` can be imported
+REPO_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+sys.path.append(REPO_ROOT)
 sys.path.append(BASE_DIR)
-sys.path.append(os.path.abspath(os.path.join(BASE_DIR, "..")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -34,7 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes, company_routes, department_routes, placement_update_routes, application_profile_routes
+from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes, company_routes, department_routes, placement_update_routes, application_profile_routes, provisioning_routes
 
 os.makedirs(os.path.join(BASE_DIR, "uploads/resumes"), exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "uploads")), name="uploads")
@@ -55,6 +57,7 @@ app.include_router(dashboard_routes.router)
 app.include_router(company_routes.router)
 app.include_router(department_routes.router)
 app.include_router(placement_update_routes.router)
+app.include_router(provisioning_routes.router)
 
 
 @app.get("/")

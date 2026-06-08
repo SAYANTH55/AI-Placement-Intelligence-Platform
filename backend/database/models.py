@@ -22,6 +22,8 @@ class User(Base):
     role = Column(String, default="student") # student, pr, dept_admin, admin
     course = Column(String, nullable=True)  # MCA, MSAIM — for students
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
+    roll_number = Column(String, nullable=True, unique=True, index=True)
+    first_login = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
