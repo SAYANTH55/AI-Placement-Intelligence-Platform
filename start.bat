@@ -157,36 +157,37 @@ if exist frontend (
 )
 
 cd backend
+echo      Running database migrations...
 "%PYTHON_EXEC%" -c "from database.db import engine; from database import models; models.Base.metadata.create_all(bind=engine); print('DB OK')" 2>nul
 "%PYTHON_EXEC%" migrate_placement_engine.py 2>nul
+"%PYTHON_EXEC%" scratch/migrate_provisioning.py 2>nul
+"%PYTHON_EXEC%" migrate_validation_gateway.py 2>nul
 if errorlevel 1 (
-    echo [WARN] DB migration check failed - will retry on server start
+    echo [WARN] Some DB migrations failed - check logs
 ) else (
-    echo [OK] Database schema up to date (outcomes + tracking tables + multi-domain ready)
+    echo [OK] Database schema fully updated (placement engine + provisioning + validation gateway ready)
 )
 
 echo.
-echo [?] Would you like to re-seed the Placement Database with mock data?
-echo     (This will provide demo students, drives, and outcomes)
+echo [6/8] Verifying AI Model Files...
 set "MODELS_MISSING=0"
-rem Adjusted path – models live in backend\ai_model\resume_parser\models\ (or wherever they are)
-if not exist backend\ai_model\models\resume_analyzer\role_model.pkl (
+if not exist ai_model\models\resume_analyzer\role_model.pkl (
     echo [WARN] role_model.pkl not found
     set "MODELS_MISSING=1"
 )
-if not exist backend\ai_model\models\resume_analyzer\vectorizer_role.pkl (
+if not exist ai_model\models\resume_analyzer\vectorizer_role.pkl (
     echo [WARN] vectorizer_role.pkl not found
     set "MODELS_MISSING=1"
 )
-if not exist backend\ai_model\models\resume_analyzer\ats_model.pkl (
+if not exist ai_model\models\resume_analyzer\ats_model.pkl (
     echo [WARN] ats_model.pkl not found
     set "MODELS_MISSING=1"
 )
-if not exist backend\ai_model\models\resume_analyzer\vectorizer_ats.pkl (
+if not exist ai_model\models\resume_analyzer\vectorizer_ats.pkl (
     echo [WARN] vectorizer_ats.pkl not found
     set "MODELS_MISSING=1"
 )
-if not exist backend\ai_model\models\resume_analyzer\skills.pkl (
+if not exist ai_model\models\resume_analyzer\skills.pkl (
     echo [WARN] skills.pkl not found
     set "MODELS_MISSING=1"
 )
@@ -210,7 +211,7 @@ cd backend
 echo [OK] Smoke test complete
 
 echo.
-echo [8/9] Running End-to-End State Machine Tests...
+echo [8/9] Running End-to-End and Unit Tests...
 set "DATABASE_URL=sqlite:///e2e_test.db"
 "%PYTHON_EXEC%" test_e2e_placement.py > e2e_test.log 2>&1
 set "DATABASE_URL="
@@ -219,6 +220,13 @@ if errorlevel 1 (
 ) else (
     echo [OK] E2E State Machine Validation Passed!
 )
+"%PYTHON_EXEC%" -m pytest tests/ > pytest_tests.log 2>&1
+if errorlevel 1 (
+    echo [WARN] Unit Tests Failed. Check backend/pytest_tests.log for details.
+) else (
+    echo [OK] Unit Tests (Domain, Pipeline, Classifier, Validation) Passed!
+)
+if exist pytest_tests.log del pytest_tests.log
 if exist e2e_test.db del e2e_test.db
 cd ..
 
@@ -301,7 +309,7 @@ echo    PR:    pr1@university.edu / prpassword
 echo    Student: student1@test.com / studentpassword
 echo.
 echo  Troubleshooting:
-echo    Backend fails  : Check backend console for imlogger.error(f"Error in upload_resume for file {file.filename}: {e}", exc_info=True) for build errors
+echo    Backend fails  : Check backend console for traceback or startup logs
 echo    Port in use    : Use netstat -ano to identify conflicting processes
 echo    Models missing : Run: python -m spacy download en_core_web_sm
 echo    DB issues      : Delete backend/ai_placement.db to reset schema
