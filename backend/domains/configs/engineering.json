@@ -1,0 +1,189 @@
+{
+    "domain_name": "engineering",
+    "display_name": "Core Engineering",
+    "description": "Non-software engineering roles: electrical, electronics, chemical, industrial, and aerospace",
+
+    "keywords": [
+        "electrical engineering", "electronics", "mechanical engineering",
+        "chemical engineering", "industrial engineering", "aerospace",
+        "civil engineering", "structural", "embedded systems", "VLSI",
+        "PCB design", "circuit design", "power systems", "control systems",
+        "PLC", "SCADA", "automation", "CAD", "AutoCAD", "SolidWorks",
+        "ANSYS", "MATLAB", "Simulink", "finite element analysis", "FEA",
+        "process engineering", "chemical process", "thermodynamics",
+        "fluid mechanics", "heat transfer", "materials science",
+        "manufacturing", "production engineering", "quality control",
+        "lean manufacturing", "six sigma", "ISO", "safety engineering",
+        "project engineering", "plant engineering", "commissioning",
+        "instrumentation", "measurement systems", "signal processing",
+        "RF engineering", "telecommunications", "IoT hardware",
+        "B.E.", "B.Tech", "M.Tech", "BE Electrical", "BE Mechanical",
+        "BE Chemical", "BE Electronics", "GATE"
+    ],
+
+    "education_signals": [
+        "B.E.", "B.Tech", "M.Tech", "M.E.",
+        "BE Electrical", "BE Mechanical", "BE Chemical", "BE Electronics",
+        "Bachelor of Engineering", "Master of Engineering",
+        "Electrical Engineering", "Electronics Engineering",
+        "Mechanical Engineering", "Chemical Engineering",
+        "Industrial Engineering", "Aerospace Engineering",
+        "Production Engineering", "Instrumentation Engineering",
+        "Electronics and Communication Engineering", "ECE",
+        "Electrical and Electronics Engineering", "EEE"
+    ],
+
+    "certification_signals": [
+        "Professional Engineer", "PE License",
+        "GATE", "GRE Engineering",
+        "Six Sigma Green Belt", "Six Sigma Black Belt",
+        "Lean Manufacturing", "ISO 9001", "ISO 14001",
+        "AutoCAD Certified", "SolidWorks CSWA", "SolidWorks CSWP",
+        "PMP for Engineers", "HAZOP", "NEBOSH",
+        "Certified Reliability Engineer", "CRE",
+        "Certified Quality Engineer", "CQE"
+    ],
+
+    "skills_dictionary": {
+        "Electrical & Electronics": [
+            "Circuit Design", "PCB Design", "Embedded Systems",
+            "VLSI Design", "Power Systems", "Control Systems",
+            "Signal Processing", "RF Engineering", "PLC Programming",
+            "SCADA", "Instrumentation", "Digital Electronics",
+            "Analog Electronics", "Microcontrollers", "FPGA"
+        ],
+        "Mechanical & Structural": [
+            "CAD Design", "SolidWorks", "AutoCAD", "CATIA",
+            "Finite Element Analysis", "FEA", "ANSYS",
+            "Thermodynamics", "Fluid Mechanics", "Heat Transfer",
+            "Materials Science", "Structural Analysis",
+            "Manufacturing Processes", "CNC Machining",
+            "Product Design", "Tolerance Analysis"
+        ],
+        "Chemical & Process": [
+            "Chemical Process Design", "Process Simulation",
+            "Thermodynamics", "Mass Transfer", "Heat Transfer",
+            "Reaction Engineering", "Process Safety", "HAZOP",
+            "Aspen Plus", "HYSYS", "Piping & Instrumentation Diagrams",
+            "P&ID", "Process Optimization", "Scale-Up"
+        ],
+        "Industrial & Manufacturing": [
+            "Lean Manufacturing", "Six Sigma", "Quality Control",
+            "ISO Standards", "Production Planning", "Supply Chain",
+            "Industrial Automation", "Robotics", "ERP Systems",
+            "Statistical Process Control", "FMEA",
+            "Kaizen", "5S", "TPM", "OEE"
+        ],
+        "Simulation & Analysis Tools": [
+            "MATLAB", "Simulink", "ANSYS", "COMSOL",
+            "Aspen Plus", "HYSYS", "LabVIEW",
+            "Python for Engineering", "R", "Excel Engineering"
+        ],
+        "Safety & Standards": [
+            "Safety Engineering", "NEBOSH", "OSHA",
+            "Process Safety Management", "Risk Assessment",
+            "ISO 9001", "ISO 14001", "ATEX",
+            "Functional Safety", "IEC 61508"
+        ],
+        "Project & Operations": [
+            "Project Engineering", "Plant Commissioning",
+            "Maintenance Engineering", "Reliability Engineering",
+            "Root Cause Analysis", "Failure Analysis",
+            "Shutdown Planning", "Capital Projects"
+        ]
+    },
+
+    "role_requirements": {
+        "Electrical Engineer": [
+            "Circuit Design", "PCB Design", "Power Systems",
+            "Control Systems", "AutoCAD", "MATLAB",
+            "Instrumentation", "Signal Processing"
+        ],
+        "Electronics Engineer": [
+            "Embedded Systems", "PCB Design", "VLSI Design",
+            "Microcontrollers", "FPGA", "Signal Processing",
+            "Digital Electronics", "Circuit Design"
+        ],
+        "Mechanical Design Engineer": [
+            "CAD Design", "SolidWorks", "AutoCAD", "FEA", "ANSYS",
+            "Thermodynamics", "Materials Science", "Product Design"
+        ],
+        "Process Engineer": [
+            "Chemical Process Design", "Process Simulation",
+            "Aspen Plus", "HYSYS", "P&ID", "HAZOP",
+            "Thermodynamics", "Mass Transfer", "Heat Transfer"
+        ],
+        "Quality Engineer": [
+            "Quality Control", "Six Sigma", "ISO 9001",
+            "Statistical Process Control", "FMEA",
+            "Root Cause Analysis", "Lean Manufacturing"
+        ],
+        "Automation Engineer": [
+            "PLC Programming", "SCADA", "Industrial Automation",
+            "Robotics", "Control Systems", "HMI Design",
+            "Process Instrumentation", "Python for Engineering"
+        ],
+        "Manufacturing Engineer": [
+            "Manufacturing Processes", "Lean Manufacturing",
+            "Production Planning", "CNC Machining", "CAD Design",
+            "Quality Control", "FMEA", "OEE"
+        ],
+        "Reliability Engineer": [
+            "Reliability Engineering", "Failure Analysis",
+            "Root Cause Analysis", "Maintenance Engineering",
+            "FMEA", "Statistical Analysis", "MATLAB"
+        ]
+    },
+
+    "role_salaries": {
+        "Electrical Engineer": "$65k - $120k",
+        "Electronics Engineer": "$65k - $125k",
+        "Mechanical Design Engineer": "$60k - $115k",
+        "Process Engineer": "$70k - $130k",
+        "Quality Engineer": "$60k - $110k",
+        "Automation Engineer": "$75k - $140k",
+        "Manufacturing Engineer": "$60k - $115k",
+        "Reliability Engineer": "$70k - $130k"
+    },
+
+    "role_skill_matrix": {
+        "Electrical Engineer": {
+            "core": ["Circuit Design", "Power Systems", "Control Systems", "MATLAB", "AutoCAD"],
+            "secondary": ["PCB Design", "Instrumentation", "Signal Processing", "PLC Programming"],
+            "soft": ["Problem Solving", "Attention to Detail", "Documentation"]
+        },
+        "Electronics Engineer": {
+            "core": ["Embedded Systems", "PCB Design", "Microcontrollers", "Digital Electronics"],
+            "secondary": ["VLSI Design", "FPGA", "Signal Processing", "Circuit Design"],
+            "soft": ["Analytical Thinking", "Precision", "Teamwork"]
+        },
+        "Mechanical Design Engineer": {
+            "core": ["SolidWorks", "AutoCAD", "FEA", "ANSYS", "Thermodynamics"],
+            "secondary": ["Materials Science", "Product Design", "CATIA", "Tolerance Analysis"],
+            "soft": ["Creativity", "Collaboration", "Communication"]
+        },
+        "Process Engineer": {
+            "core": ["Chemical Process Design", "Aspen Plus", "HYSYS", "P&ID", "HAZOP"],
+            "secondary": ["Thermodynamics", "Mass Transfer", "Process Safety"],
+            "soft": ["Analytical Thinking", "Safety Mindset", "Documentation"]
+        },
+        "Automation Engineer": {
+            "core": ["PLC Programming", "SCADA", "Industrial Automation", "Control Systems"],
+            "secondary": ["Robotics", "HMI Design", "Python for Engineering", "Instrumentation"],
+            "soft": ["Systematic Thinking", "Troubleshooting", "Collaboration"]
+        }
+    },
+
+    "skill_topics": {
+        "MATLAB": ["Basic Scripting", "Simulink Modeling", "Control System Toolbox", "Signal Processing Toolbox", "Optimization", "Data Analysis"],
+        "SolidWorks": ["Part Modeling", "Assembly Design", "Drawings & GD&T", "Simulation (FEA)", "Motion Analysis", "PDM"],
+        "ANSYS": ["Structural Analysis", "Thermal Analysis", "Fluid Dynamics (CFX/Fluent)", "Meshing", "Post-Processing", "Optimization"],
+        "PLC Programming": ["Ladder Logic", "Function Block Diagram", "Structured Text", "Allen-Bradley", "Siemens S7", "IEC 61131-3"],
+        "Six Sigma": ["DMAIC", "Statistical Process Control", "Control Charts", "Root Cause Analysis", "Process Capability", "Measurement System Analysis"],
+        "PCB Design": ["Schematic Capture", "Layout & Routing", "Design for Manufacturing", "EMI/EMC", "Signal Integrity", "Gerber Files"],
+        "Embedded Systems": ["Microcontroller Architecture", "C/C++ for Embedded", "RTOS", "Peripheral Interfacing", "Device Drivers", "Debugging"],
+        "Lean Manufacturing": ["Value Stream Mapping", "5S", "Kaizen", "Kanban", "Pull Systems", "Waste Elimination", "Poka-Yoke"],
+        "Chemical Process Design": ["PFD Development", "Heat and Mass Balance", "Equipment Sizing", "P&ID", "Safety Analysis", "Process Hazard Review"],
+        "AutoCAD": ["2D Drafting", "3D Modeling", "Civil 3D", "Electrical Schematics", "Dimensioning & Annotations", "Drawing Management"]
+    }
+}

@@ -1,0 +1,156 @@
+{
+    "domain_name": "legal",
+    "display_name": "Legal & Compliance",
+    "description": "Legal practice, compliance, contract management, and regulatory roles",
+
+    "keywords": [
+        "legal", "law", "attorney", "lawyer", "solicitor", "advocate",
+        "litigation", "contract law", "corporate law", "intellectual property",
+        "LLB", "LLM", "JD", "bar exam", "bar association",
+        "legal research", "case management", "drafting", "pleadings",
+        "deposition", "arbitration", "mediation", "dispute resolution",
+        "compliance", "regulatory affairs", "GDPR", "CCPA", "HIPAA",
+        "due diligence", "mergers acquisitions legal", "securities law",
+        "employment law", "labor law", "tax law", "patent", "trademark",
+        "copyright", "trade secret", "IP law", "data privacy",
+        "legal writing", "Westlaw", "LexisNexis", "contract review",
+        "contract drafting", "NDAs", "SLAs", "term sheets"
+    ],
+
+    "education_signals": [
+        "LLB", "LLM", "JD", "Bachelor of Laws", "Master of Laws",
+        "Juris Doctor", "BCL", "BL",
+        "Law", "Legal Studies", "Criminal Justice",
+        "Paralegal Studies", "Pre-Law"
+    ],
+
+    "certification_signals": [
+        "Bar Exam", "State Bar", "ABA", "Solicitor",
+        "CIPP", "CIPP/E", "CIPP/US", "CIPM", "CIPT",
+        "Certified Compliance Officer", "CCO",
+        "Certified Legal Manager", "CLM",
+        "Paralegal Certificate", "Notary Public"
+    ],
+
+    "skills_dictionary": {
+        "Legal Practice": [
+            "Legal Research", "Legal Writing", "Contract Drafting",
+            "Contract Review", "Case Management", "Litigation Support",
+            "Pleadings", "Motions", "Discovery", "Depositions",
+            "Legal Analysis", "Statutory Interpretation", "Case Law Analysis"
+        ],
+        "Areas of Law": [
+            "Corporate Law", "Contract Law", "Intellectual Property Law",
+            "Employment Law", "Labor Law", "Securities Law", "Tax Law",
+            "Real Estate Law", "Criminal Law", "Family Law",
+            "Environmental Law", "International Law", "Data Privacy Law"
+        ],
+        "Compliance & Regulatory": [
+            "Regulatory Compliance", "GDPR", "CCPA", "HIPAA",
+            "AML Compliance", "KYC", "SEC Compliance",
+            "SOX Compliance", "FCPA", "Anti-Corruption",
+            "Risk Assessment", "Internal Audit", "Compliance Monitoring",
+            "Regulatory Reporting"
+        ],
+        "IP & Technology Law": [
+            "Patent Law", "Trademark Registration", "Copyright Law",
+            "Trade Secret", "IP Licensing", "IP Litigation",
+            "Technology Law", "Cybersecurity Law", "Data Privacy",
+            "E-Commerce Law", "Software Licensing"
+        ],
+        "ADR & Transactions": [
+            "Arbitration", "Mediation", "Negotiation",
+            "Due Diligence", "M&A Legal", "NDAs",
+            "Term Sheets", "SLAs", "LOIs",
+            "Corporate Governance", "Entity Formation"
+        ],
+        "Legal Technology": [
+            "Westlaw", "LexisNexis", "Clio", "MyCase",
+            "Contract Lifecycle Management", "DocuSign",
+            "Legal Analytics", "eDiscovery", "Relativity"
+        ]
+    },
+
+    "role_requirements": {
+        "Corporate Lawyer": [
+            "Corporate Law", "Contract Drafting", "Due Diligence",
+            "M&A Legal", "Securities Law", "Legal Research",
+            "Legal Writing", "NDAs", "Corporate Governance"
+        ],
+        "Compliance Officer": [
+            "Regulatory Compliance", "GDPR", "Risk Assessment",
+            "Internal Audit", "Compliance Monitoring", "AML Compliance",
+            "KYC", "Regulatory Reporting", "Policy Development"
+        ],
+        "IP Attorney": [
+            "Patent Law", "Trademark Registration", "Copyright Law",
+            "IP Licensing", "IP Litigation", "Legal Research",
+            "Legal Writing", "Contract Drafting"
+        ],
+        "Legal Analyst": [
+            "Legal Research", "Legal Analysis", "Case Law Analysis",
+            "Statutory Interpretation", "Legal Writing", "Contract Review",
+            "Westlaw", "LexisNexis"
+        ],
+        "Data Privacy Counsel": [
+            "GDPR", "CCPA", "HIPAA", "Data Privacy Law",
+            "Cybersecurity Law", "Risk Assessment", "Contract Drafting",
+            "Regulatory Compliance", "Privacy Impact Assessment"
+        ],
+        "Employment Lawyer": [
+            "Employment Law", "Labor Law", "Litigation Support",
+            "Contract Drafting", "Mediation", "Legal Research",
+            "Legal Writing", "HR Policy"
+        ],
+        "Paralegal": [
+            "Legal Research", "Case Management", "Document Review",
+            "Contract Review", "Discovery", "Westlaw", "LexisNexis",
+            "Legal Writing", "Court Filing"
+        ]
+    },
+
+    "role_salaries": {
+        "Corporate Lawyer": "$90k - $200k+",
+        "Compliance Officer": "$70k - $140k",
+        "IP Attorney": "$100k - $220k+",
+        "Legal Analyst": "$55k - $100k",
+        "Data Privacy Counsel": "$90k - $170k",
+        "Employment Lawyer": "$75k - $160k",
+        "Paralegal": "$45k - $80k"
+    },
+
+    "role_skill_matrix": {
+        "Corporate Lawyer": {
+            "core": ["Corporate Law", "Contract Drafting", "Due Diligence", "M&A Legal", "Securities Law"],
+            "secondary": ["NDAs", "Legal Research", "Corporate Governance", "Westlaw"],
+            "soft": ["Negotiation", "Client Relations", "Attention to Detail", "Discretion"]
+        },
+        "Compliance Officer": {
+            "core": ["Regulatory Compliance", "GDPR", "Risk Assessment", "AML Compliance", "Internal Audit"],
+            "secondary": ["KYC", "Regulatory Reporting", "Compliance Monitoring", "SOX Compliance"],
+            "soft": ["Ethical Judgment", "Communication", "Analytical Thinking"]
+        },
+        "IP Attorney": {
+            "core": ["Patent Law", "Trademark Registration", "Copyright Law", "IP Licensing", "IP Litigation"],
+            "secondary": ["Trade Secret", "Technology Law", "Contract Drafting", "Legal Research"],
+            "soft": ["Technical Understanding", "Precision", "Client Communication"]
+        },
+        "Legal Analyst": {
+            "core": ["Legal Research", "Legal Analysis", "Case Law Analysis", "Legal Writing"],
+            "secondary": ["Westlaw", "LexisNexis", "Contract Review", "Statutory Interpretation"],
+            "soft": ["Attention to Detail", "Critical Thinking", "Written Communication"]
+        }
+    },
+
+    "skill_topics": {
+        "Legal Research": ["Primary Sources (Cases, Statutes)", "Secondary Sources", "Westlaw Navigation", "LexisNexis Navigation", "Boolean Search", "Shepardizing/KeyCiting"],
+        "Contract Drafting": ["Offer & Acceptance", "Consideration", "Representations & Warranties", "Indemnification Clauses", "Limitation of Liability", "Force Majeure"],
+        "Corporate Law": ["Entity Types", "Fiduciary Duties", "Corporate Governance", "Shareholder Agreements", "Board Resolutions", "Mergers & Acquisitions"],
+        "GDPR": ["Lawful Basis for Processing", "Data Subject Rights", "DPIAs", "Controller vs Processor", "International Transfers", "Breach Notification"],
+        "Regulatory Compliance": ["Compliance Framework", "Risk-Based Approach", "Policies & Procedures", "Training Programs", "Monitoring & Testing", "Remediation"],
+        "Patent Law": ["Patentability Requirements", "Patent Prosecution", "Claims Drafting", "Freedom to Operate", "Patent Litigation", "USPTO Process"],
+        "Arbitration": ["Arbitration Agreements", "AAA/ICC Rules", "Seat of Arbitration", "Award Enforcement", "Emergency Arbitration", "Multi-Party Arbitration"],
+        "Due Diligence": ["Legal DD Checklist", "Corporate Records Review", "IP Audit", "Litigation History", "Regulatory Filings Review", "Red Flag Reporting"],
+        "Employment Law": ["At-Will Employment", "Discrimination Law (Title VII)", "FMLA", "Non-Compete Agreements", "Wage & Hour Law", "OSHA Compliance"]
+    }
+}

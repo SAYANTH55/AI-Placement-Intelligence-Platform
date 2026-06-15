@@ -15,6 +15,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
   const [status, setStatus] = useState('idle');
   const [progress, setProgress] = useState(0);
   const [selectedRole, setSelectedRole] = useState('');
+  const [invalidDocData, setInvalidDocData] = useState(null);
 
   const onDrop = useCallback(acceptedFiles => {
     if (acceptedFiles.length > 0) {
@@ -61,6 +62,16 @@ export default function UploadBox({ onAnalyzeComplete }) {
       setStatus('complete');
 
       console.log('✅ API Response:', response.data);
+      
+      // NEW: Handle Resume Validation Gateway Rejection
+      if (response.data.success === false && response.data.is_resume === false) {
+        setStatus('invalid_document');
+        setInvalidDocData({
+          type: response.data.document_type,
+          confidence: Math.round(response.data.confidence * 100)
+        });
+        return; // Abort further processing
+      }
 
       // The backend returns { status: 'success', data: { extractedText, skills, experience, prediction, roleMatches } }
       if (!response.data || !response.data.data) {
@@ -147,6 +158,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
     setStatus('idle');
     setProgress(0);
     setSelectedRole('');
+    setInvalidDocData(null);
   };
 
   return (
@@ -337,6 +349,34 @@ export default function UploadBox({ onAnalyzeComplete }) {
               >
                 <CheckCircle size={16} />
                 Analysis complete — generating your career intelligence
+              </motion.div>
+            )}
+
+            {/* Invalid Document Error State */}
+            {status === 'invalid_document' && invalidDocData && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl text-center mt-4"
+              >
+                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                  <X className="text-red-400" size={24} />
+                </div>
+                <h3 className="text-lg font-black text-red-400 mb-2">Document Validation Failed</h3>
+                <p className="text-sm text-[#ccc] mb-4">
+                  Uploaded file appears to be: <span className="text-white font-bold">{invalidDocData.type.replace(/_/g, ' ').toUpperCase()}</span>
+                  <br />
+                  <span className="text-[#888] text-xs font-mono">Confidence: {invalidDocData.confidence}%</span>
+                </p>
+                <div className="bg-[#111] p-3 rounded-xl border border-[#222] mb-5">
+                  <p className="text-xs text-[#888]">This platform only supports resumes and CVs. Please upload a valid resume.</p>
+                </div>
+                <button
+                  onClick={handleRemove}
+                  className="bg-red-500 hover:bg-red-600 text-white text-sm font-black py-2.5 px-8 rounded-xl transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                >
+                  Try Again
+                </button>
               </motion.div>
             )}
           </motion.div>

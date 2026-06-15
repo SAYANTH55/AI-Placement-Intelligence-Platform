@@ -1,22 +1,37 @@
-C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\venv\lib\site-packages\google\api_core\_python_version_support.py:273: FutureWarning: You are using a Python version (3.10.11) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
-  warnings.warn(message, FutureWarning)
-WARNING:ai_model.resume_parser.analyzer:Model file missing: role_model.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\role_model.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: role_model.pkl is required for advanced resume analysis features.
-WARNING:ai_model.resume_parser.analyzer:Model file missing: vectorizer_role.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\vectorizer_role.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: vectorizer_role.pkl is required for advanced resume analysis features.
-WARNING:ai_model.resume_parser.analyzer:Model file missing: ats_model.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\ats_model.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: ats_model.pkl is required for advanced resume analysis features.
-WARNING:ai_model.resume_parser.analyzer:Model file missing: vectorizer_ats.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\vectorizer_ats.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: vectorizer_ats.pkl is required for advanced resume analysis features.
-WARNING:ai_model.resume_parser.analyzer:Model file missing: skills.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\skills.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: skills.pkl is required for advanced resume analysis features.
-WARNING:ai_model.resume_parser.analyzer:Model file missing: label_encoder.pkl at C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\ai_model\models\resume_analyzer\label_encoder.pkl
-WARNING:ai_model.resume_parser.analyzer:Note: label_encoder.pkl is required for advanced resume analysis features.
-ERROR:learning_layer.inference_engine:Failed to load model artifact: No module named 'numpy._core.numeric'
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator DecisionTreeClassifier from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator RandomForestClassifier from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+INFO:ai_model.resume_parser.analyzer:Successfully loaded role_model.pkl
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+INFO:ai_model.resume_parser.analyzer:Successfully loaded vectorizer_role.pkl
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator LinearRegression from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+INFO:ai_model.resume_parser.analyzer:Successfully loaded ats_model.pkl
+INFO:ai_model.resume_parser.analyzer:Successfully loaded vectorizer_ats.pkl
+INFO:ai_model.resume_parser.analyzer:Successfully loaded skills.pkl
+E:\Al-Placement-Intelligence-Platform\venv\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator LabelEncoder from version 1.8.0 when using version 1.9.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+INFO:ai_model.resume_parser.analyzer:Successfully loaded label_encoder.pkl
+ERROR:learning_layer.inference_engine:Failed to load model artifact: No module named '_loss'
 Traceback (most recent call last):
-  File "C:\Users\deonb\Desktop\AI-Placement-Intelligence-Platform\backend\learning_layer\inference_engine.py", line 226, in _load_model
+  File "E:\Al-Placement-Intelligence-Platform\backend\learning_layer\inference_engine.py", line 226, in _load_model
     artifact = pickle.load(fh)
-ModuleNotFoundError: No module named 'numpy._core.numeric'
+               ^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named '_loss'
+E:\Al-Placement-Intelligence-Platform\backend\test_e2e_placement.py:110: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  deadline=datetime.utcnow() + timedelta(days=7),
+E:\Al-Placement-Intelligence-Platform\backend\test_e2e_placement.py:394: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  deadline=datetime.utcnow() + timedelta(days=7),
 
 ============================================================
 END-TO-END PLACEMENT WORKFLOW TEST

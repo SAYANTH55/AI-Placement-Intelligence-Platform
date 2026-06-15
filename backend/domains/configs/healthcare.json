@@ -1,0 +1,154 @@
+{
+    "domain_name": "healthcare",
+    "display_name": "Healthcare & Life Sciences",
+    "description": "Clinical, health informatics, clinical research, pharmaceutical, and healthcare management roles",
+
+    "keywords": [
+        "healthcare", "clinical", "medical", "patient care", "hospital",
+        "EMR", "EHR", "Epic", "Cerner", "health informatics",
+        "clinical data analyst", "biostatistics", "pharmaceutical",
+        "clinical trials", "FDA", "regulatory affairs", "GCP", "GMP",
+        "HIPAA", "ICD-10", "CPT codes", "medical coding",
+        "public health", "epidemiology", "healthcare administration",
+        "MBBS", "MD", "nursing", "pharmacovigilance", "drug development",
+        "telemedicine", "digital health", "population health",
+        "quality improvement", "patient safety", "SAS", "STATA"
+    ],
+
+    "education_signals": [
+        "MBBS", "MD", "BDS", "BPT", "BAMS", "BHMS",
+        "B.Sc Nursing", "M.Sc Nursing", "B.Sc Life Sciences",
+        "MPH", "Master of Public Health", "MHA",
+        "Master of Healthcare Administration",
+        "Health Informatics", "Biomedical Engineering",
+        "Pharmaceutical Sciences", "Clinical Research"
+    ],
+
+    "certification_signals": [
+        "USMLE", "PLAB", "RN", "LPN", "CNA",
+        "CPHIMS", "CPHIT", "RHIA", "RHIT",
+        "Clinical Research Coordinator", "CRC", "GCP",
+        "CPHQ", "Epic Certification", "Cerner Certification"
+    ],
+
+    "skills_dictionary": {
+        "Clinical Skills": [
+            "Patient Care", "Clinical Assessment", "Diagnosis",
+            "Treatment Planning", "Medication Management",
+            "Patient Education", "Clinical Documentation"
+        ],
+        "Health Informatics": [
+            "EMR", "EHR", "Epic", "Cerner", "HL7", "FHIR",
+            "Medical Coding", "ICD-10", "CPT Codes",
+            "Health Data Analytics", "Clinical Decision Support",
+            "Healthcare Interoperability"
+        ],
+        "Clinical Research": [
+            "Clinical Trials", "Protocol Development", "IRB Submissions",
+            "GCP", "ICH Guidelines", "Data Management",
+            "Patient Recruitment", "Adverse Event Reporting",
+            "Clinical Study Reports", "Regulatory Submissions"
+        ],
+        "Data & Analytics": [
+            "Biostatistics", "SAS", "R", "STATA",
+            "Epidemiology", "Statistical Analysis",
+            "Real-World Evidence", "Population Health Analytics",
+            "Power BI", "Python"
+        ],
+        "Regulatory & Compliance": [
+            "FDA Regulations", "HIPAA", "GMP", "GLP", "GCP",
+            "Regulatory Affairs", "510(k)", "Drug Approval Process",
+            "Pharmacovigilance", "Quality Assurance"
+        ],
+        "Healthcare Management": [
+            "Healthcare Administration", "Hospital Operations",
+            "Quality Improvement", "Patient Safety",
+            "Healthcare Policy", "Budget Management",
+            "Accreditation", "Risk Management"
+        ],
+        "Pharmaceutical": [
+            "Drug Development", "Pharmacology", "Drug Safety",
+            "Medical Affairs", "Medical Writing",
+            "HEOR", "Pharmacoeconomics"
+        ]
+    },
+
+    "role_requirements": {
+        "Clinical Data Analyst": [
+            "Biostatistics", "SAS", "R", "Statistical Analysis",
+            "Clinical Trials", "Data Management", "Python"
+        ],
+        "Health Informatics Specialist": [
+            "EMR", "EHR", "Epic", "HL7", "FHIR",
+            "Health Data Analytics", "ICD-10", "SQL"
+        ],
+        "Clinical Research Coordinator": [
+            "Clinical Trials", "GCP", "Protocol Development",
+            "Patient Recruitment", "IRB Submissions",
+            "Adverse Event Reporting", "Data Management"
+        ],
+        "Regulatory Affairs Manager": [
+            "FDA Regulations", "Regulatory Affairs", "Drug Approval Process",
+            "510(k)", "GMP", "Quality Assurance", "Pharmacovigilance"
+        ],
+        "Healthcare Administrator": [
+            "Healthcare Administration", "Hospital Operations",
+            "Quality Improvement", "Patient Safety",
+            "Budget Management", "Accreditation"
+        ],
+        "Pharmacovigilance Specialist": [
+            "Drug Safety", "Adverse Event Reporting", "Pharmacovigilance",
+            "FDA Regulations", "GCP", "Medical Writing"
+        ],
+        "Medical Writer": [
+            "Medical Writing", "Clinical Study Reports",
+            "Regulatory Submissions", "Protocol Development",
+            "Scientific Writing", "GCP"
+        ]
+    },
+
+    "role_salaries": {
+        "Clinical Data Analyst": "$60k - $110k",
+        "Health Informatics Specialist": "$65k - $120k",
+        "Clinical Research Coordinator": "$50k - $90k",
+        "Regulatory Affairs Manager": "$80k - $150k",
+        "Healthcare Administrator": "$70k - $140k",
+        "Pharmacovigilance Specialist": "$65k - $120k",
+        "Medical Writer": "$60k - $120k"
+    },
+
+    "role_skill_matrix": {
+        "Clinical Data Analyst": {
+            "core": ["Biostatistics", "SAS", "R", "Statistical Analysis", "Clinical Trials"],
+            "secondary": ["Data Management", "Python", "Medical Coding"],
+            "soft": ["Attention to Detail", "Analytical Thinking", "Communication"]
+        },
+        "Health Informatics Specialist": {
+            "core": ["EMR", "EHR", "Epic", "HL7", "FHIR", "Health Data Analytics"],
+            "secondary": ["ICD-10", "SQL", "Clinical Decision Support"],
+            "soft": ["Problem Solving", "Collaboration", "Change Management"]
+        },
+        "Clinical Research Coordinator": {
+            "core": ["Clinical Trials", "GCP", "Protocol Development", "IRB Submissions"],
+            "secondary": ["Adverse Event Reporting", "Data Management"],
+            "soft": ["Patient Communication", "Organization", "Ethical Conduct"]
+        },
+        "Regulatory Affairs Manager": {
+            "core": ["FDA Regulations", "Regulatory Affairs", "Drug Approval Process", "GMP"],
+            "secondary": ["Pharmacovigilance", "Quality Assurance"],
+            "soft": ["Regulatory Interpretation", "Communication"]
+        }
+    },
+
+    "skill_topics": {
+        "Biostatistics": ["Descriptive Statistics", "Inferential Statistics", "Survival Analysis", "Regression Models", "Sample Size Calculation"],
+        "SAS": ["Base SAS Programming", "PROC SQL", "SAS Macros", "CDISC Standards", "Statistical Procedures"],
+        "Clinical Trials": ["Phase I-IV Design", "Randomization", "Blinding", "Protocol Writing", "Endpoint Selection"],
+        "GCP": ["ICH E6 Guidelines", "Informed Consent", "Site Monitoring", "Essential Documents", "Protocol Deviations"],
+        "Epic": ["Chart Navigation", "Order Entry", "Documentation", "Reporting & Analytics", "Workflow Optimization"],
+        "HL7": ["HL7 v2 Messaging", "HL7 FHIR", "SMART on FHIR", "CDA Documents", "API Development"],
+        "HIPAA": ["Privacy Rule", "Security Rule", "Breach Notification", "PHI Handling", "Business Associate Agreements"],
+        "FDA Regulations": ["21 CFR Parts", "510(k) Process", "PMA Pathway", "IND Applications", "NDA/BLA"],
+        "Pharmacovigilance": ["Adverse Event Reporting", "Signal Detection", "PSUR", "REMS Programs"]
+    }
+}

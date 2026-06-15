@@ -5,6 +5,7 @@ import os
 import re
 from ai_model.data.skills_data import ALL_SKILLS, SKILLS_DICTIONARY
 from ai_model.utils.skill_normalizer import normalize_skill, fuzzy_match_skill
+from utils.debug_logger import dump_checkpoint
 
 
 def extract_text_from_pdf(file_path):
@@ -246,12 +247,14 @@ def parse_resume(file_path):
 
     # Phase 1: Section Splitting
     sections = split_sections(text)
+    dump_checkpoint("SECTIONS", text, sections)
     
     # Phase 1: Context-Aware Skill Extraction
     all_detected_skills = []
     for sec_name, sec_text in sections.items():
         sec_skills = extract_skills_with_fuzzy_matching(sec_text, section_context=sec_name)
         all_detected_skills.extend(sec_skills)
+        dump_checkpoint(f"SKILLS_{sec_name.upper()}", sec_text, sec_skills)
         
     # Deduplicate and keep highest weight
     seen = {}
@@ -259,11 +262,12 @@ def parse_resume(file_path):
         name = normalize_skill(s["name"])
         if name not in seen or s["weight"] > seen[name]["weight"]:
             seen[name] = s
-            
     final_skills = list(seen.values())
+    dump_checkpoint("FINAL_SKILLS", all_detected_skills, final_skills)
 
     # Phase 1.5: Global Catch-All (Sweep entire text to catch skills lost in sections)
     global_skills = extract_skills_with_fuzzy_matching(text, section_context="general")
+    dump_checkpoint("GLOBAL_SKILLS", text, global_skills)
     for gs in global_skills:
         name = normalize_skill(gs["name"])
         if name not in seen:
@@ -271,9 +275,11 @@ def parse_resume(file_path):
             gs["weight"] = 0.7
             seen[name] = gs
             final_skills.append(gs)
+    dump_checkpoint("FINAL_SKILLS_WITH_GLOBAL", global_skills, final_skills)
 
     # Phase 1: Project Extraction
     projects = extract_projects(sections)
+    dump_checkpoint("PROJECTS", sections, projects)
 
     # Estimate experience
     experience_years = extract_experience_years(text)

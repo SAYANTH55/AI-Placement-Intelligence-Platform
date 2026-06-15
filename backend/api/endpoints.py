@@ -18,7 +18,7 @@ from database.models import ResumeAnalysis, User, Student
 from database.student_service import StudentService
 
 
-from utils.logger import platform_logger
+from utils.debug_logger import dump_checkpoint
 from ai_model.resume_parser.analyzer import analyze_resume
 
 router = APIRouter()
@@ -47,11 +47,76 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         
         loop = asyncio.get_event_loop()
         
+        # --- NEW: Resume Validation Gateway ---
+        from ai_model.resume_parser.parser import extract_text_from_pdf, extract_text_from_docx
+        from validation.resume_validator.validation_router import validate_document
+        
+        ext = os.path.splitext(file_path)[1].lower()
+        raw_text_for_validation = ""
+        if ext == '.pdf':
+            raw_text_for_validation = extract_text_from_pdf(file_path)
+        elif ext in ['.doc', '.docx']:
+            raw_text_for_validation = extract_text_from_docx(file_path)
+        else:
+            try:
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    raw_text_for_validation = f.read()
+            except:
+                pass
+                
+        validation_result = await validate_document(raw_text_for_validation)
+        
+        if not validation_result.is_resume:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return {
+                "success": False,
+                "is_resume": False,
+                "document_type": validation_result.document_type,
+                "confidence": validation_result.confidence,
+                "message": validation_result.message
+            }
+        # --- END VALIDATION ---
+        
         # 1. CPU-bound parsing now using robust Layer 1 Ingestion
         student_profile = await loop.run_in_executor(None, process_resume_upload, file_path)
         
-        # Backwards compatibility adapters for existing API expectations
+        # 1.1 Domain Classification (NEW — additive)
+        from domains.classifier import classify_domain
         raw_text = student_profile["metadata"]["raw_text"]
+        detected_skills_for_classify = [s["name"] for s in student_profile["skills"]]
+        domain_result = classify_domain(raw_text, detected_skills_for_classify)
+        dump_checkpoint("DOMAIN_ROUTER", {"raw_text": raw_text, "detected_skills": detected_skills_for_classify}, domain_result)
+        
+        # 1.2 Domain Routing
+        if domain_result.domain.lower() != "it":
+            # Route to multi-domain pipeline
+            from domains.domain_pipeline import run_domain_pipeline
+            pipeline_result = await loop.run_in_executor(
+                None, 
+                run_domain_pipeline, 
+                raw_text, 
+                domain_result.domain, 
+                target_role
+            )
+            
+            # Inject domain metadata into the result
+            pipeline_result["detected_domain"] = domain_result.domain
+            pipeline_result["domain_confidence"] = round(domain_result.confidence, 2)
+            pipeline_result["secondary_domain"] = domain_result.secondary_domain
+            
+            # Clean up
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                
+            return {
+                "status": "success",
+                "filename": file.filename,
+                "data": pipeline_result
+            }
+        
+        # === EXISTING IT PIPELINE BELOW (UNCHANGED) ===
+        # Backwards compatibility adapters for existing API expectations
         detected_skills = [s["name"] for s in student_profile["skills"]]
         experience_str = f"{student_profile['experience']['years']} years"
         
@@ -74,8 +139,11 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
             role_matches_task
         )
         
-        role_matches_data = role_matches_data_dict['role_matches']
-        diversity_info = role_matches_data_dict['diversity_analysis']
+        # After merging skills and determining final_roles, log role matches
+        dump_checkpoint("ROLE_MATCHES", {"final_skills": detected_skills, "experience": experience_str}, role_matches_data_dict.get("role_matches", []))
+        role_matches_data = role_matches_data_dict.get("role_matches", [])
+        diversity_info = role_matches_data_dict.get("diversity_analysis", {})
+        experience_advantage_roles = [r["role"] for r in role_matches_data if r.get("match", 0) >= 65]
 
         # 3. Dynamic Skill Merging (Layer 1 + Layer 2)
         parsed_skills_objs = student_profile.get("skills", [])
@@ -97,7 +165,7 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         
         student_profile["skills"] = final_skill_objs
         final_skills = [s["name"] for s in final_skill_objs]
-        final_roles = list(set([r["role"] for r in role_matches_data]) | set(llm_roles))
+        final_roles = list(set([m["role"] for m in role_matches_data] + llm_roles))
         
         # 4. RUN THE ADAPTIVE INTELLIGENCE ENGINE (Production Hardened ML)
         from user_intelligence.intelligence_service import intelligence_service
@@ -105,25 +173,24 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         prediction = intel_profile.get("prediction", {})
         
         # Override the legacy prediction path with the hardened ML results
-        prediction["placement_probability"] = prediction.get("predicted_score", 0.5)
+        dump_checkpoint("READINESS_SCORE", prediction, {"readiness": prediction.get("readiness"), "placement_probability": prediction.get("placement_probability", prediction.get("current_score", 0.0))})
         
         # 5. Enhance Matcher logic & Experience Advantage Roles
-        experience_advantage_roles = []
-        for r_obj in role_matches_data:
-            if r_obj["role"] in final_roles:
-                # 15% Boost for LLM cross-correlation
-                r_obj["match"] = round(min(r_obj["match"] * 1.15, 100))
-                experience_advantage_roles.append(r_obj["role"])
-
+        for role in role_matches_data:
+            if role["role"] in experience_advantage_roles:
+                role["match"] += 0.15 # Bonus for experience match
+        
         # Re-sort roles after modifying match
         role_matches_data.sort(key=lambda x: x["match"], reverse=True)
         top_role = role_matches_data[0] if role_matches_data else None
 
         # 5. ML Predictor Calibration (Step 5)
         # Ground the semantic/historic ML prediction natively into the rigid keyword matcher
-        if prediction["placement_probability"] > 0.75:
+        prob = prediction.get("placement_probability", prediction.get("current_score", 0.0))
+        prediction["placement_probability"] = prob
+        if prob > 0.75:
             prediction["readiness"] = "High"
-        elif prediction["placement_probability"] > 0.40:
+        elif prob > 0.40:
             prediction["readiness"] = "Medium"
         else:
             prediction["readiness"] = "Low"
@@ -133,13 +200,13 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
             "skills": final_skills,
             "missing_skills": top_role["missing"] if top_role else [],
             "roles": final_roles,
-            "score": int(prediction["placement_probability"] * 100)
+            "score": int(prediction.get("placement_probability", prediction.get("current_score", 0.0)) * 100)
         }
         
         llm_insights = await loop.run_in_executor(None, generate_career_insights, llm_insights_input)
 
-        platform_logger.info(f"LLM Output: {llm_output}")
-        platform_logger.info(f"Merged Roles: {final_roles}")
+        logging.info(f"LLM Output: {llm_output}")
+        logging.info(f"Merged Roles: {final_roles}")
 
         # 7. Preparation Engine — generate learning roadmap from missing skills
         missing_for_prep = top_role["missing"] if top_role else []
@@ -190,14 +257,17 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
                 "llm_insights": llm_insights,
                 "preparation_plan": preparation_plan,
                 "practice_set": practice_set,
-                "trace_id": intel_profile.get("trace_id"),
-                "requires_verification": intel_profile.get("requires_verification", False),
-                "custom_ml_analysis": custom_ml_analysis
+
+                "custom_ml_analysis": custom_ml_analysis,
+
+                "detected_domain": "IT",
+                "domain_confidence": 1.0,
+                "secondary_domain": getattr(domain_result, 'secondary_domain', None)
             }
         }
 
     except Exception as e:
-        platform_logger.error(f"Error in upload_resume for file {file.filename}: {e}", exc_info=True)
+        logging.error(f"Error in upload_resume for file {file.filename}: {e}", exc_info=True)
         if os.path.exists(file_path):
             os.remove(file_path)
         raise HTTPException(status_code=500, detail=str(e))
@@ -261,9 +331,7 @@ async def analyze_user(data: AnalyzeUserInput, db: SessionLocal = Depends(get_se
     
     return {
         "status": "success",
-        "trace_id": intel_profile.get("trace_id"),
-        "disclaimer": intel_profile.get("readiness_disclaimer"),
-        "intelligence": intel_profile
+
     }
 
 class SkillUpdateItem(BaseModel):

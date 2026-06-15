@@ -57,6 +57,17 @@ class ResumeAnalysis(Base):
     diversity_score = Column(Integer)  # 0-100
     skill_gaps = Column(JSON)  # Learning recommendations
     
+    # Multi-domain tracking
+    detected_domain = Column(String, nullable=True)
+    domain_confidence = Column(Float, nullable=True)
+    secondary_domain = Column(String, nullable=True)
+    
+    # Validation Gateway tracking
+    is_resume = Column(Boolean, default=True, nullable=True)
+    document_type = Column(String, nullable=True)
+    validation_confidence = Column(Float, nullable=True)
+    validation_reason = Column(Text, nullable=True)
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

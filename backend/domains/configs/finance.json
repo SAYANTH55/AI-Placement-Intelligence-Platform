@@ -1,0 +1,173 @@
+{
+    "domain_name": "finance",
+    "display_name": "Finance & Banking",
+    "description": "Financial analysis, investment banking, accounting, actuarial, and fintech roles",
+
+    "keywords": [
+        "financial analysis", "investment banking", "equity research", "valuation",
+        "accounting", "auditing", "financial modeling", "DCF", "LBO",
+        "portfolio management", "asset management", "risk management",
+        "CFA", "CPA", "FRM", "actuary", "underwriting",
+        "derivatives", "fixed income", "hedge fund", "private equity",
+        "mergers and acquisitions", "M&A", "IPO", "debt capital markets",
+        "balance sheet", "P&L", "income statement", "cash flow",
+        "GAAP", "IFRS", "tax", "compliance", "Basel", "Dodd-Frank",
+        "Bloomberg", "Reuters", "FactSet", "capital markets",
+        "credit analysis", "loan origination", "AML", "KYC",
+        "fintech", "quantitative finance", "algorithmic trading", "quant"
+    ],
+
+    "education_signals": [
+        "B.Com", "M.Com", "BBA Finance", "MBA Finance",
+        "Bachelor of Finance", "Master of Finance", "MFin",
+        "Bachelor of Accounting", "CPA program",
+        "Economics", "Actuarial Science", "Financial Engineering",
+        "Quantitative Finance", "Mathematical Finance"
+    ],
+
+    "certification_signals": [
+        "CFA", "CFA Level 1", "CFA Level 2", "CFA Level 3",
+        "CPA", "CA", "ACCA", "CMA", "FRM",
+        "Series 7", "Series 63", "Series 65",
+        "CFP", "CAIA", "FCA", "Bloomberg Certification"
+    ],
+
+    "skills_dictionary": {
+        "Financial Analysis": [
+            "Financial Modeling", "DCF Valuation", "LBO Modeling",
+            "Comparable Company Analysis", "Precedent Transaction Analysis",
+            "Ratio Analysis", "Sensitivity Analysis", "Scenario Analysis",
+            "Break-Even Analysis", "Variance Analysis"
+        ],
+        "Accounting & Reporting": [
+            "Financial Accounting", "Management Accounting", "GAAP", "IFRS",
+            "Balance Sheet Analysis", "Income Statement Analysis",
+            "Cash Flow Statement", "Consolidation", "Revenue Recognition",
+            "Cost Accounting", "Tax Accounting", "Audit"
+        ],
+        "Investment & Capital Markets": [
+            "Equity Research", "Fixed Income", "Derivatives", "Options",
+            "Portfolio Management", "Asset Allocation", "Risk-Adjusted Returns",
+            "Capital Markets", "IPO Process", "M&A", "Private Equity",
+            "Venture Capital", "Hedge Fund Strategies", "Quantitative Finance"
+        ],
+        "Risk & Compliance": [
+            "Credit Risk", "Market Risk", "Operational Risk",
+            "Risk Management", "Compliance", "AML", "KYC",
+            "Basel III", "Stress Testing", "VaR", "CCAR",
+            "Regulatory Reporting", "Internal Controls"
+        ],
+        "Tools & Technology": [
+            "Bloomberg Terminal", "FactSet", "Reuters Eikon",
+            "Excel Advanced", "VBA", "Python for Finance",
+            "SQL", "Power BI", "Tableau", "R",
+            "SAP Finance", "Oracle Financials", "QuickBooks"
+        ],
+        "Banking & Lending": [
+            "Credit Analysis", "Loan Origination", "Underwriting",
+            "Commercial Banking", "Retail Banking", "Trade Finance",
+            "Treasury Management", "Cash Management", "Debt Structuring"
+        ],
+        "Actuarial & Quantitative": [
+            "Actuarial Science", "Statistical Modeling", "Monte Carlo Simulation",
+            "Time Series Analysis", "Machine Learning for Finance",
+            "Algorithmic Trading", "Quantitative Research", "Pricing Models"
+        ]
+    },
+
+    "role_requirements": {
+        "Financial Analyst": [
+            "Financial Modeling", "DCF Valuation", "Excel Advanced",
+            "Ratio Analysis", "Income Statement Analysis", "Balance Sheet Analysis",
+            "Variance Analysis", "Power BI", "SQL"
+        ],
+        "Investment Banker": [
+            "DCF Valuation", "LBO Modeling", "M&A", "Comparable Company Analysis",
+            "Precedent Transaction Analysis", "Capital Markets", "Bloomberg Terminal",
+            "Financial Modeling", "Equity Research"
+        ],
+        "Equity Research Analyst": [
+            "Equity Research", "Financial Modeling", "DCF Valuation",
+            "Ratio Analysis", "Comparable Company Analysis", "Bloomberg Terminal",
+            "Industry Analysis", "Report Writing"
+        ],
+        "Risk Manager": [
+            "Credit Risk", "Market Risk", "VaR", "Stress Testing",
+            "Regulatory Reporting", "Compliance", "Basel III",
+            "Statistical Modeling", "Excel Advanced"
+        ],
+        "Actuary": [
+            "Actuarial Science", "Statistical Modeling", "Monte Carlo Simulation",
+            "Risk Management", "Pricing Models", "R", "Python for Finance",
+            "Excel Advanced", "Regulatory Compliance"
+        ],
+        "Credit Analyst": [
+            "Credit Analysis", "Financial Modeling", "Ratio Analysis",
+            "Balance Sheet Analysis", "Cash Flow Statement", "Underwriting",
+            "AML", "KYC", "SQL"
+        ],
+        "Portfolio Manager": [
+            "Portfolio Management", "Asset Allocation", "Risk-Adjusted Returns",
+            "Fixed Income", "Derivatives", "Bloomberg Terminal",
+            "Quantitative Finance", "Performance Attribution"
+        ],
+        "Quantitative Analyst": [
+            "Quantitative Finance", "Statistical Modeling", "Python for Finance",
+            "Machine Learning for Finance", "Algorithmic Trading", "R",
+            "Derivatives", "Time Series Analysis", "Monte Carlo Simulation"
+        ],
+        "Accountant": [
+            "Financial Accounting", "GAAP", "IFRS", "Tax Accounting",
+            "Audit", "Cost Accounting", "Excel Advanced", "SAP Finance", "QuickBooks"
+        ]
+    },
+
+    "role_salaries": {
+        "Financial Analyst": "$60k - $110k",
+        "Investment Banker": "$100k - $250k+",
+        "Equity Research Analyst": "$80k - $150k",
+        "Risk Manager": "$90k - $160k",
+        "Actuary": "$75k - $180k",
+        "Credit Analyst": "$55k - $100k",
+        "Portfolio Manager": "$100k - $250k+",
+        "Quantitative Analyst": "$120k - $300k+",
+        "Accountant": "$50k - $90k"
+    },
+
+    "role_skill_matrix": {
+        "Financial Analyst": {
+            "core": ["Financial Modeling", "DCF Valuation", "Excel Advanced", "Ratio Analysis"],
+            "secondary": ["Power BI", "SQL", "Variance Analysis", "Bloomberg Terminal"],
+            "soft": ["Attention to Detail", "Communication", "Deadline Management"]
+        },
+        "Investment Banker": {
+            "core": ["DCF Valuation", "LBO Modeling", "M&A", "Comparable Company Analysis", "Capital Markets"],
+            "secondary": ["Bloomberg Terminal", "Financial Modeling", "Precedent Transaction Analysis"],
+            "soft": ["High-Pressure Performance", "Client Relations", "Presentation Skills"]
+        },
+        "Risk Manager": {
+            "core": ["Credit Risk", "Market Risk", "VaR", "Compliance", "Basel III"],
+            "secondary": ["Stress Testing", "Statistical Modeling", "Regulatory Reporting"],
+            "soft": ["Analytical Thinking", "Communication", "Ethical Judgment"]
+        },
+        "Quantitative Analyst": {
+            "core": ["Quantitative Finance", "Python for Finance", "Statistical Modeling", "Machine Learning for Finance"],
+            "secondary": ["Algorithmic Trading", "R", "Derivatives", "Time Series Analysis"],
+            "soft": ["Research Mindset", "Precision", "Collaboration"]
+        }
+    },
+
+    "skill_topics": {
+        "Financial Modeling": ["Three-Statement Model", "Revenue Build", "Cost Drivers", "Debt Schedule", "Working Capital", "Sensitivities"],
+        "DCF Valuation": ["Unlevered FCF", "WACC Calculation", "Terminal Value", "Equity Bridge", "Sensitivity Tables", "Football Field Chart"],
+        "LBO Modeling": ["Debt Tranches", "Returns Analysis (IRR/MOIC)", "Sources & Uses", "Operating Assumptions", "Waterfall", "Exit Multiples"],
+        "Excel Advanced": ["Pivot Tables", "VLOOKUP/INDEX-MATCH", "Power Query", "Macros & VBA", "Data Validation", "Conditional Logic"],
+        "Bloomberg Terminal": ["Equity Analysis", "Fixed Income", "FX Tools", "News & Research", "Charting", "Excel Add-in (API)"],
+        "Portfolio Management": ["Asset Allocation Frameworks", "Sharpe Ratio", "Beta/Alpha", "Rebalancing", "Performance Attribution", "Factor Models"],
+        "Credit Analysis": ["5 Cs of Credit", "Debt Service Coverage", "Covenant Analysis", "Credit Scoring", "Collateral Evaluation"],
+        "AML": ["CDD/EDD", "Transaction Monitoring", "SAR Filing", "Red Flags", "FATF Guidelines", "Sanctions Screening"],
+        "Python for Finance": ["NumPy & Pandas", "yfinance API", "Portfolio Optimization", "Backtesting", "Options Pricing (Black-Scholes)", "ML for Returns Prediction"],
+        "Statistical Modeling": ["Regression Analysis", "Time Series (ARIMA)", "Monte Carlo", "Hypothesis Testing", "Bayesian Methods", "Factor Analysis"],
+        "Risk Management": ["Risk Identification", "Quantitative vs Qualitative", "VaR Methods", "Stress Testing", "Risk Appetite Framework", "ERM"]
+    }
+}

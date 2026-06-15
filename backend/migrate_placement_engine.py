@@ -109,6 +109,20 @@ def migrate():
             c.execute("ALTER TABLE placement_applications ADD COLUMN ai_match_score REAL")
             print("[MIGRATE] Added column: placement_applications.ai_match_score")
 
+    # ── 5. Add multi-domain columns to resume_analyses table ──
+    if table_exists(c, "resume_analyses"):
+        if not column_exists(c, "resume_analyses", "detected_domain"):
+            c.execute("ALTER TABLE resume_analyses ADD COLUMN detected_domain TEXT")
+            print("[MIGRATE] Added column: resume_analyses.detected_domain")
+
+        if not column_exists(c, "resume_analyses", "domain_confidence"):
+            c.execute("ALTER TABLE resume_analyses ADD COLUMN domain_confidence REAL")
+            print("[MIGRATE] Added column: resume_analyses.domain_confidence")
+
+        if not column_exists(c, "resume_analyses", "secondary_domain"):
+            c.execute("ALTER TABLE resume_analyses ADD COLUMN secondary_domain TEXT")
+            print("[MIGRATE] Added column: resume_analyses.secondary_domain")
+
     conn.commit()
     conn.close()
     print("[MIGRATE] Migration completed successfully!")

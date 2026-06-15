@@ -63,6 +63,7 @@ def analyze_with_llm(parsed_data: dict) -> dict:
     prompt = f"""
     Analyze this resume and return STRICT JSON.
     Do not hallucinate. Use the provided context to infer additional potential target roles and hidden skills that might not be explicitly stated but are heavily implied by the work experience.
+    CRITICAL: Identify the candidate's core domain (e.g., IT/CS, Mechanical, Marketing, etc.). Do NOT hallucinate software/IT skills if the profile is strictly non-IT. Only infer skills that naturally belong to their identified domain.
 
     Context:
     Experience Years: {parsed_data.get('experience', 0)}
@@ -126,6 +127,7 @@ def generate_career_insights(structured_data: dict) -> dict:
     prompt = f"""
     Generate deeply personalized career insights based on this final candidate evaluation. Return STRICT JSON.
     Use the provided data to suggest specific, non-generic career paths.
+    CRITICAL INSTRUCTION: Analyze the provided 'Final Skills' and 'Target Roles Detected' to determine the candidate's core domain. Provide learning paths, personalized jobs, and interview tips that STRICTLY align with that specific domain (e.g., do not suggest learning Python for a Mechanical Engineer unless explicitly relevant).
 
     Evaluation Data:
     - Final Skills: {structured_data.get('skills', [])}

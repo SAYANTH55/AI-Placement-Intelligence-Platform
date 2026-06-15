@@ -1,0 +1,17 @@
+Computer Science Resume
+
+Education
+B.Sc. Computer Science, XYZ University, 2018-2022
+
+Experience
+Software Engineer at TechCorp (2022-2024)
+- Developed web applications using FastAPI and React.
+- Implemented CI/CD pipelines.
+
+Projects
+AI Placement Platform
+- Built end-to-end resume parsing and skill extraction.
+- Used spacy, pdfplumber, fuzzy matching.
+
+Skills
+Python, FastAPI, React, SQL, Docker, Git, Machine Learning, NLP, Cloud

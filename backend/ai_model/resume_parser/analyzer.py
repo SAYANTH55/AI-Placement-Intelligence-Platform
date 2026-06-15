@@ -66,10 +66,10 @@ class ResumeAnalyzer:
 
     def extract_skills(self, text: str) -> list:
         """Extracts skills based on the loaded skills database."""
+
         skills_db = self.models.get("skills")
-        if not text or not skills_db:
+        if not skills_db:
             return []
-        
         found_skills = []
         text_padded = f" {text} "
         

@@ -31,3 +31,7 @@ models/*.h5
 .env
 __pycache__/
 *.py[cod]
+
+# Logs
+*.log
+

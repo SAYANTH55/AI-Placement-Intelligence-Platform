@@ -5,6 +5,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 import joblib
 import os
+from sklearn.preprocessing import LabelEncoder
+from sklearn.linear_model import LinearRegression
 
 # Create models directory if it doesn't exist
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
@@ -90,7 +92,61 @@ def train_skill_matcher():
     joblib.dump(vectorizer, vec_path)
     print(f"Skill Vectorizer saved to {vec_path}")
 
+def train_resume_analyzer_models():
+    print("Training Resume Analyzer Models (Synthetic Data)...")
+    ra_dir = os.path.join(MODELS_DIR, "resume_analyzer")
+    if not os.path.exists(ra_dir):
+        os.makedirs(ra_dir)
+        
+    # 1. skills.pkl
+    skills_db = {
+        "Software Engineer": ["python", "java", "c++", "react", "sql", "javascript", "node", "aws"],
+        "Data Scientist": ["python", "r", "sql", "machine learning", "pandas", "numpy", "tensorflow"],
+        "Mechanical Engineer": ["cad", "solidworks", "thermodynamics", "manufacturing", "ansys"],
+        "Marketing": ["seo", "content creation", "social media", "google analytics", "campaign"]
+    }
+    joblib.dump(skills_db, os.path.join(ra_dir, "skills.pkl"))
+    
+    # 2. role_model, vectorizer_role, label_encoder
+    corpus = [
+        "software engineer developing scalable applications python java react node aws",
+        "data scientist machine learning models python pandas sql tensorflow",
+        "mechanical engineer cad solidworks thermodynamics design ansys",
+        "marketing manager seo content creation social media campaign analytics"
+    ]
+    labels = ["Software Engineer", "Data Scientist", "Mechanical Engineer", "Marketing"]
+    
+    le = LabelEncoder()
+    y = le.fit_transform(labels)
+    vec_role = TfidfVectorizer()
+    X = vec_role.fit_transform(corpus)
+    
+    role_model = RandomForestClassifier(n_estimators=10, random_state=42)
+    role_model.fit(X, y)
+    
+    joblib.dump(role_model, os.path.join(ra_dir, "role_model.pkl"))
+    joblib.dump(vec_role, os.path.join(ra_dir, "vectorizer_role.pkl"))
+    joblib.dump(le, os.path.join(ra_dir, "label_encoder.pkl"))
+    
+    # 3. ats_model, vectorizer_ats
+    corpus_ats = [
+        "clear well formatted resume with measurable achievements python java",
+        "messy resume bad formatting no keywords",
+        "excellent professional summary strong skills bullet points solidworks"
+    ]
+    scores = [85.0, 30.0, 90.0]
+    vec_ats = TfidfVectorizer()
+    X_ats = vec_ats.fit_transform(corpus_ats)
+    ats_model = LinearRegression()
+    ats_model.fit(X_ats, scores)
+    
+    joblib.dump(ats_model, os.path.join(ra_dir, "ats_model.pkl"))
+    joblib.dump(vec_ats, os.path.join(ra_dir, "vectorizer_ats.pkl"))
+    print("Resume Analyzer models saved to:", ra_dir)
+
+
 if __name__ == "__main__":
     train_placement_model()
     train_skill_matcher()
+    train_resume_analyzer_models()
     print("All models trained and synchronized successfully.")

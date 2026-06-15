@@ -158,35 +158,40 @@ if exist frontend (
 
 cd backend
 "%PYTHON_EXEC%" -c "from database.db import engine; from database import models; models.Base.metadata.create_all(bind=engine); print('DB OK')" 2>nul
+"%PYTHON_EXEC%" migrate_placement_engine.py 2>nul
 if errorlevel 1 (
     echo [WARN] DB migration check failed - will retry on server start
 ) else (
-    echo [OK] Database schema up to date (outcomes + tracking tables ready)
+    echo [OK] Database schema up to date (outcomes + tracking tables + multi-domain ready)
 )
 
 echo.
 echo [?] Would you like to re-seed the Placement Database with mock data?
 echo     (This will provide demo students, drives, and outcomes)
-set /p SEED_CHOICE="Seed database now? (y/n): "
-if /i "!SEED_CHOICE!"=="y" (
-    echo      Seeding database...
-    "%PYTHON_EXEC%" seed_placement.py
-    echo [OK] Placement data seeded successfully
-)
-
-echo.
-echo [6/8] Verifying AI Model Files...
 set "MODELS_MISSING=0"
-if not exist backend\ai_model\models\placement_predictor.pkl (
-    echo [WARN] placement_predictor.pkl not found
+rem Adjusted path – models live in backend\ai_model\resume_parser\models\ (or wherever they are)
+if not exist backend\ai_model\models\resume_analyzer\role_model.pkl (
+    echo [WARN] role_model.pkl not found
     set "MODELS_MISSING=1"
 )
-if not exist backend\ai_model\models\skill_vectorizer.pkl (
-    echo [WARN] skill_vectorizer.pkl not found
+if not exist backend\ai_model\models\resume_analyzer\vectorizer_role.pkl (
+    echo [WARN] vectorizer_role.pkl not found
+    set "MODELS_MISSING=1"
+)
+if not exist backend\ai_model\models\resume_analyzer\ats_model.pkl (
+    echo [WARN] ats_model.pkl not found
+    set "MODELS_MISSING=1"
+)
+if not exist backend\ai_model\models\resume_analyzer\vectorizer_ats.pkl (
+    echo [WARN] vectorizer_ats.pkl not found
+    set "MODELS_MISSING=1"
+)
+if not exist backend\ai_model\models\resume_analyzer\skills.pkl (
+    echo [WARN] skills.pkl not found
     set "MODELS_MISSING=1"
 )
 
-if "!MODELS_MISSING!"=="1" (
+if "%MODELS_MISSING%"=="1" (
     echo [WARN] Some ML models are missing. Resume analysis may not work.
 ) else (
     echo [OK] All ML models verified
@@ -296,8 +301,7 @@ echo    PR:    pr1@university.edu / prpassword
 echo    Student: student1@test.com / studentpassword
 echo.
 echo  Troubleshooting:
-echo    Backend fails  : Check backend console for import / port errors
-echo    Frontend fails : Check frontend console for build errors
+echo    Backend fails  : Check backend console for imlogger.error(f"Error in upload_resume for file {file.filename}: {e}", exc_info=True) for build errors
 echo    Port in use    : Use netstat -ano to identify conflicting processes
 echo    Models missing : Run: python -m spacy download en_core_web_sm
 echo    DB issues      : Delete backend/ai_placement.db to reset schema

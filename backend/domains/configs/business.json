@@ -1,0 +1,162 @@
+{
+    "domain_name": "business",
+    "display_name": "Business & Management",
+    "description": "Business administration, management consulting, operations, and strategy roles",
+    
+    "keywords": [
+        "business development", "management consulting", "operations management",
+        "business strategy", "MBA", "strategic planning", "business analysis",
+        "project management", "supply chain", "logistics", "procurement",
+        "stakeholder management", "business intelligence", "KPI", "ROI",
+        "market research", "competitive analysis", "SWOT", "value proposition",
+        "change management", "organizational development", "lean management",
+        "six sigma", "process improvement", "vendor management",
+        "CRM", "ERP", "SAP", "salesforce", "PMP", "PRINCE2",
+        "business plan", "P&L", "budget management", "revenue",
+        "client relations", "account management", "B2B", "B2C"
+    ],
+
+    "education_signals": [
+        "MBA", "BBA", "Master of Business Administration",
+        "Bachelor of Business Administration", "B.Com", "M.Com",
+        "Bachelor of Commerce", "Master of Commerce",
+        "Business Management", "Operations Management",
+        "International Business", "Entrepreneurship"
+    ],
+
+    "certification_signals": [
+        "PMP", "PRINCE2", "Six Sigma", "Lean Six Sigma",
+        "CAPM", "CSM", "Certified Scrum Master",
+        "PMI-ACP", "SAFe", "CBAP", "CCBA",
+        "Google Project Management", "ITIL"
+    ],
+
+    "skills_dictionary": {
+        "Strategy & Planning": [
+            "Strategic Planning", "Business Strategy", "Market Research",
+            "Competitive Analysis", "SWOT Analysis", "Business Modeling",
+            "Value Proposition", "Go-to-Market Strategy", "Growth Strategy",
+            "Corporate Strategy", "Scenario Planning"
+        ],
+        "Project Management": [
+            "Project Management", "Agile", "Scrum", "Kanban", "Waterfall",
+            "Risk Management", "Stakeholder Management", "Resource Planning",
+            "Gantt Charts", "WBS", "Critical Path Method", "Sprint Planning",
+            "JIRA", "Asana", "Monday.com", "Trello"
+        ],
+        "Operations": [
+            "Operations Management", "Supply Chain Management", "Logistics",
+            "Procurement", "Inventory Management", "Process Improvement",
+            "Lean Management", "Six Sigma", "Quality Management", "Vendor Management",
+            "Warehouse Management", "Distribution", "Forecasting"
+        ],
+        "Finance & Analytics": [
+            "Financial Analysis", "Budgeting", "P&L Management",
+            "Cost Optimization", "Revenue Forecasting", "ROI Analysis",
+            "Business Intelligence", "KPI Tracking", "Data-Driven Decision Making",
+            "Excel", "Power BI", "Tableau", "SQL"
+        ],
+        "Communication & Leadership": [
+            "Client Relations", "Stakeholder Communication", "Presentation Skills",
+            "Negotiation", "Team Leadership", "Cross-Functional Collaboration",
+            "Executive Reporting", "Change Management", "Conflict Resolution",
+            "Mentoring", "Public Speaking"
+        ],
+        "Technology & Tools": [
+            "CRM", "ERP", "SAP", "Salesforce", "HubSpot",
+            "Microsoft Office Suite", "Google Workspace", "Slack",
+            "Confluence", "SharePoint", "Power Automate"
+        ]
+    },
+
+    "role_requirements": {
+        "Management Consultant": [
+            "Strategic Planning", "Business Strategy", "Market Research",
+            "Competitive Analysis", "Presentation Skills", "Data-Driven Decision Making",
+            "Excel", "Power BI", "Stakeholder Communication"
+        ],
+        "Business Analyst": [
+            "Business Intelligence", "SQL", "Excel", "Power BI",
+            "Stakeholder Management", "Process Improvement", "JIRA",
+            "Data-Driven Decision Making", "KPI Tracking"
+        ],
+        "Project Manager": [
+            "Project Management", "Agile", "Scrum", "Risk Management",
+            "Stakeholder Management", "JIRA", "Resource Planning",
+            "Gantt Charts", "Team Leadership"
+        ],
+        "Operations Manager": [
+            "Operations Management", "Supply Chain Management", "Process Improvement",
+            "Lean Management", "Six Sigma", "Vendor Management",
+            "Budgeting", "Quality Management", "Forecasting"
+        ],
+        "Product Manager": [
+            "Strategic Planning", "Market Research", "Stakeholder Management",
+            "Agile", "JIRA", "Go-to-Market Strategy", "KPI Tracking",
+            "Data-Driven Decision Making", "Cross-Functional Collaboration"
+        ],
+        "Supply Chain Manager": [
+            "Supply Chain Management", "Logistics", "Procurement",
+            "Inventory Management", "Vendor Management", "Forecasting",
+            "SAP", "Cost Optimization", "Warehouse Management"
+        ],
+        "Business Development Manager": [
+            "Business Strategy", "Client Relations", "Negotiation",
+            "Market Research", "Revenue Forecasting", "CRM",
+            "Salesforce", "Presentation Skills", "Go-to-Market Strategy"
+        ]
+    },
+
+    "role_salaries": {
+        "Management Consultant": "$85k - $160k",
+        "Business Analyst": "$65k - $120k",
+        "Project Manager": "$80k - $140k",
+        "Operations Manager": "$70k - $130k",
+        "Product Manager": "$90k - $160k",
+        "Supply Chain Manager": "$75k - $135k",
+        "Business Development Manager": "$80k - $150k"
+    },
+
+    "role_skill_matrix": {
+        "Management Consultant": {
+            "core": ["Strategic Planning", "Business Strategy", "Market Research", "Competitive Analysis", "Presentation Skills"],
+            "secondary": ["Excel", "Power BI", "Data-Driven Decision Making", "Stakeholder Communication"],
+            "soft": ["Negotiation", "Public Speaking", "Mentoring"]
+        },
+        "Business Analyst": {
+            "core": ["Business Intelligence", "SQL", "Excel", "Stakeholder Management", "Process Improvement"],
+            "secondary": ["Power BI", "JIRA", "KPI Tracking", "Data-Driven Decision Making"],
+            "soft": ["Communication", "Attention to Detail"]
+        },
+        "Project Manager": {
+            "core": ["Project Management", "Agile", "Scrum", "Risk Management", "Stakeholder Management"],
+            "secondary": ["JIRA", "Resource Planning", "Gantt Charts", "Kanban"],
+            "soft": ["Team Leadership", "Conflict Resolution", "Communication"]
+        },
+        "Operations Manager": {
+            "core": ["Operations Management", "Supply Chain Management", "Process Improvement", "Lean Management"],
+            "secondary": ["Six Sigma", "Vendor Management", "Budgeting", "Quality Management"],
+            "soft": ["Team Leadership", "Adaptability"]
+        },
+        "Product Manager": {
+            "core": ["Strategic Planning", "Market Research", "Agile", "KPI Tracking", "Stakeholder Management"],
+            "secondary": ["JIRA", "Go-to-Market Strategy", "Data-Driven Decision Making"],
+            "soft": ["Cross-Functional Collaboration", "Communication", "Adaptability"]
+        }
+    },
+
+    "skill_topics": {
+        "Strategic Planning": ["Vision & Mission", "Goal Setting (OKRs)", "SWOT Analysis", "PESTEL Analysis", "Porter's Five Forces", "Blue Ocean Strategy"],
+        "Business Strategy": ["Competitive Advantage", "Market Positioning", "Growth Strategies", "Diversification", "M&A Strategy", "Business Model Canvas"],
+        "Market Research": ["Primary Research", "Secondary Research", "Survey Design", "Focus Groups", "Market Sizing (TAM/SAM/SOM)", "Trend Analysis"],
+        "Project Management": ["Initiation & Scope", "WBS & Scheduling", "Risk Assessment", "Stakeholder Mapping", "Earned Value Management", "Retrospectives"],
+        "Agile": ["Scrum Framework", "Sprint Planning", "User Stories", "Velocity Tracking", "Kanban Boards", "SAFe Framework"],
+        "Supply Chain Management": ["Demand Planning", "Supplier Management", "Logistics Optimization", "Inventory Control", "Just-in-Time", "ERP Systems"],
+        "Business Intelligence": ["Dashboard Design", "Data Modeling", "ETL Basics", "KPI Frameworks", "Reporting Automation", "Predictive Analytics"],
+        "Excel": ["Pivot Tables", "VLOOKUP/XLOOKUP", "Macros & VBA", "Data Validation", "Financial Modeling", "Conditional Formatting"],
+        "Power BI": ["Data Import & Transform", "DAX Formulas", "Visualizations", "Dashboards", "Row-Level Security", "Publishing & Sharing"],
+        "SQL": ["SELECT & Joins", "Aggregations", "Subqueries", "Window Functions", "Performance Tuning", "Stored Procedures"],
+        "Six Sigma": ["DMAIC Methodology", "Statistical Process Control", "Root Cause Analysis", "Control Charts", "Process Capability", "Lean Integration"],
+        "Negotiation": ["BATNA Strategy", "Win-Win Framework", "Anchoring", "Active Listening", "Contract Negotiation", "Conflict Resolution"]
+    }
+}
