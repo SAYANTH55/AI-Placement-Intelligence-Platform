@@ -36,7 +36,7 @@ if %MAJOR% EQU 3 if %MINOR% LSS 9 (
     exit /b 1
 )
 if %MAJOR% GEQ 3 if %MINOR% GEQ 9 (
-    echo [INFO] Python version is compatible (requires 3.9+)
+    echo [INFO] Python version is compatible - requires 3.9+
 )
 echo.
 
@@ -165,7 +165,7 @@ echo      Running database migrations...
 if errorlevel 1 (
     echo [WARN] Some DB migrations failed - check logs
 ) else (
-    echo [OK] Database schema fully updated (placement engine + provisioning + validation gateway ready)
+    echo [OK] Database schema fully updated - placement engine, provisioning, and validation gateway ready
 )
 
 echo.
@@ -224,7 +224,7 @@ if errorlevel 1 (
 if errorlevel 1 (
     echo [WARN] Unit Tests Failed. Check backend/pytest_tests.log for details.
 ) else (
-    echo [OK] Unit Tests (Domain, Pipeline, Classifier, Validation) Passed!
+    echo [OK] Unit Tests - Domain, Pipeline, Classifier, and Validation - Passed!
 )
 if exist pytest_tests.log del pytest_tests.log
 if exist e2e_test.db del e2e_test.db
@@ -255,12 +255,12 @@ if not defined FALLBACK_GEMINI_API_KEY (
 
 REM ── Start Backend ───────────────────────────────────────────────
 echo.
-echo [>>] Checking if port 8000 is available...
+echo [->] Checking if port 8000 is available...
 netstat -ano | findstr ":8000 " >nul 2>&1
 if errorlevel 0 if not errorlevel 1 (
     echo [WARN] Port 8000 may already be in use - trying anyway...
 )
-echo [>>] Launching FastAPI Backend (v4.0.0) on port 8000...
+echo [->] Launching FastAPI Backend (v4.0.0) on port 8000...
 start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
 
 REM Give backend 4 seconds to initialize DB tables and engines
@@ -268,12 +268,12 @@ timeout /t 4 /nobreak >nul
 
 REM ── Start Frontend ──────────────────────────────────────────────
 echo.
-echo [>>] Checking if port 5173 is available...
+echo [->] Checking if port 5173 is available...
 netstat -ano | findstr ":5173 " >nul 2>&1
 if errorlevel 0 if not errorlevel 1 (
     echo [WARN] Port 5173 may already be in use - trying anyway...
 )
-echo [>>] Launching React / Vite Frontend on port 5173...
+echo [->] Launching React / Vite Frontend on port 5173...
 start "Frontend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && cd frontend && npm run dev || (echo. && echo [ERROR] FRONTEND FAILED - SEE ABOVE && pause)"
 
 REM Give frontend time to compile
