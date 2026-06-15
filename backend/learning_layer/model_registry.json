@@ -25,7 +25,20 @@
         "val_recall": 1.0,
         "val_f1": 1.0
       }
+    },
+    {
+      "version": "20260615_104504",
+      "path": "E:\\Al-Placement-Intelligence-Platform\\backend\\learning_layer\\model_versions\\model_20260615_104504.pkl",
+      "mode": "classification",
+      "trained_at": "2026-06-15T10:45:04.830415+00:00",
+      "metrics": {
+        "train_score": 1.0,
+        "val_score": 0.8667,
+        "val_precision": 1.0,
+        "val_recall": 0.7778,
+        "val_f1": 0.875
+      }
     }
   ],
-  "latest": "20260424_080446"
+  "latest": "20260615_104504"
 }

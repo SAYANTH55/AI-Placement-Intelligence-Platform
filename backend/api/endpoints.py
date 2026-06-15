@@ -293,8 +293,9 @@ async def health_check():
     """
     from user_intelligence.intelligence_service import intelligence_service
     from learning_layer.calibration_service import calibration_service
+    from learning_layer.inference_engine import inference_engine
     
-    intel_status = intelligence_service.predictor.mode
+    intel_status = "ml_active" if inference_engine.is_available() else "heuristic_fallback"
     calibration = calibration_service.get_calibration_report()
     
     return {
