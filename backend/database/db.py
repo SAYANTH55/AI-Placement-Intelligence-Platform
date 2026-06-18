@@ -14,9 +14,10 @@ _DEFAULT_DB_URL = f"sqlite:///{os.path.normpath(_DEFAULT_DB_PATH)}"
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", _DEFAULT_DB_URL)
 
-# connect_args is needed only for SQLite
+connect_args = {"check_same_thread": False} if SQLALCHEMY_DATABASE_URL.startswith("sqlite") else {}
+
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL, connect_args=connect_args
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

@@ -112,13 +112,22 @@ if errorlevel 1 (
     echo [OK] Python dependencies ready
 )
 
+REM Ensure Playwright browsers are installed for PDF generation
+echo      Verifying Playwright browser binaries...
+"%PYTHON_EXEC%" -m playwright install chromium >nul 2>&1
+if errorlevel 1 (
+    echo [WARN] Failed to install Playwright chromium. PDF generation may fail.
+) else (
+    echo [OK] Playwright chromium installed
+)
+
 REM Verify critical packages are installed (including new ML dependencies)
 echo      Verifying critical packages...
-"%PYTHON_EXEC%" -c "import sqlalchemy, fastapi, uvicorn, spacy, xgboost, sklearn; print('All critical packages OK')" >nul 2>&1
+"%PYTHON_EXEC%" -c "import sqlalchemy, fastapi, uvicorn, spacy, xgboost, sklearn, playwright; print('All critical packages OK')" >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Critical packages not installed!
     echo [INFO] Running targeted installation...
-    "%PYTHON_EXEC%" -m pip install --no-cache-dir fastapi uvicorn sqlalchemy spacy pandas numpy xgboost scikit-learn
+    "%PYTHON_EXEC%" -m pip install --no-cache-dir fastapi uvicorn sqlalchemy spacy pandas numpy xgboost scikit-learn playwright
     if errorlevel 1 (
         echo [ERROR] Installation failed - deleting venv...
         cd ..
@@ -245,12 +254,14 @@ if exist .env (
     echo [WARN] No .env file found - using system defaults
 )
 
-REM ── Ensure Critical API Keys are set ───────────────────────────
+REM ── Ensure Critical API Keys are set ───────────────────────
+REM API keys must be set in your .env file (never hardcode keys here).
+REM Copy .env.example to .env and fill in your GEMINI_API_KEY and FALLBACK_GEMINI_API_KEY.
 if not defined GEMINI_API_KEY (
-    set "GEMINI_API_KEY=AIzaSyB0ARUN-xGleIUDKZDzSFJOk0H8v6qW6aY"
+    echo [WARN] GEMINI_API_KEY is not set. Add it to your .env file.
 )
 if not defined FALLBACK_GEMINI_API_KEY (
-    set "FALLBACK_GEMINI_API_KEY=AIzaSyDLpynwr6L1lgPTh4640mtGofcGrLf_0vY"
+    echo [WARN] FALLBACK_GEMINI_API_KEY is not set. Add it to your .env file.
 )
 
 REM ── Start Backend ───────────────────────────────────────────────

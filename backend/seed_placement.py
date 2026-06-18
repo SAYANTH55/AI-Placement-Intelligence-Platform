@@ -13,8 +13,20 @@ from api.auth import pwd_context
 def get_hash(pwd):
     return pwd_context.hash(pwd)
 
-def seed():
+def seed(force=False):
+    # Always ensure tables exist
+    Base.metadata.create_all(bind=engine)
+
+    db: Session = SessionLocal()
+    existing_users = db.query(User).count()
+    if existing_users > 0 and not force:
+        print(f"Database already has {existing_users} user(s). Skipping seed.")
+        print("Run with force=True to wipe and reseed.")
+        db.close()
+        return
+
     print("Resetting database...")
+    db.close()
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     

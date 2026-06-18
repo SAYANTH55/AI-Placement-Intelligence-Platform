@@ -312,7 +312,7 @@ export default function DashboardStats() {
                     </div>
 
                     <h2 className="text-[32px] font-medium text-white leading-[1.1] relative z-10 w-4/5">
-                        Generate new AI Placement<br />Reports instantly
+                        Analyze Placement<br />Intelligence instantly
                     </h2>
                 </motion.div>
 

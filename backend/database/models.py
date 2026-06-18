@@ -392,3 +392,200 @@ class StudentApplicationProfile(Base):
 
     student = relationship("Student", back_populates="application_profile")
 
+
+# ── Phase 2: Resume Analysis Normalization ──
+
+class ResumeSkill(Base):
+    __tablename__ = "resume_skills"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
+    skill_name = Column(String, index=True)
+    skill_score = Column(Float, nullable=True)
+    confidence = Column(Float, nullable=True)
+    source_section = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    analysis = relationship("ResumeAnalysis", backref="normalized_skills")
+
+class ResumePrediction(Base):
+    __tablename__ = "resume_predictions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
+    predicted_role = Column(String, index=True)
+    role_confidence = Column(Float, nullable=True)
+    placement_probability = Column(Float, nullable=True)
+    readiness_score = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    analysis = relationship("ResumeAnalysis", backref="normalized_predictions")
+
+class ResumeGap(Base):
+    __tablename__ = "resume_gaps"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
+    skill_name = Column(String, index=True)
+    importance = Column(String, nullable=True)
+    gap_score = Column(Float, nullable=True)
+    recommendation = Column(Text, nullable=True)
+    
+    analysis = relationship("ResumeAnalysis", backref="normalized_gaps")
+
+class ResumeDomainPrediction(Base):
+    __tablename__ = "resume_domain_predictions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
+    primary_domain = Column(String, index=True)
+    secondary_domain = Column(String, nullable=True)
+    confidence = Column(Float, nullable=True)
+    
+    analysis = relationship("ResumeAnalysis", backref="normalized_domains")
+
+# ── Phase 4: Skill Intelligence Layer ──
+
+class Skill(Base):
+    __tablename__ = "skills"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    skill_name = Column(String, unique=True, index=True)
+    domain = Column(String, index=True, nullable=True)
+    category = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+
+class StudentSkill(Base):
+    __tablename__ = "student_skills"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    skill_id = Column(Integer, ForeignKey("skills.id"), index=True)
+    proficiency_score = Column(Float, nullable=True)
+    confidence_score = Column(Float, nullable=True)
+    source = Column(String, nullable=True)
+    
+    student = relationship("Student", backref="normalized_skills")
+    skill = relationship("Skill")
+
+# ── Phase 5: Skill History Tracking ──
+
+class SkillHistory(Base):
+    __tablename__ = "skill_history"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    skill_id = Column(Integer, ForeignKey("skills.id"), index=True)
+    score = Column(Float, nullable=True)
+    source = Column(String, nullable=True)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    
+    student = relationship("Student", backref="skill_history")
+    skill = relationship("Skill")
+
+# ── Phase 6: Knowledge Graph Preparation ──
+
+class SkillRelationship(Base):
+    __tablename__ = "skill_relationships"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    parent_skill_id = Column(Integer, ForeignKey("skills.id"), index=True)
+    child_skill_id = Column(Integer, ForeignKey("skills.id"), index=True)
+    relationship_type = Column(String, index=True)
+    
+    parent_skill = relationship("Skill", foreign_keys=[parent_skill_id])
+    child_skill = relationship("Skill", foreign_keys=[child_skill_id])
+
+# ── Phase 8: Placement Outcome Intelligence ──
+
+class PlacementPredictionSnapshot(Base):
+    __tablename__ = "placement_prediction_snapshots"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    predicted_probability = Column(Float, nullable=True)
+    actual_outcome = Column(Boolean, nullable=True)
+    prediction_date = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    
+    student = relationship("Student", backref="prediction_snapshots")
+
+
+# ── Phase 11: Taxonomy Intelligence Layer ──
+
+class Domain(Base):
+    __tablename__ = "domains"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    domain_name = Column(String, unique=True, index=True)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, default=True)
+    parent_domain_id = Column(Integer, ForeignKey("domains.id"), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    parent = relationship("Domain", remote_side=[id], backref="subdomains")
+
+class SkillAlias(Base):
+    __tablename__ = "skill_aliases"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    skill_id = Column(Integer, ForeignKey("skills.id"), index=True)
+    alias_name = Column(String, unique=True, index=True)
+    alias_type = Column(String, nullable=True) # synonym, abbreviation, typo, legacy
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    skill = relationship("Skill", backref="aliases")
+
+# ── Phase 15: Resume Versioning ──
+
+class ResumeVersion(Base):
+    __tablename__ = "resume_versions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
+    version_number = Column(Integer, default=1)
+    resume_hash = Column(String, index=True)
+    upload_timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    is_latest = Column(Boolean, default=True)
+    
+    student = relationship("Student", backref="resume_versions")
+    analysis = relationship("ResumeAnalysis")
+
+# ── Phase 16: Placement Dataset Builder ──
+
+class TrainingDatasetSnapshot(Base):
+    __tablename__ = "training_dataset_snapshots"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    snapshot_date = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    ats_score = Column(Float, nullable=True)
+    readiness_score = Column(String, nullable=True)
+    role_match_score = Column(Float, nullable=True)
+    skills_snapshot = Column(JSON, nullable=True)
+    domain = Column(String, nullable=True)
+    outcome = Column(Boolean, nullable=True)
+    
+    student = relationship("Student")
+
+
+# ── Report Snapshot Storage ──
+
+class GeneratedReport(Base):
+    """Cache generated PDF reports to avoid redundant LLM calls.
+    A cached report is reused as long as no newer ResumeAnalysis exists."""
+    __tablename__ = "generated_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True)
+    analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), nullable=True, index=True)
+    report_type = Column(String, default="placement_dossier", index=True)
+    generated_at = Column(DateTime(timezone=True), server_default=func.now())
+    pdf_path = Column(String, nullable=True)   # Path on disk where PDF is stored
+    report_hash = Column(String, nullable=True, index=True)  # Hash of analysis_id used to detect staleness
+    file_size_bytes = Column(Integer, nullable=True)
+
+    user = relationship("User")
+    analysis = relationship("ResumeAnalysis")
+

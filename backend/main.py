@@ -4,6 +4,11 @@ import os
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
+import sys
+import asyncio
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 # Add backend directory and parent workspace root to sys.path so imports work from different launch contexts
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Add the repository root (one level up from backend) so `api` can be imported
@@ -22,6 +27,23 @@ from database import models
 # Create All Unified Database Tables
 models.Base.metadata.create_all(bind=engine)
 
+# Auto-seed if database is empty (safe — won't overwrite existing data)
+try:
+    from database.db import SessionLocal as _SL
+    _db = _SL()
+    _user_count = _db.query(models.User).count()
+    _db.close()
+    if _user_count == 0:
+        import logging as _logging
+        _logging.getLogger(__name__).info("Database is empty — running auto-seed...")
+        import sys as _sys, os as _os
+        _sys.path.insert(0, BASE_DIR)
+        from seed_placement import seed as _seed
+        _seed()
+except Exception as _e:
+    import logging as _logging
+    _logging.getLogger(__name__).warning(f"Auto-seed skipped: {_e}")
+
 app = FastAPI(
     title="AI Placement Intelligence Platform API",
     description="AI-powered placement prediction and skill matching",
@@ -37,7 +59,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes, company_routes, department_routes, placement_update_routes, application_profile_routes, provisioning_routes
+from api import pr_routes, drive_routes, application_routes, round_routes, dashboard_routes, company_routes, department_routes, placement_update_routes, application_profile_routes, provisioning_routes, report_routes
 
 os.makedirs(os.path.join(BASE_DIR, "uploads/resumes"), exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "uploads")), name="uploads")
@@ -59,6 +81,7 @@ app.include_router(company_routes.router)
 app.include_router(department_routes.router)
 app.include_router(placement_update_routes.router)
 app.include_router(provisioning_routes.router)
+app.include_router(report_routes.router)
 
 
 @app.get("/")
@@ -69,7 +92,6 @@ async def root():
             "Resume analysis with improved AI/ML scoring",
             "Resume history tracking",
             "Job description comparison",
-            "PDF export reports",
             "Rate limiting for abuse prevention"
         ],
         "docs": "/docs"

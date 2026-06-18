@@ -12,6 +12,7 @@ import ScoreRing from '../components/dashboard/ScoreRing';
 import { RefreshCw, Menu, TrendingUp, Target, Briefcase, Sparkles, ArrowRight, Zap, BookOpen, Code, MessageSquare, CheckCircle, Circle, BarChart2, Award, Clock, FileText, Star, Globe, Search } from 'lucide-react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { fetchPreparationPlan, fetchPracticeSet, fetchProgress } from '../services/engineApi';
+import { generateDossier } from '../services/reportApi';
 import OutcomeTracker from '../components/dashboard/OutcomeTracker';
 import PlacementEngine from './PlacementEngine';
 import MyProfile from './MyProfile';
@@ -1291,6 +1292,26 @@ export default function Dashboard() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedRoleIndex, setSelectedRoleIndex] = useState(0);
+  const [generatingReport, setGeneratingReport] = useState(false);
+
+  const handleGenerateReport = async () => {
+    if (!analyzedData) return;
+    setGeneratingReport(true);
+    try {
+      await generateDossier(analyzedData, user?.id);
+    } catch (error) {
+      console.error('❌ Report generation failed:', error);
+      let errorMsg = 'Failed to generate report. ';
+      if (error.response?.data?.detail) {
+        errorMsg += error.response.data.detail;
+      } else {
+        errorMsg += error.message || 'Unknown error occurred';
+      }
+      alert('❌ ' + errorMsg);
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
 
   const handleAnalyzeComplete = useCallback((data) => {
     setAnalyzedData(data);
@@ -1496,6 +1517,18 @@ export default function Dashboard() {
         <div className="space-y-8">
           <InsightCards data={analyzedData} />
           
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="flex items-center justify-between relative z-40"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-5 rounded-full bg-[#F97316] shadow-[0_0_10px_rgba(249,115,22,0.6)]" />
+              <p className="text-xs font-black uppercase tracking-widest text-[#555]">Analysis Complete</p>
+            </div>
+          </motion.div>
+          
           {/* AI Insights Card */}
           {analyzedData?.llm_enhancement && analyzedData.llm_enhancement.summary && (
             <DarkCard delay={0.2} glow>
@@ -1580,7 +1613,7 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-10 hidden md:flex items-center justify-between gap-6 relative z-10"
+          className="mb-10 hidden md:flex items-center justify-between gap-6 relative z-50"
         >
           {/* Greeting Title */}
           <div className="flex-1">
@@ -1593,15 +1626,33 @@ export default function Dashboard() {
           {/* Right Profile - Simplified */}
           <div className="flex items-center gap-6">
             {analyzedData && (
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] hover:bg-[#F97316]/20 transition-all group shadow-[0_0_20px_rgba(249,115,22,0.1)]"
-              >
-                <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">New Analysis</span>
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  disabled={generatingReport}
+                  onClick={handleGenerateReport}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 disabled:opacity-50 transition-all group shadow-[0_0_20px_rgba(168,85,247,0.1)] cursor-pointer"
+                >
+                  {generatingReport ? (
+                    <RefreshCw size={16} className="animate-spin" />
+                  ) : (
+                    <FileText size={16} className="group-hover:translate-y-[-1px] transition-transform" />
+                  )}
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                    {generatingReport ? 'Generating...' : 'Generate Report'}
+                  </span>
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleReset}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] hover:bg-[#F97316]/20 transition-all group shadow-[0_0_20px_rgba(249,115,22,0.1)] cursor-pointer"
+                >
+                  <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em]">New Analysis</span>
+                </motion.button>
+              </div>
             )}
             <div className="flex items-center gap-4 border-l border-white/5 pl-6">
               <div className="text-right">
@@ -1617,13 +1668,27 @@ export default function Dashboard() {
 
         {/* Mobile: score banner */}
         {analyzedData && (
-          <div className="md:hidden flex items-center justify-between mb-4 glass-panel px-4 py-2.5 rounded-2xl border border-primary-accent/20 shadow-card-depth">
-            <div className="text-sm font-black flex items-center gap-2 text-[#888]">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
-              Score: <span className="text-primary-accent">{analyzedData.score}%</span>
+          <div className="md:hidden flex flex-col sm:flex-row sm:items-center justify-between mb-4 glass-panel p-4 rounded-2xl border border-primary-accent/20 shadow-card-depth gap-3">
+            <div className="flex items-center justify-between w-full sm:w-auto">
+              <div className="text-sm font-black flex items-center gap-2 text-[#888]">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
+                Score: <span className="text-primary-accent">{analyzedData.score}%</span>
+              </div>
+              <button onClick={handleReset} className="text-xs text-[#555] hover:text-red-400 flex items-center gap-1 cursor-pointer">
+                <RefreshCw size={12} /> Reset
+              </button>
             </div>
-            <button onClick={handleReset} className="text-xs text-[#555] hover:text-red-400 flex items-center gap-1">
-              <RefreshCw size={12} /> Reset
+            <button
+              disabled={generatingReport}
+              onClick={handleGenerateReport}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 disabled:opacity-50 transition-all font-black text-[10px] uppercase tracking-[0.2em] cursor-pointer"
+            >
+              {generatingReport ? (
+                <RefreshCw size={12} className="animate-spin" />
+              ) : (
+                <FileText size={12} />
+              )}
+              {generatingReport ? 'Generating Report...' : 'Generate Report'}
             </button>
           </div>
         )}

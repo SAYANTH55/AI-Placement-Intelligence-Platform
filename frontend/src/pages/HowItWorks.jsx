@@ -32,7 +32,7 @@ const steps = [
   {
     icon: <BarChart2 size={32} />,
     step: '03',
-    title: 'Intelligence Report',
+    title: 'Detailed Insights',
     tag: 'OUTPUT',
     desc: 'Receive a comprehensive score, skill gap breakdown, target role recommendations, and a personalized learning roadmap — all in one view.',
     stat: '360°',

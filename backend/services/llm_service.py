@@ -182,3 +182,5 @@ def generate_career_insights(structured_data: dict) -> dict:
             except Exception as inner_e:
                 logger.error(f"LLM generate_career_insights fallback failure: {str(inner_e)}", exc_info=True)
         return safe_fallback
+
+
