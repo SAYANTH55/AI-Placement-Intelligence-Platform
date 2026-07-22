@@ -24,7 +24,7 @@ const FIELDS = [
   { id: 'projects',         label: 'Projects',            icon: FileText,    type: 'textarea', fullWidth: true },
 ];
 
-const inputClass = "w-full bg-[#0A0A0C] border border-[#1a1a1a] p-4 rounded-2xl text-sm text-white placeholder-[#333] focus:border-[#F97316] outline-none transition-all";
+const inputClass = "w-full bg-[#FFFFFF] border border-[#C9C2AF] p-4 rounded-2xl text-sm text-[#1B2A4A] placeholder-[#888888] focus:border-[#1B2A4A] outline-none transition-all";
 
 export default function MyProfile() {
   const [loading, setLoading] = useState(true);
@@ -64,15 +64,15 @@ export default function MyProfile() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#060606]">
-        <div className="w-8 h-8 border-4 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+      <div className="flex-1 flex items-center justify-center bg-[#F4EFE4]">
+        <div className="w-8 h-8 border-4 border-[#1B2A4A] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 bg-[#060606] p-6 md:p-10 overflow-y-auto custom-scrollbar relative">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#F97316]/5 blur-[120px] -z-10 rounded-full" />
+    <div className="flex-1 bg-[#F4EFE4] p-6 md:p-10 overflow-y-auto custom-scrollbar relative">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1B2A4A]/5 blur-[120px] -z-10 rounded-full" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/3 blur-[100px] -z-10 rounded-full" />
 
       <div className="max-w-4xl mx-auto">
@@ -80,18 +80,18 @@ export default function MyProfile() {
         <div className="flex items-start justify-between mb-10">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-1 h-8 bg-gradient-to-b from-[#F97316] to-orange-600 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
-              <h1 className="text-3xl font-black text-white tracking-tight">My Application Profile</h1>
+              <div className="w-1 h-8 bg-gradient-to-b from-[#1B2A4A] to-[#9ECCFA] rounded-full shadow-[0_0_15px_rgba(27,42,74,0.5)]" />
+              <h1 className="text-3xl font-black text-[#1B2A4A] tracking-tight">My Application Profile</h1>
             </div>
-            <p className="text-[#555] text-sm ml-4 font-medium uppercase tracking-widest flex items-center gap-2">
-              <Zap size={14} className="text-[#F97316]" />
+            <p className="text-[#888888] text-sm ml-4 font-medium uppercase tracking-widest flex items-center gap-2">
+              <Zap size={14} className="text-[#1B2A4A]" />
               Pre-save your details · Powers the Easy Apply feature
             </p>
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-6 py-3 bg-[#F97316] text-white rounded-2xl font-black text-sm flex items-center gap-2.5 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shrink-0"
+            className="px-6 py-3 bg-[#1B2A4A] text-white rounded-2xl font-black text-sm flex items-center gap-2.5 shadow-[0_0_20px_rgba(27,42,74,0.3)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 shrink-0"
           >
             {saving
               ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -102,14 +102,14 @@ export default function MyProfile() {
         </div>
 
         {/* Easy Apply Banner */}
-        <div className="mb-8 p-5 bg-gradient-to-r from-[#F97316]/10 to-transparent border border-[#F97316]/20 rounded-2xl flex items-center gap-4">
-          <div className="w-11 h-11 bg-[#F97316]/20 rounded-xl flex items-center justify-center shrink-0">
-            <Zap size={22} className="text-[#F97316]" />
+        <div className="mb-8 p-5 bg-gradient-to-r from-[#1B2A4A]/10 to-transparent border border-[#1B2A4A]/20 rounded-2xl flex items-center gap-4">
+          <div className="w-11 h-11 bg-[#1B2A4A]/20 rounded-xl flex items-center justify-center shrink-0">
+            <Zap size={22} className="text-[#1B2A4A]" />
           </div>
           <div>
-            <h3 className="text-sm font-black text-white mb-0.5">How Easy Apply Works</h3>
+            <h3 className="text-sm font-black text-[#1B2A4A] mb-0.5">How Easy Apply Works</h3>
             <p className="text-xs text-[#666] leading-relaxed">
-              When you click <span className="text-[#F97316] font-bold">Apply Now</span> on a drive, the application form will auto-fill with the details you save here. You can still review and edit before submitting.
+              When you click <span className="text-[#1B2A4A] font-bold">Apply Now</span> on a drive, the application form will auto-fill with the details you save here. You can still review and edit before submitting.
             </p>
           </div>
         </div>
@@ -121,8 +121,8 @@ export default function MyProfile() {
             animate={{ opacity: 1, y: 0 }}
             className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 ${
               message.type === 'success'
-                ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                : 'bg-red-500/10 border-red-500/30 text-red-400'
+                ? 'bg-[#EAF3DE] border-[#97C459] text-[#27500A]'
+                : 'bg-[#FCEBEB] border-[#F09595] text-[#791F1F]'
             }`}
           >
             {message.type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
@@ -136,8 +136,8 @@ export default function MyProfile() {
             const Icon = field.icon;
             return (
               <div key={field.id} className={field.fullWidth ? 'md:col-span-2' : ''}>
-                <label className="flex items-center gap-2 text-[10px] font-black text-[#444] uppercase tracking-[0.2em] mb-2.5 px-1">
-                  <Icon size={12} className="text-[#F97316]/60" />
+                <label className="flex items-center gap-2 text-[10px] font-black text-[#888888] uppercase tracking-[0.2em] mb-2.5 px-1">
+                  <Icon size={12} className="text-[#1B2A4A]/60" />
                   {field.label}
                 </label>
                 {field.type === 'textarea' ? (
@@ -167,7 +167,7 @@ export default function MyProfile() {
                           alert("Failed to upload file");
                         }
                       }}
-                      className="w-full text-sm text-[#888] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#F97316] file:text-white hover:file:bg-[#ea580c] transition-all bg-[#0A0A0C] border border-[#1a1a1a] rounded-2xl p-2 focus:border-[#F97316] outline-none"
+                      className="w-full text-sm text-[#6B6B63] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#1B2A4A] file:text-white hover:file:bg-[#2C3E63] transition-all bg-[#FFFFFF] border border-[#C9C2AF] rounded-2xl p-2 focus:border-[#1B2A4A] outline-none"
                     />
                     {profile[field.id] && (
                       <p className="mt-2 text-[10px] text-green-400 font-bold truncate">✓ File Uploaded: {profile[field.id].split('/').pop()}</p>
@@ -192,7 +192,7 @@ export default function MyProfile() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-gradient-to-r from-[#F97316] to-[#fb923c] text-white py-4 rounded-2xl font-black shadow-[0_0_25px_rgba(249,115,22,0.3)] hover:shadow-[0_0_40px_rgba(249,115,22,0.5)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-[#1B2A4A] hover:bg-[#2C3E63] text-white py-4 rounded-2xl font-black shadow-[0_4px_20px_rgba(27,42,74,0.2)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {saving ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Save size={20} />}
               {saving ? 'Saving...' : 'Save Application Profile'}

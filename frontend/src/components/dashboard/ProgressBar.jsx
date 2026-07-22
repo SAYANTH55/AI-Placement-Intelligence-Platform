@@ -12,8 +12,8 @@ export default function ProgressBar({ score }) {
     trackColor = 'bg-red-100';
     label = 'Needs Work';
   } else if (score < 75) {
-    barColor = 'bg-orange-500';
-    textColor = 'text-orange-600';
+    barColor = 'bg-[#1B2A4A]';
+    textColor = 'text-[#9ECCFA]';
     trackColor = 'bg-orange-100';
     label = 'Good';
   }

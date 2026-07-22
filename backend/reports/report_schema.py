@@ -105,11 +105,32 @@ class AdvisorVerdict(BaseModel):
     overall_rating: str = "Promising"
 
 
+class ATSScores(BaseModel):
+    overall_score: int = 0
+    structure_score: int = 0
+    skills_score: int = 0
+    experience_score: int = 0
+    projects_score: int = 0
+    education_score: int = 0
+    achievements_score: int = 0
+    formatting_score: int = 0
+    keyword_score: int = 0
+    feedback: str = ""
+    missing_core_skills: List[str] = []
+
+
+class JDInsights(BaseModel):
+    match_percent: int = 0
+    present_skills: List[str] = []
+    missing_skills: List[str] = []
+    detected_role: str = ""
+
+
 class DossierPayload(BaseModel):
     student: StudentInfo = Field(default_factory=StudentInfo)
     readiness: ReadinessMetrics = Field(default_factory=ReadinessMetrics)
     probability: ProbabilityMetrics = Field(default_factory=ProbabilityMetrics)
-    executive_assessment: str = ""
+    executive_assessment: dict = Field(default_factory=dict)
     strengths: List[StrengthItem] = []
     gaps: List[GapItem] = []
     skills: List[SkillItem] = []
@@ -120,3 +141,5 @@ class DossierPayload(BaseModel):
     roadmap: List[RoadmapMonth] = []
     learning_priorities: List[LearningPriority] = []
     advisor_verdict: AdvisorVerdict = Field(default_factory=AdvisorVerdict)
+    ats_data: Optional[ATSScores] = None
+    jd_data: Optional[JDInsights] = None

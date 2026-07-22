@@ -222,9 +222,52 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
             user_skills=final_skills
         )
 
+        # ── 9. Candidate Intelligence Layer (additive, non-breaking) ──────────────
+        # Aggregates ALL pipeline outputs into a rich CandidateIntelligenceProfile,
+        # then generates the Executive Career Assessment via the LLM.
+        # Wrapped in try/except — failure here NEVER affects the main response.
+        executive_intelligence = {}
+        try:
+            from services.candidate_intelligence import build_candidate_intelligence_profile
+            from services.llm_service import generate_executive_assessment
+
+            cip = build_candidate_intelligence_profile(
+                student_profile=student_profile,
+                role_matches=role_matches_data,
+                prediction=prediction,
+                llm_output=llm_output,
+                diversity_info=diversity_info,
+                preparation_plan=preparation_plan,
+                custom_ml_analysis=custom_ml_analysis,
+                domain_result=domain_result,
+            )
+            executive_assessment = await loop.run_in_executor(
+                None, generate_executive_assessment, cip
+            )
+            executive_intelligence = {
+                "candidate_intelligence_profile": cip,
+                "executive_assessment": executive_assessment,
+            }
+            logging.info("[CandidateIntelligence] Profile built and assessment generated.")
+        except Exception as _cie:
+            logging.warning(f"[CandidateIntelligence] Layer skipped (non-breaking): {_cie}")
+
+        # ── 10. Preload ATS Checker Data ──────────────────────────────────────────
+        ats_report = {}
+        try:
+            from services.ats_analyzer import run_full_analysis
+            ats_report_obj = await loop.run_in_executor(
+                None, run_full_analysis, {"skills": final_skills, **student_profile}, raw_text
+            )
+            # convert pydantic model to dict if needed, or dict directly
+            ats_report = ats_report_obj.dict() if hasattr(ats_report_obj, "dict") else dict(ats_report_obj)
+            logging.info("[ATS] Preloaded standalone ATS report.")
+        except Exception as _ats_err:
+            logging.warning(f"[ATS] Preloading failed: {_ats_err}")
+
         # Clean up
         os.remove(file_path)
-        
+
         return {
             "status": "success",
             "filename": file.filename,
@@ -262,9 +305,16 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
 
                 "detected_domain": "IT",
                 "domain_confidence": 1.0,
-                "secondary_domain": getattr(domain_result, 'secondary_domain', None)
+                "secondary_domain": getattr(domain_result, 'secondary_domain', None),
+
+                # ── NEW: Candidate Intelligence (additive — always present, may be {}) ──
+                "executive_intelligence": executive_intelligence,
+                
+                # ── NEW: ATS Checker Data ──
+                "ats_report": ats_report,
             }
         }
+
 
     except Exception as e:
         logging.error(f"Error in upload_resume for file {file.filename}: {e}", exc_info=True)

@@ -32,8 +32,11 @@ if PRIMARY_KEY:
 
 def _model():
     return genai.GenerativeModel(
-        "gemini-1.5-flash-latest",
-        generation_config={"temperature": 0.3, "max_output_tokens": 2048},
+        "gemini-2.0-flash",
+        generation_config={
+            "temperature": 0.4,
+            "max_output_tokens": 1024,
+        },
     )
 
 
@@ -63,7 +66,7 @@ def _json_call(prompt: str, fallback: dict | list) -> dict | list:
         return fallback
     try:
         model = genai.GenerativeModel(
-            "gemini-1.5-flash-latest",
+            "gemini-1.5-flash",
             generation_config={
                 "temperature": 0.3,
                 "response_mime_type": "application/json",
@@ -84,7 +87,11 @@ def _json_call(prompt: str, fallback: dict | list) -> dict | list:
 
 # ── 1. Executive Assessment (200-250 words) ──────────────────────────────────
 
-def generate_executive_assessment(payload: DossierPayload) -> str:
+def generate_executive_assessment(payload: DossierPayload) -> dict:
+    # If the payload already has the advanced structured executive assessment from CandidateIntelligence, use it!
+    if isinstance(payload.executive_assessment, dict) and "sections" in payload.executive_assessment:
+        return payload.executive_assessment
+
     student = payload.student
     readiness = payload.readiness
     prob = payload.probability
@@ -95,8 +102,18 @@ def generate_executive_assessment(payload: DossierPayload) -> str:
     prompt = f"""
 You are a Senior Talent Intelligence Analyst at a top executive search firm.
 
-Write an executive assessment for the following candidate. This will appear in a
-Placement Intelligence Dossier shared with recruiters and placement officers.
+Write a highly structured executive assessment for the following candidate. 
+Return STRICT JSON matching exactly this schema:
+{{
+    "assessment": "Full combined text...",
+    "sections": {{
+        "executive_overview": "Overview of readiness and role target...",
+        "technical_capability": "Assessment of skills and depth...",
+        "resume_quality": "Evaluation of structure and ATS compatibility...",
+        "placement_outlook": "Prediction of market success...",
+        "recruiter_verdict": "Final recommendation to advance or reject..."
+    }}
+}}
 
 CANDIDATE DATA (use these exact figures):
 - Name: {student.name}
@@ -109,15 +126,12 @@ CANDIDATE DATA (use these exact figures):
 - Critical Gaps: {gaps_list}
 
 INSTRUCTIONS:
-- Write EXACTLY 200 to 250 words. Count carefully.
 - Do NOT use generic phrases like "promising candidate" or "strong potential".
 - Reference the actual skills, gaps, domain, and scores explicitly.
 - Write in a professional executive consultant voice — confident, data-driven, specific.
-- No bullet points. Flowing paragraphs only.
-- Do not mention the word "dossier" or "report".
-- Output ONLY the assessment text, nothing else.
+- Output ONLY valid JSON, nothing else.
 """
-    fallback = (
+    fallback_text = (
         f"{student.name} demonstrates a {readiness.readiness_label.lower()} readiness profile "
         f"within the {student.primary_domain} domain, with a composite placement score of "
         f"{readiness.placement_score:.1f}% and a {prob.placement_probability:.1f}% predicted "
@@ -125,7 +139,18 @@ INSTRUCTIONS:
         f"foundation for {top_role} roles. Closing identified gaps in {gaps_list} represents "
         f"the clearest path to elevating market competitiveness and role eligibility."
     )
-    return _call_gemini(prompt, fallback)
+    fallback = {
+        "assessment": fallback_text,
+        "sections": {
+            "executive_overview": fallback_text,
+            "technical_capability": f"Core technical strengths in {skills_list}.",
+            "resume_quality": "Resume parsed successfully.",
+            "placement_outlook": f"Placement probability is {prob.placement_probability:.1f}%.",
+            "recruiter_verdict": f"Targeting {top_role} roles."
+        }
+    }
+    return _json_call(prompt, fallback)
+
 
 
 # ── 2. Strength Reasons (1 sentence per strength) ────────────────────────────

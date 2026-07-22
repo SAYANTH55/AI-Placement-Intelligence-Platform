@@ -63,7 +63,7 @@ export default function ChangePassword() {
                         <div className="w-14 h-14 rounded-2xl bg-primary-accent/10 border border-primary-accent/20 flex items-center justify-center mx-auto mb-4">
                             <Lock size={24} className="text-primary-accent" />
                         </div>
-                        <h1 className="text-xl font-black text-white">
+                        <h1 className="text-xl font-black text-[#1B2A4A]">
                             {isFirstLogin ? 'Set Your Password' : 'Change Password'}
                         </h1>
                         <p className="text-xs text-secondary-muted">
@@ -76,7 +76,7 @@ export default function ChangePassword() {
                     {isFirstLogin && (
                         <div className="flex items-start gap-2 p-3 rounded-xl bg-primary-accent/5 border border-primary-accent/20 text-[11px] text-secondary-muted">
                             <AlertCircle size={14} className="text-primary-accent mt-0.5 shrink-0" />
-                            <span>Your temporary password is your roll number: <strong className="text-white">{user?.roll_number || 'check your email'}</strong></span>
+                            <span>Your temporary password is your roll number: <strong className="text-[#1B2A4A]">{user?.roll_number || 'check your email'}</strong></span>
                         </div>
                     )}
 
@@ -93,9 +93,9 @@ export default function ChangePassword() {
                                     value={form.current_password}
                                     onChange={e => setForm({ ...form, current_password: e.target.value })}
                                     placeholder={isFirstLogin ? 'Enter your roll number' : 'Enter current password'}
-                                    className="w-full glass-search p-4 pr-12 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                                    className="w-full glass-search p-4 pr-12 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                                 />
-                                <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-4 top-1/2 -translate-y-1/2 text-tertiary-muted hover:text-white transition-colors">
+                                <button type="button" onClick={() => setShowCurrent(!showCurrent)} className="absolute right-4 top-1/2 -translate-y-1/2 text-tertiary-muted hover:text-[#1B2A4A] transition-colors">
                                     {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
@@ -112,9 +112,9 @@ export default function ChangePassword() {
                                     value={form.new_password}
                                     onChange={e => setForm({ ...form, new_password: e.target.value })}
                                     placeholder="Minimum 8 characters"
-                                    className="w-full glass-search p-4 pr-12 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                                    className="w-full glass-search p-4 pr-12 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                                 />
-                                <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-4 top-1/2 -translate-y-1/2 text-tertiary-muted hover:text-white transition-colors">
+                                <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-4 top-1/2 -translate-y-1/2 text-tertiary-muted hover:text-[#1B2A4A] transition-colors">
                                     {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
                             </div>
@@ -129,7 +129,7 @@ export default function ChangePassword() {
                                 value={form.confirm_password}
                                 onChange={e => setForm({ ...form, confirm_password: e.target.value })}
                                 placeholder="Re-enter new password"
-                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                             />
                         </div>
 
@@ -143,7 +143,7 @@ export default function ChangePassword() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-neon-gradient text-white py-4 rounded-2xl font-black shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2"
+                            className="w-full bg-neon-gradient text-[#1B2A4A] py-4 rounded-2xl font-black shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2"
                         >
                             {loading ? 'Updating...' : <><ShieldCheck size={18} /> {isFirstLogin ? 'Set Password & Continue' : 'Update Password'}</>}
                         </button>

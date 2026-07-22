@@ -1,0 +1,167 @@
+"""
+domain_dataset.py
+-----------------
+Curated resume snippets labelled by career domain.
+Used to train the XGBoost Domain Classifier.
+
+Domains: IT | Finance | Healthcare | HR | Marketing | Legal | Mechanical | Civil | Education
+"""
+
+DOMAIN_DATA = [
+    # ── IT ──────────────────────────────────────────────────────────────────
+    ("python java javascript react nodejs sql aws docker kubernetes machine learning deep learning tensorflow pytorch software development backend frontend devops cloud", "IT"),
+    ("github git version control pull request code review agile scrum sprint kanban jira confluence ci cd pipeline deployment testing", "IT"),
+    ("network security penetration testing linux bash scripting server administration firewall vpn configuration protocols tcp ip dns dhcp", "IT"),
+    ("data structures algorithms complexity analysis dynamic programming graph traversal binary search sorting recursion competitive programming leetcode", "IT"),
+    ("mobile app development swift kotlin flutter react native xcode android studio firebase push notification gps camera integration", "IT"),
+    ("database administration mysql postgresql mongodb redis database design normalization stored procedures triggers backup recovery", "IT"),
+    ("system design high availability scalability microservices load balancing caching message queue distributed systems architecture", "IT"),
+    ("web development html css javascript typescript rest api graphql api integration frontend backend full stack development", "IT"),
+    ("artificial intelligence natural language processing computer vision speech recognition robotics automation deep learning neural network", "IT"),
+    ("cloud computing aws azure gcp terraform infrastructure as code devops serverless lambda containers orchestration kubernetes", "IT"),
+    ("software testing qa automation selenium cypress jest pytest unit integration end to end regression performance load testing", "IT"),
+    ("product management roadmap user stories sprint planning stakeholder management product lifecycle agile methodology market research", "IT"),
+    ("it support helpdesk ticketing system windows active directory networking troubleshooting hardware software installation configuration", "IT"),
+    ("blockchain cryptocurrency smart contracts solidity ethereum web3 defi nft distributed ledger consensus mechanism", "IT"),
+    ("embedded systems iot arduino raspberry pi firmware c c++ rtos real time operating system hardware programming sensors", "IT"),
+
+    # ── FINANCE ─────────────────────────────────────────────────────────────
+    ("financial analysis excel vlookup pivot tables financial modelling dcf valuation npv irr sensitivity analysis scenario planning", "Finance"),
+    ("investment banking mergers acquisitions due diligence valuation pitch deck financial statements balance sheet income statement", "Finance"),
+    ("accounting journal entries general ledger trial balance accounts payable receivable reconciliation month end close auditing", "Finance"),
+    ("risk management credit risk market risk operational risk var stress testing scenario analysis basel iii compliance regulatory", "Finance"),
+    ("portfolio management equities fixed income derivatives options futures hedging asset allocation rebalancing performance attribution", "Finance"),
+    ("financial reporting ifrs gaap consolidation group accounts intercompany eliminations segment reporting disclosure management", "Finance"),
+    ("taxation corporate tax vat gst transfer pricing tax planning compliance filing deferred tax provision tax advisory", "Finance"),
+    ("insurance actuarial science mortality tables reserve calculation premium pricing underwriting claims management reinsurance", "Finance"),
+    ("retail banking customer relationship management loan processing credit scoring mortgage underwriting kyc aml compliance", "Finance"),
+    ("quantitative finance python r matlab stochastic calculus black scholes monte carlo simulation algorithmic trading", "Finance"),
+    ("treasury cash management liquidity forecasting fx hedging interest rate swap fixed income bond yield curve duration", "Finance"),
+    ("private equity venture capital deal sourcing term sheet cap table governance board reporting portfolio monitoring exit", "Finance"),
+    ("financial planning analysis fp and a budgeting forecasting variance analysis kpi dashboard management reporting", "Finance"),
+    ("compliance aml kyc fatf regulations sanctions screening transaction monitoring suspicious activity report filing", "Finance"),
+    ("capital markets equity research analyst reports sector coverage earnings model price target recommendation buy sell hold", "Finance"),
+
+    # ── HEALTHCARE ──────────────────────────────────────────────────────────
+    ("clinical research gcp ich guidelines protocol development crf site management data management sas clinical trial", "Healthcare"),
+    ("nursing patient care medication administration vital signs ehr documentation bedside manner clinical skills hospital", "Healthcare"),
+    ("pharmacy dispensing drug interaction counselling formulary management pharmacovigilance adverse event reporting medication review", "Healthcare"),
+    ("medical imaging radiology mri ct scan interpretation dicom pacs ris radiology report clinical diagnosis", "Healthcare"),
+    ("public health epidemiology disease surveillance biostatistics r spss community health program evaluation policy", "Healthcare"),
+    ("healthcare administration hospital management jci accreditation quality improvement patient safety incident reporting", "Healthcare"),
+    ("physiotherapy rehabilitation musculoskeletal neurological assessment exercise prescription manual therapy patient education", "Healthcare"),
+    ("medical coding icd-10 cpt billing claim submission denial management prior authorization insurance reimbursement", "Healthcare"),
+    ("dentistry oral examination dental records treatment planning restorations extraction orthodontics patient management", "Healthcare"),
+    ("laboratory diagnostics pcr elisa western blot cell culture microbiology culture sensitivity lab quality control", "Healthcare"),
+    ("mental health counselling cbt dbt psychotherapy assessment diagnosis dsmv patient assessment care plan documentation", "Healthcare"),
+    ("health informatics ehr epic cerner interoperability hl7 fhir clinical decision support implementation training go live", "Healthcare"),
+    ("nutrition dietetics meal planning clinical nutrition enteral parenteral feeding patient assessment bmi micronutrient", "Healthcare"),
+    ("medical device regulatory fda ce marking iso 13485 510k pma clinical evaluation report post market surveillance", "Healthcare"),
+    ("occupational health workplace health safety risk assessment exposure monitoring audiometry spirometry preplacement examination", "Healthcare"),
+
+    # ── HR ──────────────────────────────────────────────────────────────────
+    ("recruitment talent acquisition job posting screening interviewing onboarding offer negotiation candidate experience employer brand", "HR"),
+    ("performance management appraisal kpi okr 360 feedback goal setting development plan pip pip performance improvement", "HR"),
+    ("hr operations hris workday sap successfactors payroll benefits administration leave management attendance compliance", "HR"),
+    ("learning development training needs analysis instructional design elearning lms content creation facilitation evaluation", "HR"),
+    ("employee engagement pulse survey culture program recognition wellbeing retention strategy attrition analysis eNPS", "HR"),
+    ("compensation benefits benchmarking salary structure band job evaluation hay korn ferry global grading total rewards", "HR"),
+    ("hr analytics people analytics workforce planning headcount forecasting diversity inclusion gender pay gap reporting", "HR"),
+    ("labour relations industrial relations collective bargaining grievance handling disciplinary process employment law", "HR"),
+    ("organizational development change management culture transformation leadership coaching assessment center succession planning", "HR"),
+    ("hr business partner strategic alignment workforce planning talent management stakeholder advisory business strategy", "HR"),
+    ("employer branding linkedin glassdoor social media university relations campus hiring graduate program diversity", "HR"),
+    ("hr compliance statutory compliance provident fund gratuity esi professional tax labour law audit statutory returns", "HR"),
+    ("talent management succession planning high potential identification leadership pipeline competency framework career path", "HR"),
+    ("diversity equity inclusion unconscious bias gender diversity affirmative action inclusive hiring cultural competency", "HR"),
+    ("hr digital transformation rpa automation chatbot ai in hr digital hr strategy implementation change management", "HR"),
+
+    # ── MARKETING ───────────────────────────────────────────────────────────
+    ("digital marketing seo sem ppc google ads facebook ads instagram ads linkedin ads campaign management analytics roas", "Marketing"),
+    ("content marketing blog copywriting social media content calendar editorial strategy brand voice tone distribution", "Marketing"),
+    ("email marketing mailchimp klaviyo segmentation automation drip campaign ab testing open rate click rate conversion", "Marketing"),
+    ("brand management brand identity guidelines visual design positioning brand strategy market research consumer insight", "Marketing"),
+    ("market research consumer surveys focus groups competitive analysis brand tracking sentiment analysis insight reporting", "Marketing"),
+    ("product marketing gtm strategy positioning messaging sales enablement competitive intelligence analyst relations pr", "Marketing"),
+    ("performance marketing cpa cpl roas ltv attribution model conversion rate funnel optimization landing page testing", "Marketing"),
+    ("influencer marketing creator partnership ugc user generated content nano micro macro mega influencer campaign roi", "Marketing"),
+    ("marketing analytics google analytics 4 mixpanel amplitude cohort funnel attribution reporting data driven decision", "Marketing"),
+    ("crm marketing hubspot salesforce marketing cloud email nurture lead scoring customer lifecycle pipeline marketing", "Marketing"),
+    ("event marketing conference trade show webinar virtual event sponsorship logistics coordination post event analysis", "Marketing"),
+    ("pr communications media relations press release journalist outreach crisis communications thought leadership ghostwriting", "Marketing"),
+    ("ecommerce marketing shopify woocommerce product listing optimisation reviews ratings a plus content marketplace", "Marketing"),
+    ("video marketing youtube production editing thumbnail script storytelling youtube seo analytics channel growth", "Marketing"),
+    ("growth hacking viral loop referral program retention strategy activation onboarding aha moment north star metric", "Marketing"),
+
+    # ── LEGAL ───────────────────────────────────────────────────────────────
+    ("corporate law mergers acquisitions joint venture shareholders agreement due diligence transaction documentation", "Legal"),
+    ("litigation court proceedings pleadings discovery deposition brief writing oral argument trial practice appeals", "Legal"),
+    ("contract drafting review negotiation sla nda mou agreement commercial terms risk mitigation legal opinions", "Legal"),
+    ("intellectual property patent trademark copyright licensing protection infringement enforcement registration prosecution", "Legal"),
+    ("employment law contract termination discrimination harassment workplace investigation regulatory compliance", "Legal"),
+    ("data privacy gdpr ccpa privacy policy data protection impact assessment dpia breach notification regulatory advisory", "Legal"),
+    ("real estate conveyancing title search lease review property agreement registration stamp duty due diligence", "Legal"),
+    ("tax law transfer pricing advisory ruling vat gst customs excise international tax planning treaty interpretation", "Legal"),
+    ("regulatory compliance financial services banking insurance securities law licence application approval submissions", "Legal"),
+    ("criminal law defence prosecution evidence procedure sentencing appeal parole judicial review constitutional law", "Legal"),
+    ("legal research westlaw lexisnexis case law statutory interpretation memoranda brief writing legal analysis opinion", "Legal"),
+    ("immigration law visa application sponsorship permit residence citizenship naturalization deportation appeal", "Legal"),
+    ("environmental law compliance regulatory permit environmental impact assessment remediation carbon emission trading", "Legal"),
+    ("family law divorce custody maintenance asset division settlement negotiation mediation court representation", "Legal"),
+    ("arbitration mediation dispute resolution adr commercial arbitration international arbitration icc lcia award enforcement", "Legal"),
+
+    # ── MECHANICAL ──────────────────────────────────────────────────────────
+    ("cad design solidworks catia autocad creo design modelling assembly drawing gdt tolerance surface modelling sheet metal", "Mechanical"),
+    ("finite element analysis ansys abaqus structural analysis thermal analysis fatigue failure stress strain simulation", "Mechanical"),
+    ("manufacturing process cnc machining lathe milling turning grinding injection moulding casting forging quality control", "Mechanical"),
+    ("thermal engineering heat transfer thermodynamics fluid mechanics heat exchanger cooling system hvac refrigeration", "Mechanical"),
+    ("product design concept development prototyping 3d printing additive manufacturing design for manufacturing dfm dfma", "Mechanical"),
+    ("project engineering plant layout piping p and id isometric drawing pressure vessel asme code standards", "Mechanical"),
+    ("quality engineering six sigma spc control chart measurement system analysis gage r r iso 9001 fmea dfmea", "Mechanical"),
+    ("automotive engineering vehicle dynamics powertrain suspension brakes nvh testing fatigue durability cad fem", "Mechanical"),
+    ("materials science metallurgy material selection corrosion hardness tensile compressive impact testing failure analysis", "Mechanical"),
+    ("robotics automation plc scada servo motor pneumatic hydraulic industrial automation conveyor assembly line", "Mechanical"),
+    ("tool and die press tool stamping progressive die blanking piercing bending forming die design casting tooling", "Mechanical"),
+    ("maintenance engineering predictive preventive corrective maintenance vibration analysis lubrication reliability rcm", "Mechanical"),
+    ("aerospace structures composite materials fatigue crack growth non destructive testing mro repair modification", "Mechanical"),
+    ("energy engineering power plant boiler turbine generator steam cycle efficiency heat rate performance improvement", "Mechanical"),
+    ("oil gas piping offshore structure process engineering flow assurance riser pipeline integrity management", "Mechanical"),
+
+    # ── CIVIL ───────────────────────────────────────────────────────────────
+    ("structural engineering rcc steel design etabs staad safe is codes aci design of beams columns slabs foundations", "Civil"),
+    ("construction management project planning ms project primavera p6 schedule baseline progress tracking earned value", "Civil"),
+    ("geotechnical engineering soil investigation boring test spt cptu bearing capacity settlement slope stability", "Civil"),
+    ("highway road design autocad civil 3d geometric design alignment profile cross section traffic engineering pavement", "Civil"),
+    ("water resources irrigation drainage hydrology hec ras hec hms flood routing dam design reservoir operation", "Civil"),
+    ("environmental engineering wastewater treatment etp stp sewer design effluent standard environmental impact assessment", "Civil"),
+    ("surveying total station gps gnss levelling contour mapping remote sensing gis arcgis qgis spatial analysis", "Civil"),
+    ("building information modelling bim revit navisworks clash detection coordination 4d 5d model quantity takeoff", "Civil"),
+    ("quantity surveying bill of quantities tendering contract administration measurement valuation cost estimation", "Civil"),
+    ("transportation planning traffic modelling vissim synchro traffic impact assessment interchange design pedestrian", "Civil"),
+    ("site supervision quality control concrete testing cube slump reinforcement cover block formwork inspection", "Civil"),
+    ("tunnelling underground excavation tunnel boring machine support system shotcrete rockbolt instrumentation monitoring", "Civil"),
+    ("bridge engineering design superstructure substructure foundation inspection assessment rehabilitation repair", "Civil"),
+    ("infrastructure planning urban planning zoning land use master plan development control regulations layout", "Civil"),
+    ("construction safety risk assessment method statement toolbox talk permit to work accident investigation hse", "Civil"),
+
+    # ── EDUCATION ───────────────────────────────────────────────────────────
+    ("teaching curriculum development lesson planning classroom management student assessment learning outcomes pedagogy", "Education"),
+    ("higher education university lecturer research publication journal conference grant writing academic writing", "Education"),
+    ("elearning instructional design lms moodle canvas blackboard scorm tin can xapi interactive content authoring", "Education"),
+    ("special education learning disability iep differentiated instruction inclusive classroom behaviour management", "Education"),
+    ("educational technology edtech digital tools gamification flipped classroom blended learning personalised learning", "Education"),
+    ("school administration principal vice principal timetabling policy parent communication regulatory compliance", "Education"),
+    ("early childhood education preschool kindergarten play-based learning child development milestones safeguarding", "Education"),
+    ("stem education science technology engineering mathematics robotics coding computational thinking problem solving", "Education"),
+    ("counselling guidance career counselling student support wellbeing pastoral care college university application", "Education"),
+    ("training corporate trainer facilitation workshop programme design evaluation kirkpatrick model roi measurement", "Education"),
+    ("library information science cataloguing classification reference services digital library database management", "Education"),
+    ("assessment evaluation rubric criterion formative summative standardised test psychometrics validity reliability", "Education"),
+    ("adult literacy language teaching efl esl tesol ielts toefl grammar phonetics communicative language teaching", "Education"),
+    ("educational research action research mixed methods qualitative quantitative data analysis publication ethics", "Education"),
+    ("sports physical education coaching fitness training pe curriculum sports science biomechanics exercise physiology", "Education"),
+]
+
+
+def get_domain_dataset():
+    return [(text.strip(), label) for text, label in DOMAIN_DATA]

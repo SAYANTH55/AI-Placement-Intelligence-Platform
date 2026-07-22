@@ -113,14 +113,14 @@ export default function StudentManagement() {
         <div className="space-y-6">
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                    <h1 className="text-2xl font-black tracking-tight text-[#1B2A4A] flex items-center gap-2">
                         <UserPlus className="text-primary-accent" size={24} /> Student Management
                     </h1>
                     <p className="text-xs text-secondary-muted mt-1">Import students via CSV or add individually, manage accounts, and track onboarding</p>
                 </div>
                 <button
                     onClick={() => { setShowAddModal(true); setAddSuccess(null); setAddError(''); }}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black bg-neon-gradient text-white shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all shrink-0"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black bg-neon-gradient text-[#1B2A4A] shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all shrink-0"
                 >
                     <UserPlus size={14} /> Add Student
                 </button>
@@ -129,13 +129,13 @@ export default function StudentManagement() {
             {/* CSV Import */}
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
                 <div className="glass-panel shadow-card-depth rounded-3xl p-6 space-y-4">
-                    <h2 className="text-sm font-black text-white flex items-center gap-2"><Upload size={16} className="text-tertiary-muted" /> Bulk Import</h2>
+                    <h2 className="text-sm font-black text-[#1B2A4A] flex items-center gap-2"><Upload size={16} className="text-tertiary-muted" /> Bulk Import</h2>
                     <div className="flex flex-wrap gap-3 items-center">
-                        <button onClick={handleDownloadTemplate} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-white/10 bg-white/[0.04] text-secondary-muted hover:text-white hover:border-primary-accent transition-all flex items-center gap-2">
+                        <button onClick={handleDownloadTemplate} className="px-5 py-2.5 rounded-xl text-xs font-bold border border-[#1B2A4A]/10 bg-[#1B2A4A]/[0.04] text-secondary-muted hover:text-[#1B2A4A] hover:border-primary-accent transition-all flex items-center gap-2">
                             <Download size={14} /> Download Template
                         </button>
                         <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" />
-                        <label htmlFor="csv-upload" className={`px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center gap-2 ${importing ? 'bg-primary-accent/20 text-primary-accent border border-primary-accent/30' : 'bg-neon-gradient text-white shadow-neon-glow hover:-translate-y-0.5 active:scale-95'}`}>
+                        <label htmlFor="csv-upload" className={`px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all flex items-center gap-2 ${importing ? 'bg-primary-accent/20 text-primary-accent border border-primary-accent/30' : 'bg-neon-gradient text-[#1B2A4A] shadow-neon-glow hover:-translate-y-0.5 active:scale-95'}`}>
                             {importing ? <><div className="w-3.5 h-3.5 border-2 border-primary-accent border-t-transparent rounded-full animate-spin" /> Importing...</> : <><Upload size={14} /> Upload CSV</>}
                         </label>
                     </div>
@@ -146,7 +146,7 @@ export default function StudentManagement() {
                                     <div className="flex items-start gap-2 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs"><XCircle size={16} className="shrink-0 mt-0.5" /><span>{importResult.error}</span></div>
                                 ) : (
                                     <div className="p-4 rounded-2xl bg-primary-accent/5 border border-primary-accent/20 space-y-2">
-                                        <div className="flex items-center gap-2 text-xs font-bold text-white"><CheckCircle size={16} className="text-[#34D399]" /> Import Complete</div>
+                                        <div className="flex items-center gap-2 text-xs font-bold text-[#1B2A4A]"><CheckCircle size={16} className="text-[#34D399]" /> Import Complete</div>
                                         <div className="flex gap-6 text-xs text-secondary-muted">
                                             <span><strong className="text-[#34D399]">{importResult.created}</strong> created</span>
                                             <span><strong className="text-amber-400">{importResult.skipped}</strong> skipped</span>
@@ -158,7 +158,7 @@ export default function StudentManagement() {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    <div className="flex items-start gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[10px] text-tertiary-muted">
+                    <div className="flex items-start gap-2 p-3 rounded-xl bg-[#1B2A4A]/[0.02] border border-[#1B2A4A]/5 text-[10px] text-tertiary-muted">
                         <AlertCircle size={12} className="text-primary-accent mt-0.5 shrink-0" />
                         <span>Columns: <strong className="text-secondary-muted">name, email, roll_number, course, batch</strong>. Password = roll number. Students change on first login.</span>
                     </div>
@@ -168,14 +168,14 @@ export default function StudentManagement() {
             {/* Stats */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total', value: students.length, color: 'white/20', icon: <Users size={16} className="text-white" />, textColor: 'text-white' },
+                    { label: 'Total', value: students.length, color: 'white/20', icon: <Users size={16} className="text-[#1B2A4A]" />, textColor: 'text-[#1B2A4A]' },
                     { label: 'Active', value: activeCount, color: '[#34D399]', icon: <CheckCircle size={16} className="text-[#34D399]" />, textColor: 'text-[#34D399]' },
                     { label: 'Pending', value: pendingCount, color: 'amber-400', icon: <Clock size={16} className="text-amber-400" />, textColor: 'text-amber-400' },
                     { label: 'Unassigned', value: unassignedCount, color: 'white/10', icon: <Users size={16} className="text-tertiary-muted" />, textColor: 'text-tertiary-muted' },
                 ].map(c => (
                     <div key={c.label} className={`glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-${c.color}`}>
                         <div className="flex items-center gap-3 mb-3">
-                            <div className="p-2 bg-white/5 border border-white/10 rounded-lg">{c.icon}</div>
+                            <div className="p-2 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 rounded-lg">{c.icon}</div>
                             <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">{c.label}</p>
                         </div>
                         <p className={`text-2xl font-black ${c.textColor}`}>{c.value}</p>
@@ -187,15 +187,15 @@ export default function StudentManagement() {
             <div className="flex flex-wrap items-center gap-3">
                 <div className="flex items-center gap-2 glass-search shadow-card-depth rounded-xl px-4 flex-1 min-w-[200px]">
                     <Search size={14} className="text-tertiary-muted" />
-                    <input type="text" placeholder="Search name, email, roll number..." className="bg-transparent border-none outline-none text-xs text-white p-3 w-full placeholder-tertiary-muted" value={search} onChange={e => setSearch(e.target.value)} />
+                    <input type="text" placeholder="Search name, email, roll number..." className="bg-transparent border-none outline-none text-xs text-[#1B2A4A] p-3 w-full placeholder-tertiary-muted" value={search} onChange={e => setSearch(e.target.value)} />
                 </div>
-                <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none" value={filterCourse} onChange={e => setFilterCourse(e.target.value)}>
+                <select className="glass-search p-2.5 rounded-xl text-xs text-[#1B2A4A] outline-none" value={filterCourse} onChange={e => setFilterCourse(e.target.value)}>
                     <option value="ALL">All Courses</option><option value="MCA">MCA</option><option value="MSAIM">MSAIM</option>
                 </select>
-                <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none" value={filterBatch} onChange={e => setFilterBatch(e.target.value)}>
+                <select className="glass-search p-2.5 rounded-xl text-xs text-[#1B2A4A] outline-none" value={filterBatch} onChange={e => setFilterBatch(e.target.value)}>
                     <option value="ALL">All Batches</option>{batches.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
-                <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <select className="glass-search p-2.5 rounded-xl text-xs text-[#1B2A4A] outline-none" value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
                     <option value="ALL">All Status</option><option value="active">Active</option><option value="pending">Pending</option><option value="unassigned">Unassigned</option>
                 </select>
             </div>
@@ -204,7 +204,7 @@ export default function StudentManagement() {
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-panel shadow-card-depth rounded-3xl overflow-hidden">
                 <table className="w-full text-left text-xs">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <tr className="border-b border-[#1B2A4A]/5 bg-[#1B2A4A]/[0.02]">
                             {['Student', 'Roll No', 'Course', 'Batch', 'PR Assigned', 'Status', ''].map(h => (
                                 <th key={h} className={`px-5 py-4 font-black uppercase tracking-widest text-secondary-muted ${h === '' ? 'text-right' : ''}`}>{h || 'Actions'}</th>
                             ))}
@@ -216,17 +216,17 @@ export default function StudentManagement() {
                         ) : filtered.length === 0 ? (
                             <tr><td colSpan="7" className="px-6 py-20 text-center text-tertiary-muted">{students.length === 0 ? 'No students yet. Upload a CSV to get started.' : 'No matches.'}</td></tr>
                         ) : filtered.map((s, i) => (
-                            <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.01 }} className="hover:bg-white/[0.03] transition-colors">
+                            <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.01 }} className="hover:bg-[#1B2A4A]/[0.03] transition-colors">
                                 <td className="px-5 py-3.5">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-primary-accent/15 border border-primary-accent/30 flex items-center justify-center text-[10px] font-black text-primary-accent">{s.name?.[0] || '?'}</div>
-                                        <div><p className="font-bold text-white">{s.name}</p><p className="text-[10px] text-tertiary-muted">{s.email}</p></div>
+                                        <div><p className="font-bold text-[#1B2A4A]">{s.name}</p><p className="text-[10px] text-tertiary-muted">{s.email}</p></div>
                                     </div>
                                 </td>
                                 <td className="px-5 py-3.5 font-mono text-secondary-muted">{s.roll_number || '—'}</td>
                                 <td className="px-5 py-3.5"><span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${s.course === 'MCA' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'}`}>{s.course || '—'}</span></td>
                                 <td className="px-5 py-3.5 text-secondary-muted">{s.batch || '—'}</td>
-                                <td className="px-5 py-3.5">{s.pr_name ? <span className="text-white font-medium">{s.pr_name}</span> : <span className="text-tertiary-muted italic">Unassigned</span>}</td>
+                                <td className="px-5 py-3.5">{s.pr_name ? <span className="text-[#1B2A4A] font-medium">{s.pr_name}</span> : <span className="text-tertiary-muted italic">Unassigned</span>}</td>
                                 <td className="px-5 py-3.5">
                                     <div className="flex items-center gap-1.5">
                                         <div className={`w-1.5 h-1.5 rounded-full ${s.account_status === 'active' ? 'bg-[#34D399] shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.5)]'}`} />
@@ -234,13 +234,13 @@ export default function StudentManagement() {
                                     </div>
                                 </td>
                                 <td className="px-5 py-3.5 text-right">
-                                    <button onClick={() => handleDelete(s.id, s.name)} className="p-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition-all" title="Delete"><Trash2 size={13} /></button>
+                                    <button onClick={() => handleDelete(s.id, s.name)} className="p-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-[#1B2A4A] transition-all" title="Delete"><Trash2 size={13} /></button>
                                 </td>
                             </motion.tr>
                         ))}
                     </tbody>
                 </table>
-                {!loading && filtered.length > 0 && <div className="px-5 py-3 border-t border-white/5 text-[10px] text-tertiary-muted">Showing {filtered.length} of {students.length}</div>}
+                {!loading && filtered.length > 0 && <div className="px-5 py-3 border-t border-[#1B2A4A]/5 text-[10px] text-tertiary-muted">Showing {filtered.length} of {students.length}</div>}
             </motion.div>
 
             {/* ── Add Student Modal ───────────────────────────────── */}
@@ -257,20 +257,20 @@ export default function StudentManagement() {
                         <motion.div
                             initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 80 }}
                             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                            className="fixed top-0 right-0 h-full w-full max-w-md bg-[#0f0f0f] border-l border-white/10 shadow-2xl z-50 flex flex-col"
+                            className="fixed top-0 right-0 h-full w-full max-w-md bg-[#0f0f0f] border-l border-[#1B2A4A]/10 shadow-2xl z-50 flex flex-col"
                         >
                             {/* Header */}
-                            <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                            <div className="flex items-center justify-between px-6 py-5 border-b border-[#1B2A4A]/10">
                                 <div className="flex items-center gap-3">
                                     <div className="w-9 h-9 rounded-xl bg-primary-accent/10 border border-primary-accent/20 flex items-center justify-center">
                                         <GraduationCap size={18} className="text-primary-accent" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-black text-white">Add Student</p>
+                                        <p className="text-sm font-black text-[#1B2A4A]">Add Student</p>
                                         <p className="text-[10px] text-tertiary-muted">Manually create one account</p>
                                     </div>
                                 </div>
-                                <button onClick={closeAddModal} className="p-1.5 text-tertiary-muted hover:text-white transition-colors"><X size={18} /></button>
+                                <button onClick={closeAddModal} className="p-1.5 text-tertiary-muted hover:text-[#1B2A4A] transition-colors"><X size={18} /></button>
                             </div>
 
                             {/* Body */}
@@ -286,9 +286,9 @@ export default function StudentManagement() {
                                             <div className="flex items-center gap-2 text-xs font-bold text-[#34D399]">
                                                 <CheckCircle size={14} /> Account created for {addSuccess.name}
                                             </div>
-                                            <div className="flex items-center gap-2 p-3 rounded-xl bg-black/30 border border-white/5">
+                                            <div className="flex items-center gap-2 p-3 rounded-xl bg-black/30 border border-[#1B2A4A]/5">
                                                 <KeyRound size={13} className="text-amber-400 shrink-0" />
-                                                <span className="text-[11px] text-secondary-muted">Temp password: <strong className="text-white font-mono">{addSuccess.roll_number}</strong></span>
+                                                <span className="text-[11px] text-secondary-muted">Temp password: <strong className="text-[#1B2A4A] font-mono">{addSuccess.roll_number}</strong></span>
                                             </div>
                                             <p className="text-[10px] text-tertiary-muted">Student will be prompted to change it on first login.</p>
                                         </motion.div>
@@ -308,28 +308,28 @@ export default function StudentManagement() {
                                         <label className="text-[10px] font-black uppercase tracking-widest text-secondary-muted">Full Name *</label>
                                         <input required value={addForm.name} onChange={e => setAddForm({...addForm, name: e.target.value})}
                                             placeholder="e.g. Riya Sharma"
-                                            className="w-full glass-search p-3.5 rounded-xl text-sm text-white placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
+                                            className="w-full glass-search p-3.5 rounded-xl text-sm text-[#1B2A4A] placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
                                     </div>
                                     {/* Email */}
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-secondary-muted">College Email *</label>
                                         <input required type="email" value={addForm.email} onChange={e => setAddForm({...addForm, email: e.target.value})}
                                             placeholder="riya@college.edu"
-                                            className="w-full glass-search p-3.5 rounded-xl text-sm text-white placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
+                                            className="w-full glass-search p-3.5 rounded-xl text-sm text-[#1B2A4A] placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
                                     </div>
                                     {/* Roll Number */}
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-secondary-muted">Roll Number * <span className="text-primary-accent">(used as temp password)</span></label>
                                         <input required value={addForm.roll_number} onChange={e => setAddForm({...addForm, roll_number: e.target.value})}
                                             placeholder="e.g. MCA2025042"
-                                            className="w-full glass-search p-3.5 rounded-xl text-sm font-mono text-white placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
+                                            className="w-full glass-search p-3.5 rounded-xl text-sm font-mono text-[#1B2A4A] placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
                                     </div>
                                     {/* Course + Batch */}
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-secondary-muted">Course *</label>
                                             <select required value={addForm.course} onChange={e => setAddForm({...addForm, course: e.target.value})}
-                                                className="w-full glass-search p-3.5 rounded-xl text-sm text-white outline-none">
+                                                className="w-full glass-search p-3.5 rounded-xl text-sm text-[#1B2A4A] outline-none">
                                                 <option value="MCA">MCA</option>
                                                 <option value="MSAIM">MSAIM</option>
                                             </select>
@@ -338,26 +338,26 @@ export default function StudentManagement() {
                                             <label className="text-[10px] font-black uppercase tracking-widest text-secondary-muted">Batch *</label>
                                             <input required value={addForm.batch} onChange={e => setAddForm({...addForm, batch: e.target.value})}
                                                 placeholder="MCA 2025 A"
-                                                className="w-full glass-search p-3.5 rounded-xl text-sm text-white placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
+                                                className="w-full glass-search p-3.5 rounded-xl text-sm text-[#1B2A4A] placeholder-tertiary-muted outline-none focus:border-primary-accent transition-colors" />
                                         </div>
                                     </div>
                                     {/* CGPA (optional) */}
 
                                 </form>
 
-                                <div className="flex items-start gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[10px] text-tertiary-muted">
+                                <div className="flex items-start gap-2 p-3 rounded-xl bg-[#1B2A4A]/[0.02] border border-[#1B2A4A]/5 text-[10px] text-tertiary-muted">
                                     <AlertCircle size={12} className="text-primary-accent mt-0.5 shrink-0" />
                                     <span>The student logs in with their <strong className="text-secondary-muted">email</strong> + <strong className="text-secondary-muted">roll number</strong> as the temporary password and must change it on first login.</span>
                                 </div>
                             </div>
 
                             {/* Footer */}
-                            <div className="px-6 py-4 border-t border-white/10 flex gap-3">
-                                <button onClick={closeAddModal} className="flex-1 py-3 rounded-xl text-xs font-bold border border-white/10 text-secondary-muted hover:text-white hover:border-white/20 transition-all">
+                            <div className="px-6 py-4 border-t border-[#1B2A4A]/10 flex gap-3">
+                                <button onClick={closeAddModal} className="flex-1 py-3 rounded-xl text-xs font-bold border border-[#1B2A4A]/10 text-secondary-muted hover:text-[#1B2A4A] hover:border-[#1B2A4A]/20 transition-all">
                                     Cancel
                                 </button>
                                 <button type="submit" form="add-student-form" disabled={addLoading}
-                                    className="flex-1 py-3 rounded-xl text-xs font-black bg-neon-gradient text-white shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                                    className="flex-1 py-3 rounded-xl text-xs font-black bg-neon-gradient text-[#1B2A4A] shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                                     {addLoading ? <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />Creating...</> : <><UserPlus size={14} />Create Account</>}
                                 </button>
                             </div>

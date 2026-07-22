@@ -1,3 +1,8 @@
+import warnings
+# Suppress non-actionable FutureWarning from google-api-core about Python 3.10 EOL.
+# This does not affect functionality; upgrade Python when convenient (3.11+).
+warnings.filterwarnings("ignore", category=FutureWarning, module="google.api_core")
+
 import sys
 import os
 
@@ -20,7 +25,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from api import endpoints, auth, resume_routes, engine_routes, learning_routes, outcome_routes
+from api import endpoints, auth, resume_routes, engine_routes, learning_routes, outcome_routes, ats_routes, recommendation_routes
 from database.db import engine
 from database import models
 
@@ -43,6 +48,16 @@ try:
 except Exception as _e:
     import logging as _logging
     _logging.getLogger(__name__).warning(f"Auto-seed skipped: {_e}")
+
+# ── Auto-generate missing ML model files (one-time, first boot) ─────────────
+try:
+    import sys as _sys
+    _sys.path.insert(0, BASE_DIR)
+    from ai_model.train_models import ensure_models_exist as _ensure_models
+    _ensure_models()
+except Exception as _me:
+    import logging as _logging
+    _logging.getLogger(__name__).warning(f"Model bootstrap skipped: {_me}")
 
 app = FastAPI(
     title="AI Placement Intelligence Platform API",
@@ -82,6 +97,16 @@ app.include_router(department_routes.router)
 app.include_router(placement_update_routes.router)
 app.include_router(provisioning_routes.router)
 app.include_router(report_routes.router)
+app.include_router(ats_routes.router)  # ← ATS Analyzer (isolated, additive)
+app.include_router(recommendation_routes.router)  # ← Job Recommendation Engine
+
+# Warm up JD embeddings in background on startup
+@app.on_event("startup")
+async def startup_event():
+    import threading
+    from ai_model.job_recommendation_engine import warmup
+    t = threading.Thread(target=warmup, daemon=True)
+    t.start()
 
 
 @app.get("/")

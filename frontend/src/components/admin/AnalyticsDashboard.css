@@ -1,6 +1,6 @@
 .analytics-dashboard {
     padding: 40px;
-    background: #060606;
+    background: #F4EFE4;
     min-height: 100vh;
     color: white;
 }
@@ -84,7 +84,7 @@
 
 .moat-card {
     background: rgba(20, 20, 20, 0.5);
-    border: 1px solid #1a1a1a;
+    border: 1px solid #C9C2AF;
     padding: 24px;
     border-radius: 16px;
     backdrop-filter: blur(10px);
@@ -96,7 +96,7 @@
 }
 
 .moat-card p {
-    color: #888;
+    color: #888888555;
     font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 20px;

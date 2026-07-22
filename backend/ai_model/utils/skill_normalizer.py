@@ -88,6 +88,21 @@ SKILL_SYNONYMS = {
     "design pattern": "design patterns",
     "data structure": "data structures",
     "algorithm": "algorithms",
+    
+    # Non-Tech variants
+    "search engine optimization": "seo",
+    "social media marketing": "social media",
+    "pay per click": "ppc",
+    "google ads": "google adwords",
+    "ga4": "google analytics",
+    "general accepted accounting principles": "gaap",
+    "profit and loss": "p&l",
+    "human resources": "hr",
+    "talent acquisition": "recruiting",
+    "public relations": "pr",
+    "b to b": "b2b",
+    "business to business": "b2b",
+    "customer relationship management": "crm",
 }
 
 # ── SKILL WEIGHTS BY ROLE ──
@@ -158,6 +173,37 @@ SKILL_WEIGHTS_BY_ROLE = {
         "docker": 0.9,
         "git": 0.7,
     },
+    "Marketing Manager": {
+        "seo": 1.5,
+        "content marketing": 1.4,
+        "google analytics": 1.3,
+        "social media": 1.2,
+        "ppc": 1.2,
+        "email marketing": 1.1,
+        "crm": 1.0,
+        "copywriting": 1.2,
+        "b2b": 0.8,
+    },
+    "Financial Analyst": {
+        "financial modeling": 1.5,
+        "excel": 1.4,
+        "gaap": 1.3,
+        "data analysis": 1.2,
+        "forecasting": 1.3,
+        "sql": 1.0,
+        "p&l": 1.1,
+        "valuation": 1.2,
+    },
+    "HR Professional": {
+        "recruiting": 1.5,
+        "onboarding": 1.3,
+        "employee relations": 1.4,
+        "hris": 1.2,
+        "performance management": 1.3,
+        "compliance": 1.2,
+        "talent management": 1.3,
+        "payroll": 1.0,
+    },
 }
 
 # ── SKILL CATEGORIES ──
@@ -169,6 +215,9 @@ SKILL_CATEGORIES = {
     "DevOps": ["docker", "kubernetes", "jenkins", "ci/cd", "terraform", "aws"],
     "ML/AI": ["machine learning", "python", "tensorflow", "scikit-learn", "pandas"],
     "Testing": ["unit testing", "automation testing", "pytest", "jest"],
+    "Marketing & Sales": ["seo", "content marketing", "google analytics", "social media", "crm", "ppc", "b2b", "email marketing"],
+    "Finance & Accounting": ["financial modeling", "excel", "gaap", "forecasting", "valuation", "p&l", "budgeting"],
+    "Human Resources": ["recruiting", "employee relations", "hris", "onboarding", "performance management", "compliance"],
 }
 
 
@@ -295,8 +344,9 @@ def calculate_weighted_match(extracted_skills: list, role_requirements: list,
         for i, req_norm in enumerate(required_norm):
             if norm_extracted == req_norm:
                 present_skills.append(extracted_skill)
-                matched_required.add(i)
-                matched_weight += required_weights[i]
+                if i not in matched_required:
+                    matched_required.add(i)
+                    matched_weight += required_weights[i]
                 match_found = True
                 break
         
@@ -305,8 +355,9 @@ def calculate_weighted_match(extracted_skills: list, role_requirements: list,
             for i, req_skill in enumerate(role_requirements):
                 if fuzzy_match_skill(extracted_skill, req_skill, threshold=0.80):
                     present_skills.append(extracted_skill)
-                    matched_required.add(i)
-                    matched_weight += required_weights[i] * 0.9  # Slight penalty for fuzzy
+                    if i not in matched_required:
+                        matched_required.add(i)
+                        matched_weight += required_weights[i] * 0.9  # Slight penalty for fuzzy
                     fuzz_count += 1
                     match_found = True
                     break

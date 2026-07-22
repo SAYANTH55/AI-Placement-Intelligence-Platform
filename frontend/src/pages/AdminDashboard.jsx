@@ -46,7 +46,7 @@ export default function AdminDashboard() {
         item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
 
     return (
-        <div className="flex w-full flex-1 bg-dashboard-base text-white overflow-hidden font-['Inter'] relative">
+        <div className="flex w-full flex-1 bg-dashboard-base text-[#1B2A4A] overflow-hidden font-['Inter'] relative">
             
             {/* Massive Background Glowing Orbs */}
             <div className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-[#FF4D26] opacity-[0.12] blur-[180px] rounded-full pointer-events-none" />
@@ -65,8 +65,8 @@ export default function AdminDashboard() {
                             to={item.path}
                             className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                                 isActive(item)
-                                ? 'glass-panel text-primary-accent border-white/10 shadow-card-depth'
-                                : 'text-secondary-muted hover:text-white hover:bg-white/[0.04]'
+                                ? 'glass-panel text-primary-accent border-[#1B2A4A]/10 shadow-card-depth'
+                                : 'text-secondary-muted hover:text-[#1B2A4A] hover:bg-[#1B2A4A]/[0.04]'
                             }`}
                         >
                             {item.name}

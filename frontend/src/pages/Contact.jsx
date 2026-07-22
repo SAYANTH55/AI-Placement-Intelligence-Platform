@@ -9,7 +9,7 @@ import {
 function Particle({ x, y, delay }) {
   return (
     <motion.div
-      className="absolute w-1 h-1 rounded-full bg-[#F97316] pointer-events-none"
+      className="absolute w-1 h-1 rounded-full bg-[#1B2A4A] pointer-events-none"
       style={{ left: `${x}%`, top: `${y}%` }}
       animate={{
         opacity: [0, 0.8, 0],
@@ -29,7 +29,7 @@ function OrbitRing({ radius, duration, reverse, dotColor }) {
       style={{
         width: radius * 2, height: radius * 2,
         marginLeft: -radius, marginTop: -radius,
-        border: '1px solid rgba(249,115,22,0.08)',
+        border: '1px solid rgba(27,42,74,0.08)',
       }}
       animate={{ rotate: reverse ? -360 : 360 }}
       transition={{ duration, repeat: Infinity, ease: 'linear' }}
@@ -76,7 +76,7 @@ function MagCard({ children, className }) {
         style={{
           background: useTransform(
             [glowX, glowY],
-            ([gx, gy]) => `radial-gradient(380px circle at ${gx}px ${gy}px, rgba(249,115,22,0.06), transparent 70%)`
+            ([gx, gy]) => `radial-gradient(380px circle at ${gx}px ${gy}px, rgba(27,42,74,0.06), transparent 70%)`
           ),
         }}
       />
@@ -103,7 +103,7 @@ function GlitchText({ text, className }) {
       {text}
       {glitch && (
         <>
-          <span className="absolute inset-0 text-[#F97316] translate-x-1 opacity-70" aria-hidden>{text}</span>
+          <span className="absolute inset-0 text-[#1B2A4A] translate-x-1 opacity-70" aria-hidden>{text}</span>
           <span className="absolute inset-0 text-cyan-400 -translate-x-1 opacity-50" aria-hidden>{text}</span>
         </>
       )}
@@ -125,7 +125,7 @@ function AnimInput({ label, name, type = 'text', value, onChange, placeholder, m
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
     >
-      <label className="block text-[10px] font-black text-[#555] uppercase tracking-[0.3em] mb-2">{label}</label>
+      <label className="block text-[10px] font-black text-[#888888] uppercase tracking-[0.3em] mb-2">{label}</label>
       <div className="relative">
         <Tag
           name={name}
@@ -136,8 +136,8 @@ function AnimInput({ label, name, type = 'text', value, onChange, placeholder, m
           rows={multiline ? 5 : undefined}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className={`w-full bg-[#070707] border text-white rounded-2xl px-5 py-4 text-sm placeholder:text-[#333] focus:outline-none transition-all duration-300 resize-none ${
-            focused ? 'border-[#F97316]/60 shadow-[0_0_20px_rgba(249,115,22,0.12)]' : 'border-[#1A1A1A]'
+          className={`w-full bg-[#FFFFFF] border text-[#1B2A4A] rounded-2xl px-5 py-4 text-sm placeholder:text-[#888888] focus:outline-none transition-all duration-300 resize-none ${
+            focused ? 'border-[#1B2A4A]/60 shadow-[0_0_20px_rgba(27,42,74,0.12)]' : 'border-[#C9C2AF]'
           }`}
           required
         />
@@ -146,7 +146,7 @@ function AnimInput({ label, name, type = 'text', value, onChange, placeholder, m
           {focused && (
             <motion.div
               key="scan"
-              className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F97316] to-transparent pointer-events-none"
+              className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#1B2A4A] to-transparent pointer-events-none"
               initial={{ top: 0, opacity: 0 }}
               animate={{ top: ['0%', '100%'], opacity: [0, 1, 0] }}
               exit={{ opacity: 0 }}
@@ -184,11 +184,11 @@ export default function Contact() {
   const contacts = [
     { icon: <Mail size={20} />, label: 'Email', value: 'contact@aiplacement.io', accent: '#3B82F6' },
     { icon: <MessageSquare size={20} />, label: 'Support', value: 'Available 9am–6pm IST', accent: '#22C55E' },
-    { icon: <MapPin size={20} />, label: 'Location', value: 'Bengaluru, India', accent: '#F97316' },
+    { icon: <MapPin size={20} />, label: 'Location', value: 'Bengaluru, India', accent: '#1B2A4A' },
   ];
 
   return (
-    <div className="min-h-screen bg-[#060606] overflow-hidden relative" style={{ perspective: '1200px' }}>
+    <div className="min-h-screen bg-[#F4EFE4] overflow-hidden relative" style={{ perspective: '1200px' }}>
 
       {/* ── Floating particles ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
@@ -196,13 +196,13 @@ export default function Contact() {
       </div>
 
       {/* ── Grid overlay ── */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.025)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(27,42,74,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(27,42,74,0.025)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none z-0" />
 
       {/* ── Orbit rings ── */}
       <div className="absolute top-[18%] left-1/2 -translate-x-1/2 pointer-events-none z-0 w-0 h-0">
-        <OrbitRing radius={260} duration={22} dotColor="#F97316" />
-        <OrbitRing radius={380} duration={34} reverse dotColor="rgba(249,115,22,0.4)" />
-        <OrbitRing radius={480} duration={50} dotColor="rgba(249,115,22,0.2)" />
+        <OrbitRing radius={260} duration={22} dotColor="#1B2A4A" />
+        <OrbitRing radius={380} duration={34} reverse dotColor="rgba(27,42,74,0.4)" />
+        <OrbitRing radius={480} duration={50} dotColor="rgba(27,42,74,0.2)" />
       </div>
 
       {/* ── Hero header ── */}
@@ -213,12 +213,12 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center gap-2 mb-8 bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] text-[11px] font-black uppercase tracking-[0.35em] px-6 py-3 rounded-full"
+          className="inline-flex items-center gap-2 mb-8 bg-[#1B2A4A]/10 border border-[#1B2A4A]/30 text-[#1B2A4A] text-[11px] font-black uppercase tracking-[0.35em] px-6 py-3 rounded-full"
         >
           <motion.span
             animate={{ scale: [1, 1.4, 1] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-2 h-2 rounded-full bg-[#F97316] inline-block"
+            className="w-2 h-2 rounded-full bg-[#1B2A4A] inline-block"
           />
           Direct Line Open
         </motion.div>
@@ -228,10 +228,10 @@ export default function Contact() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          className="text-6xl sm:text-8xl font-black text-white tracking-tight leading-none mb-6"
+          className="text-6xl sm:text-8xl font-black text-[#1B2A4A] tracking-tight leading-none mb-6"
         >
-          <GlitchText text="Get in" className="text-white" />{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] via-[#FF8C3A] to-[#F97316] bg-[length:200%] animate-pulse">
+          <GlitchText text="Get in" className="text-[#1B2A4A]" />{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B2A4A] via-[#9ECCFA] to-[#1B2A4A] bg-[length:200%] animate-pulse">
             Touch
           </span>
         </motion.h1>
@@ -241,10 +241,10 @@ export default function Contact() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-[#555] text-lg max-w-xl mx-auto leading-relaxed"
+          className="text-[#888888] text-lg max-w-xl mx-auto leading-relaxed"
         >
           Interested in partnering or bringing our AI placement platform to your university?{' '}
-          <span className="text-[#888]">Reach out — we'd love to hear from you.</span>
+          <span className="text-[#888888555]">Reach out — we'd love to hear from you.</span>
         </motion.p>
 
         {/* Decorative divider */}
@@ -252,7 +252,7 @@ export default function Contact() {
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-12 mx-auto h-px w-72 bg-gradient-to-r from-transparent via-[#F97316]/50 to-transparent"
+          className="mt-12 mx-auto h-px w-72 bg-gradient-to-r from-transparent via-[#1B2A4A]/50 to-transparent"
         />
       </div>
 
@@ -269,7 +269,7 @@ export default function Contact() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
-              <MagCard className="relative group bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-5 overflow-hidden cursor-default transition-all duration-300 hover:border-[#F97316]/30">
+              <MagCard className="relative group bg-[#FFFFFF] border border-[#C9C2AF] rounded-[1.5rem] p-5 overflow-hidden cursor-default transition-all duration-300 hover:border-[#1B2A4A]/30">
                 {/* Icon */}
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300"
@@ -278,8 +278,8 @@ export default function Contact() {
                   {c.icon}
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-[#444] uppercase tracking-[0.25em]">{c.label}</p>
-                  <p className="text-sm font-semibold text-white mt-0.5">{c.value}</p>
+                  <p className="text-[10px] font-black text-[#888888] uppercase tracking-[0.25em]">{c.label}</p>
+                  <p className="text-sm font-semibold text-[#1B2A4A] mt-0.5">{c.value}</p>
                 </div>
               </MagCard>
             </motion.div>
@@ -292,7 +292,7 @@ export default function Contact() {
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="relative overflow-hidden rounded-[1.5rem] p-6 cursor-default"
-            style={{ background: 'linear-gradient(135deg, #F97316, #FF8C3A, #F97316)', backgroundSize: '200%' }}
+            style={{ background: 'linear-gradient(135deg, #1B2A4A, #9ECCFA, #1B2A4A)', backgroundSize: '200%' }}
             whileHover={{ backgroundPosition: '100% 0' }}
           >
             {/* Shimmer sweep */}
@@ -301,9 +301,9 @@ export default function Contact() {
               animate={{ translateX: ['−100%', '200%'] }}
               transition={{ repeat: Infinity, duration: 2.5, ease: 'linear', repeatDelay: 1 }}
             />
-            <h3 className="font-black text-white text-base mb-1">For Universities</h3>
-            <p className="text-sm text-white/80 leading-relaxed">Institutional licensing and batch onboarding for placement cells. Get in touch for a custom demo.</p>
-            <div className="mt-4 inline-flex items-center gap-2 text-white text-xs font-bold">
+            <h3 className="font-black text-[#1B2A4A] text-base mb-1">For Universities</h3>
+            <p className="text-sm text-[#1B2A4A]/80 leading-relaxed">Institutional licensing and batch onboarding for placement cells. Get in touch for a custom demo.</p>
+            <div className="mt-4 inline-flex items-center gap-2 text-[#1B2A4A] text-xs font-bold">
               Learn more <ArrowRight size={14} />
             </div>
           </motion.div>
@@ -318,19 +318,19 @@ export default function Contact() {
           className="lg:col-span-3"
           style={{ transformStyle: 'preserve-3d' }}
         >
-          <div className="relative bg-[#08080A] border border-[#181818] rounded-[2rem] p-8 sm:p-10 overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.5)]">
+          <div className="relative bg-[#FFFFFF] border border-[#C9C2AF] rounded-[2rem] p-8 sm:p-10 overflow-hidden shadow-[0_20px_50px_-15px_rgba(27,42,74,0.15)]">
 
             {/* Top neon accent line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F97316] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#1B2A4A] to-transparent" />
 
             {/* Corner accent dots */}
-            <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#F97316]/40" />
-            <div className="absolute bottom-4 left-4 w-1.5 h-1.5 rounded-full bg-[#F97316]/20" />
+            <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-[#1B2A4A]/40" />
+            <div className="absolute bottom-4 left-4 w-1.5 h-1.5 rounded-full bg-[#1B2A4A]/20" />
 
             {/* Scanline effect */}
             <motion.div
               className="absolute left-0 right-0 h-24 pointer-events-none z-0"
-              style={{ background: 'linear-gradient(to bottom, transparent, rgba(249,115,22,0.02), transparent)' }}
+              style={{ background: 'linear-gradient(to bottom, transparent, rgba(27,42,74,0.02), transparent)' }}
               animate={{ top: ['-20%', '120%'] }}
               transition={{ repeat: Infinity, duration: 6, ease: 'linear', repeatDelay: 2 }}
             />
@@ -352,14 +352,14 @@ export default function Contact() {
                   >
                     <CheckCircle size={38} />
                   </motion.div>
-                  <h3 className="text-2xl font-black text-white mb-2">Message Sent!</h3>
+                  <h3 className="text-2xl font-black text-[#1B2A4A] mb-2">Message Sent!</h3>
                   <p className="text-[#666] text-sm">We'll get back to you within 1–2 business days.</p>
 
                   {/* Particles burst */}
                   {[...Array(8)].map((_, i) => (
                     <motion.div
                       key={i}
-                      className="absolute w-1.5 h-1.5 rounded-full bg-[#F97316]"
+                      className="absolute w-1.5 h-1.5 rounded-full bg-[#1B2A4A]"
                       initial={{ x: 0, y: 0, opacity: 1 }}
                       animate={{ x: Math.cos(i * 45 * Math.PI/180) * 100, y: Math.sin(i * 45 * Math.PI/180) * 100, opacity: 0 }}
                       transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
@@ -375,7 +375,7 @@ export default function Contact() {
                       <span className="w-3 h-3 rounded-full bg-amber-500/60" />
                       <span className="w-3 h-3 rounded-full bg-green-500/60" />
                     </div>
-                    <span className="text-[#333] font-mono text-xs">contact.init( )</span>
+                    <span className="text-[#888888] font-mono text-xs">contact.init( )</span>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -387,9 +387,9 @@ export default function Contact() {
                     <motion.button
                       type="submit"
                       disabled={sending}
-                      whileHover={{ scale: 1.02, boxShadow: '0 0 40px rgba(249,115,22,0.45)' }}
+                      whileHover={{ scale: 1.02, boxShadow: '0 0 40px rgba(27,42,74,0.45)' }}
                       whileTap={{ scale: 0.97 }}
-                      className="relative w-full overflow-hidden flex justify-center items-center gap-3 bg-[#F97316] text-white font-black py-4 rounded-2xl transition-colors duration-200 text-sm disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_25px_rgba(249,115,22,0.2)]"
+                      className="relative w-full overflow-hidden flex justify-center items-center gap-3 bg-[#1B2A4A] text-white font-black py-4 rounded-2xl transition-colors duration-200 text-sm disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_25px_rgba(27,42,74,0.2)]"
                     >
                       {/* Button shimmer sweep */}
                       <motion.div
@@ -401,7 +401,7 @@ export default function Contact() {
                         <motion.div
                           animate={{ rotate: 360 }}
                           transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                          className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
+                          className="w-5 h-5 border-2 border-[#1B2A4A]/30 border-t-white rounded-full"
                         />
                       ) : <Send size={16} />}
                       <span>{sending ? 'Sending...' : 'Send Message'}</span>

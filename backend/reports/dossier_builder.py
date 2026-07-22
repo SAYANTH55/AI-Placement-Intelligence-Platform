@@ -57,6 +57,8 @@ def _render_html(payload: DossierPayload) -> str:
         roadmap=payload.roadmap,
         learning_priorities=payload.learning_priorities,
         advisor_verdict=payload.advisor_verdict,
+        ats_data=payload.ats_data,
+        jd_data=payload.jd_data,
     )
 
 

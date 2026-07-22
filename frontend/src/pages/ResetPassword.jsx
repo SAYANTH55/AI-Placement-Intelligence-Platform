@@ -60,7 +60,7 @@ export default function ResetPassword() {
 
       <div className="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-orange-500">
+          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#1B2A4A]">
             <KeyRound size={26} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Set New Password</h1>
@@ -94,7 +94,7 @@ export default function ResetPassword() {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Min 8 characters"
-                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl py-3.5 px-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
+                    className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl py-3.5 px-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-medium"
                   />
                   <button
                     type="button"
@@ -114,7 +114,7 @@ export default function ResetPassword() {
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Repeat your password"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl py-3.5 px-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl py-3.5 px-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-medium"
                 />
               </div>
             </div>
@@ -133,7 +133,7 @@ export default function ResetPassword() {
             <button
               type="submit"
               disabled={loading || !password || password !== confirmPassword}
-              className="w-full flex justify-center items-center gap-2 bg-[#F97316] text-white py-4 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex justify-center items-center gap-2 bg-[#1B2A4A] text-white py-4 rounded-xl font-bold text-sm hover:bg-[#9ECCFA] transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : null}
               {loading ? 'Updating Password...' : 'Reset Password'}

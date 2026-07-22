@@ -22,10 +22,10 @@ export default function Navbar() {
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="sticky top-0 z-[100] bg-[#060606]/90 backdrop-blur-xl border-b border-[#1A1A1A] shadow-[0_4px_30px_rgba(249,115,22,0.08)] w-full"
+      className="sticky top-0 z-[100] bg-[#F4EFE4]/90 backdrop-blur-xl border-b border-[#C9C2AF] shadow-[0_4px_30px_rgba(27,42,74,0.08)] w-full"
     >
       {/* Neon orange line under navbar */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#1B2A4A]/40 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
@@ -44,8 +44,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'text-[#F97316]'
-                      : 'text-[#888] hover:text-white'
+                      ? 'text-[#1B2A4A]'
+                      : 'text-[#6B6B63] hover:text-[#1B2A4A]'
                   }`
                 }
               >
@@ -55,7 +55,7 @@ export default function Navbar() {
                     {isActive && (
                       <motion.div
                         layoutId="navbar-active-pill"
-                        className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]"
+                        className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-[#1B2A4A] shadow-[0_0_8px_rgba(27,42,74,0.8)]"
                         transition={{ type: 'spring', stiffness: 500, damping: 40 }}
                       />
                     )}
@@ -63,19 +63,28 @@ export default function Navbar() {
                 )}
               </NavLink>
             ))}
-            {user && (
-              <NavLink
-                to={user.role === 'admin' || user.role === 'pr' ? '/admin' : '/dashboard'}
-                className={({ isActive }) => {
-                  const active = isActive || location.pathname.startsWith('/admin') || location.pathname.startsWith('/dashboard');
-                  return `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    active ? 'text-[#F97316]' : 'text-[#888] hover:text-white'
-                  }`;
-                }}
-              >
-                Dashboard
-              </NavLink>
-            )}
+            {user && (() => {
+              const isDashActive = location.pathname.startsWith('/admin') || location.pathname.startsWith('/dashboard');
+              return (
+                <NavLink
+                  to={user.role === 'admin' || user.role === 'pr' ? '/admin' : '/dashboard'}
+                  className={() =>
+                    `relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      isDashActive ? 'text-[#1B2A4A]' : 'text-[#6B6B63] hover:text-[#1B2A4A]'
+                    }`
+                  }
+                >
+                  Dashboard
+                  {isDashActive && (
+                    <motion.div
+                      layoutId="navbar-active-pill"
+                      className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-[#1B2A4A]"
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
+                  )}
+                </NavLink>
+              );
+            })()}
           </nav>
 
           {/* Right Actions */}
@@ -84,10 +93,10 @@ export default function Navbar() {
               <ProfileDropdown />
             ) : (
               <motion.button
-                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(249,115,22,0.4)' }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(27,42,74,0.4)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => navigate('/login')}
-                className="flex items-center gap-2 bg-[#F97316] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-[0_0_0px_rgba(249,115,22,0)]"
+                className="flex items-center gap-2 bg-[#1B2A4A] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 shadow-[0_0_0px_rgba(27,42,74,0)]"
               >
                 Start Hub
                 <Zap size={14} className="fill-white" />

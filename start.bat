@@ -4,7 +4,7 @@ color 0A
 echo.
 echo ================================================================
 echo  AI Placement Intelligence Platform - Startup Script
-echo  Version: 5.2.0 (Python 3.10 Compatible + ML Optimized)
+echo  Version: 5.3.0 (Python 3.10 Compatible + ML Optimized + ATS Patched)
 echo ================================================================
 echo.
 
@@ -139,6 +139,32 @@ if errorlevel 1 (
 )
 
 echo.
+echo [3b/8] Training / Verifying ML Models...
+set "ML_MODELS_OK=1"
+if not exist backend\ai_model\models\resume_analyzer\role_model.pkl set "ML_MODELS_OK=0"
+if not exist backend\ai_model\models\resume_analyzer\vectorizer_role.pkl set "ML_MODELS_OK=0"
+if not exist backend\ai_model\models\resume_analyzer\ats_model.pkl set "ML_MODELS_OK=0"
+if not exist backend\ai_model\models\resume_analyzer\vectorizer_ats.pkl set "ML_MODELS_OK=0"
+if not exist backend\ai_model\models\resume_analyzer\skills.pkl set "ML_MODELS_OK=0"
+if not exist backend\ai_model\models\resume_analyzer\label_encoder.pkl set "ML_MODELS_OK=0"
+
+if "%ML_MODELS_OK%"=="0" (
+    echo      One or more resume analyzer models missing — training now...
+    echo      ^(This is a one-time operation, may take ~10 seconds^)
+    cd backend
+    "%PYTHON_EXEC%" -m ai_model.train_models > model_train.log 2>&1
+    if errorlevel 1 (
+        echo [WARN] Model training failed. Check backend/model_train.log for details.
+    ) else (
+        echo [OK] All ML models trained and saved.
+        if exist model_train.log del model_train.log
+    )
+    cd ..
+) else (
+    echo [OK] All ML models present.
+)
+
+echo.
 echo [4/8] Downloading spaCy NLP Model...
 REM Download spaCy model - it's needed for text processing
 "%PYTHON_EXEC%" -m spacy download en_core_web_sm >nul 2>&1
@@ -213,6 +239,7 @@ echo [X] Initializing Logs Directory...
 if not exist backend\logs mkdir backend\logs
 echo [OK] Logs directory ready
 
+
 echo.
 echo [7/8] Running Engine Smoke Test...
 cd backend
@@ -243,6 +270,12 @@ echo.
 echo [9/9] Starting All Services...
 echo.
 echo ================================================================
+
+REM ── Clear Caches for newly incorporated changes ──────────────
+echo [OK] Clearing caches to ensure recent patches reflect...
+if exist "frontend\node_modules\.vite" rmdir /s /q "frontend\node_modules\.vite"
+for /d /r "backend" %%d in (__pycache__) do @if exist "%%d" rmdir /s /q "%%d"
+echo [OK] Vite and Python caches cleared.
 
 REM ── Load Environment Variables from .env ───────────────────────
 if exist .env (
@@ -309,6 +342,10 @@ echo    GET  /analytics/outcomes      - Cohort-wide placement analytics
 echo    POST /preparation/plan        - Learning roadmap from skill gaps
 echo    POST /practice/set            - Role-filtered question set
 echo    POST /tracking/feedback       - Adaptive ML feedback loop
+echo    POST /api/ats/analyze         - Standalone Resume ATS Benchmark
+echo    POST /api/ats/debug           - ATS Engine Trace ^& Reasoning
+echo    POST /api/compare-jd          - JD to Resume Matcher
+echo    POST /api/reports/dossier/generate - Placement Dossier Generation
 echo.
 echo  Server Windows:
 echo    Backend  : "Backend - AI Placement Intelligence v4"

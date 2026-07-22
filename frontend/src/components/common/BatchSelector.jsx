@@ -32,7 +32,7 @@ export default function BatchSelector({ selectedBatch, setSelectedBatch }) {
         disabled={loading}
         value={selectedBatch || ''}
         onChange={(e) => setSelectedBatch(e.target.value || null)}
-        className="bg-white/5 border border-white/10 rounded-lg p-2 text-sm text-white outline-none"
+        className="bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 rounded-lg p-2 text-sm text-[#1B2A4A] outline-none"
       >
         <option value="">All Batches</option>
         {batches.map((b) => (

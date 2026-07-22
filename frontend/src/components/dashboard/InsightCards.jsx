@@ -1,169 +1,176 @@
-import { Activity, Target, Briefcase, TrendingUp } from 'lucide-react';
+import { Activity, Target, TrendingUp } from 'lucide-react';
 import ScoreRing from './ScoreRing';
 import { motion } from 'framer-motion';
 
 /* ─────────────────────────────────────────────────────────────────
-   InsightCards — Reference-match design
-   Big-number stat cards with icon containers, top accent bar,
-   and arrow link bottom — identical visual language to reference.
+   InsightCards — 3-up bento row
+   Proper sizing, industry avg with a comparison bar, no overflow
 ───────────────────────────────────────────────────────────────── */
 export default function InsightCards({ data }) {
   if (!data) return null;
 
-  const cards = [
-    {
-      icon: Activity,
-      title: 'Placement Score',
-      sub: 'Overall readiness',
-      accent: '#F97316',
-      big: `${data.score}%`,
-      content: (
-        <div className="flex items-center justify-between mt-2">
-          <ScoreRing score={data.score} size={76} strokeWidth={7} />
-          <div className="text-right">
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#666]">Industry avg</p>
-            <p className="text-lg font-black text-white">62%</p>
+  const score = data.score ?? 0;
+  const industryAvg = 62;
+  const missing = data.missing ?? [];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+      {/* ── Card 1: Placement Score ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -3 }}
+        className="relative flex flex-col overflow-hidden rounded-[18px] p-5"
+        style={{ background: '#FFFFFF', border: '1px solid #E4DED0' }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(to right, transparent, #1B2A4A50, transparent)' }} />
+
+        {/* Header */}
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(27,42,74,0.08)', border: '1px solid rgba(27,42,74,0.15)' }}>
+            <Activity size={14} style={{ color: '#1B2A4A' }} />
+          </div>
+          <div>
+            <h3 className="font-black text-[#1B2A4A] text-[13px] leading-tight">Placement Score</h3>
+            <p className="text-[11px] leading-tight text-[#9A968A]">Overall readiness</p>
           </div>
         </div>
-      ),
-    },
-    {
-      icon: Target,
-      title: 'Missing Skills',
-      sub: `${data.missing.length} gaps identified`,
-      accent: '#F87171',
-      big: `${data.missing.length}`,
-      content: (
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {data.missing.slice(0, 3).map((skill, i) => (
-            <span
-              key={i}
-              className="text-[10px] font-bold px-2.5 py-1 rounded-full"
-              style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)', color: '#F87171' }}
-            >
+
+        {/* Big number */}
+        <div className="text-4xl font-black text-[#1B2A4A] mb-4">{score}%</div>
+
+        {/* Ring + Industry avg comparison */}
+        <div className="flex items-end justify-between gap-3">
+          <ScoreRing score={score} size={72} strokeWidth={6} />
+
+          {/* Industry avg comparison */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#9A968A] mb-2">vs Industry Avg</p>
+            {/* Your score bar */}
+            <div className="mb-1.5">
+              <div className="flex justify-between mb-0.5">
+                <span className="text-[10px] font-semibold text-[#1B2A4A]">You</span>
+                <span className="text-[10px] font-black text-[#1B2A4A]">{score}%</span>
+              </div>
+              <div className="h-1.5 rounded-full" style={{ background: '#E4DED0' }}>
+                <motion.div initial={{ width: 0 }} animate={{ width: `${score}%` }}
+                  transition={{ delay: 0.3, duration: 0.8, ease: 'easeOut' }}
+                  className="h-full rounded-full" style={{ background: '#1B2A4A' }} />
+              </div>
+            </div>
+            {/* Industry bar */}
+            <div>
+              <div className="flex justify-between mb-0.5">
+                <span className="text-[10px] font-semibold text-[#9A968A]">Industry</span>
+                <span className="text-[10px] font-black text-[#9A968A]">{industryAvg}%</span>
+              </div>
+              <div className="h-1.5 rounded-full" style={{ background: '#E4DED0' }}>
+                <motion.div initial={{ width: 0 }} animate={{ width: `${industryAvg}%` }}
+                  transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+                  className="h-full rounded-full" style={{ background: '#C9C2AF' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Card 2: Missing Skills ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -3 }}
+        className="relative flex flex-col overflow-hidden rounded-[18px] p-5"
+        style={{ background: '#FFFFFF', border: '1px solid #E4DED0' }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(to right, transparent, #F8717150, transparent)' }} />
+
+        {/* Header */}
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.2)' }}>
+            <Target size={14} style={{ color: '#F87171' }} />
+          </div>
+          <div>
+            <h3 className="font-black text-[#1B2A4A] text-[13px] leading-tight">Missing Skills</h3>
+            <p className="text-[11px] leading-tight text-[#9A968A]">{missing.length} gaps identified</p>
+          </div>
+        </div>
+
+        {/* Big number */}
+        <div className="text-4xl font-black mb-4" style={{ color: '#F87171' }}>{missing.length}</div>
+
+        {/* Skill tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {missing.slice(0, 4).map((skill, i) => (
+            <span key={i} className="text-[11px] font-bold px-3 py-1 rounded-full"
+              style={{ background: '#FCEBEB', border: '1px solid #F09595', color: '#791F1F' }}>
               {skill}
             </span>
           ))}
-          {data.missing.length > 3 && (
-            <span className="text-[10px] font-medium self-center" style={{ color: '#444' }}>
-              +{data.missing.length - 3} more
+          {missing.length > 4 && (
+            <span className="text-[11px] font-medium self-center" style={{ color: '#9A968A' }}>
+              +{missing.length - 4} more
             </span>
           )}
         </div>
-      ),
-    },
-    {
-      icon: Briefcase,
-      title: 'Top Roles',
-      sub: 'Best career matches',
-      accent: '#34D399',
-      big: `${(data.jobRoles || []).length}`,
-      content: (
-        <ul className="space-y-2 mt-3">
-          {(data.jobRoles || []).slice(0, 3).map((role, i) => (
-            <li key={i} className="flex items-center gap-2 text-xs font-semibold" style={{ color: '#888' }}>
-              <span className="w-1.5 h-1.5 flex-shrink-0 rounded-full" style={{ background: '#34D399', boxShadow: '0 0 6px rgba(52,211,153,0.6)' }} />
-              {typeof role === 'string' ? role : role.title}
-              {role.match && <span className="ml-auto text-[10px]" style={{ color: '#34D399' }}>{role.match}%</span>}
-            </li>
-          ))}
-        </ul>
-      ),
-    },
-    {
-      icon: TrendingUp,
-      title: 'Placement Prob.',
-      sub: 'Based on 50k+ records',
-      accent: '#818CF8',
-      big: `${data.score}%`,
-      content: (
-        <div className="mt-3">
-          {/* Mini bar chart */}
-          <div className="space-y-1.5">
-            {[
-              { label: 'Tech', pct: Math.min(data.score + 8, 100) },
-              { label: 'Finance', pct: Math.max(data.score - 10, 10) },
-              { label: 'Product', pct: Math.min(data.score + 2, 100) },
-            ].map((bar, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-[9px] w-10 flex-shrink-0" style={{ color: '#444' }}>{bar.label}</span>
-                <div className="flex-1 h-1 rounded-full" style={{ background: '#1c1c1c' }}>
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${bar.pct}%` }}
-                    transition={{ delay: 0.3 + i * 0.1, duration: 0.8, ease: 'easeOut' }}
-                    className="h-full rounded-full"
-                    style={{ background: '#818CF8', boxShadow: '0 0 6px rgba(129,140,248,0.5)' }}
-                  />
-                </div>
-                <span className="text-[9px] w-6 text-right" style={{ color: '#555' }}>{bar.pct}%</span>
-              </div>
-            ))}
+      </motion.div>
+
+      {/* ── Card 3: Placement Probability ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.14, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -3 }}
+        className="relative flex flex-col overflow-hidden rounded-[18px] p-5"
+        style={{ background: '#FFFFFF', border: '1px solid #E4DED0' }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-px"
+          style={{ background: 'linear-gradient(to right, transparent, #1B2A4A50, transparent)' }} />
+
+        {/* Header */}
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'rgba(27,42,74,0.08)', border: '1px solid rgba(27,42,74,0.15)' }}>
+            <TrendingUp size={14} style={{ color: '#1B2A4A' }} />
+          </div>
+          <div>
+            <h3 className="font-black text-[#1B2A4A] text-[13px] leading-tight">Placement Prob.</h3>
+            <p className="text-[11px] leading-tight text-[#9A968A]">Based on 50k+ records</p>
           </div>
         </div>
-      ),
-    },
-  ];
 
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((card, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          whileHover={{ y: -3 }}
-          className="relative flex flex-col overflow-hidden cursor-default"
-          style={{
-            background: '#111',
-            border: '1px solid #1c1c1c',
-            borderRadius: '18px',
-            padding: '20px',
-            transition: 'border-color 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = `${card.accent}30`}
-          onMouseLeave={e => e.currentTarget.style.borderColor = '#1c1c1c'}
-        >
-          {/* Top accent line */}
-          <div
-            className="absolute top-0 left-0 right-0 h-px"
-            style={{ background: `linear-gradient(to right, transparent, ${card.accent}50, transparent)` }}
-          />
+        {/* Big number */}
+        <div className="text-4xl font-black text-[#1B2A4A] mb-4">{score}%</div>
 
-          {/* Arrow link top-right (reference style) */}
-          <div
-            className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center"
-            style={{ background: '#1c1c1c', border: '1px solid #252525' }}
-          >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M2 8L8 2M8 2H4M8 2V6" stroke="#444" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-
-          {/* Icon + label */}
-          <div className="flex items-center gap-2.5 mb-3">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: `${card.accent}18`, border: `1px solid ${card.accent}30` }}
-            >
-              <card.icon size={16} style={{ color: card.accent }} />
+        {/* Sector breakdown bars */}
+        <div className="space-y-2.5">
+          {[
+            { label: 'Tech',     pct: Math.min(score + 8, 100) },
+            { label: 'Finance',  pct: Math.max(score - 10, 5)  },
+            { label: 'Product',  pct: Math.min(score + 2, 100) },
+          ].map((bar, i) => (
+            <div key={i}>
+              <div className="flex justify-between mb-1">
+                <span className="text-[11px] font-semibold text-[#6B6B63]">{bar.label}</span>
+                <span className="text-[11px] font-black text-[#1B2A4A]">{bar.pct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full" style={{ background: '#E4DED0' }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${bar.pct}%` }}
+                  transition={{ delay: 0.3 + i * 0.1, duration: 0.8, ease: 'easeOut' }}
+                  className="h-full rounded-full"
+                  style={{ background: '#1B2A4A', opacity: 1 - i * 0.2 }}
+                />
+              </div>
             </div>
-            <div>
-              <h3 className="font-black text-white text-xs leading-tight">{card.title}</h3>
-              <p className="text-[10px] leading-tight" style={{ color: '#444' }}>{card.sub}</p>
-            </div>
-          </div>
+          ))}
+        </div>
+      </motion.div>
 
-          {/* Big number — reference style */}
-          <div className="text-3xl font-black mb-1" style={{ color: card.accent, textShadow: `0 0 20px ${card.accent}40` }}>
-            {card.big}
-          </div>
-
-          {/* Extra content */}
-          {card.content}
-        </motion.div>
-      ))}
     </div>
   );
 }

@@ -28,7 +28,7 @@ const EMPTY_FORM = {
   rounds: [{ round_number: 1, round_name: 'Aptitude / Screening' }]
 };
 
-const inputCls = "w-full glass-search p-3 rounded-xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted";
+const inputCls = "w-full glass-search p-3 rounded-xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted";
 
 export default function DrivesManagement() {
   const { user } = useAppContext();
@@ -123,7 +123,7 @@ export default function DrivesManagement() {
   const cardBorder = (s) => {
     if (s === 'open') return 'border-green-500/20 hover:border-green-500/40';
     if (s === 'closed') return 'border-red-500/20 hover:border-red-500/30 bg-red-500/[0.03]';
-    return 'border-white/5 hover:border-primary-accent/30';
+    return 'border-[#1B2A4A]/5 hover:border-primary-accent/30';
   };
 
   return (
@@ -131,7 +131,7 @@ export default function DrivesManagement() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Placement Drives</h1>
+          <h1 className="text-2xl font-black tracking-tight text-[#1B2A4A]">Placement Drives</h1>
           <p className="text-xs text-secondary-muted mt-1">
             {user?.role === 'admin' ? 'Create, edit and manage all placement drives' : 'Create placement drives for your assigned students'}
           </p>
@@ -144,7 +144,7 @@ export default function DrivesManagement() {
               setForm(EMPTY_FORM);
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-neon-gradient text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-neon-glow hover:-translate-y-0.5 transition-all"
+            className="flex items-center gap-2 bg-neon-gradient text-[#1B2A4A] px-5 py-2.5 rounded-xl text-sm font-bold shadow-neon-glow hover:-translate-y-0.5 transition-all"
           >
             <Plus size={16} /> {showForm && !editingId ? 'Cancel' : 'New Drive'}
           </button>
@@ -163,8 +163,8 @@ export default function DrivesManagement() {
           >
             <form onSubmit={handleSubmit} className="glass-panel shadow-card-depth rounded-3xl p-8 space-y-5 mb-8">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-black text-white">{editingId ? 'Edit Drive' : 'Launch New Drive'}</h2>
-                <button type="button" onClick={() => { setShowForm(false); setEditingId(null); setForm(EMPTY_FORM); }} className="text-xs text-secondary-muted hover:text-white transition-all">Cancel</button>
+                <h2 className="text-lg font-black text-[#1B2A4A]">{editingId ? 'Edit Drive' : 'Launch New Drive'}</h2>
+                <button type="button" onClick={() => { setShowForm(false); setEditingId(null); setForm(EMPTY_FORM); }} className="text-xs text-secondary-muted hover:text-[#1B2A4A] transition-all">Cancel</button>
               </div>
 
               {/* Basic Info */}
@@ -190,14 +190,14 @@ export default function DrivesManagement() {
                 <input placeholder="Eligibility Criteria *" className={inputCls} value={form.eligibility_criteria} onChange={e => setForm({ ...form, eligibility_criteria: e.target.value })} required />
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <input type="date" className={`${inputCls} text-[#888]`} value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} required />
-                <select className={`${inputCls} text-[#888]`} value={form.course} onChange={e => setForm({ ...form, course: e.target.value })}>
+                <input type="date" className={`${inputCls} text-[#888888555]`} value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} required />
+                <select className={`${inputCls} text-[#888888555]`} value={form.course} onChange={e => setForm({ ...form, course: e.target.value })}>
                   <option value="ALL">All Courses</option>
                   <option value="MCA">MCA</option>
                   <option value="MSAIM">MSc AI/ML</option>
                 </select>
                 {editingId && (
-                  <select className={`${inputCls} text-[#888]`} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+                  <select className={`${inputCls} text-[#888888555]`} value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
                     <option value="open">Open</option>
                     <option value="closed">Closed</option>
                     <option value="archived">Archived</option>
@@ -206,7 +206,7 @@ export default function DrivesManagement() {
               </div>
 
               {/* Rounds Configuration */}
-              <div className="border-t border-white/5 pt-6">
+              <div className="border-t border-[#1B2A4A]/5 pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-[10px] font-black text-primary-accent uppercase tracking-[0.2em] mb-1">Recruitment Rounds</p>
@@ -226,13 +226,13 @@ export default function DrivesManagement() {
                 </div>
                 <div className="space-y-3">
                   {(form.rounds || []).map((round, idx) => (
-                    <div key={idx} className="flex items-center gap-3 bg-white/[0.02] border border-white/5 rounded-xl p-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-xs font-black text-secondary-muted shrink-0">
+                    <div key={idx} className="flex items-center gap-3 bg-[#1B2A4A]/[0.02] border border-[#1B2A4A]/5 rounded-xl p-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#1B2A4A]/5 flex items-center justify-center text-xs font-black text-secondary-muted shrink-0">
                         {idx + 1}
                       </div>
                       <input
                         placeholder="e.g. Aptitude Test, Technical Interview, HR Round..."
-                        className="flex-1 bg-transparent border-none text-sm text-white focus:outline-none placeholder-tertiary-muted"
+                        className="flex-1 bg-transparent border-none text-sm text-[#1B2A4A] focus:outline-none placeholder-tertiary-muted"
                         value={round.round_name}
                         onChange={(e) => {
                           const newRounds = [...form.rounds];
@@ -249,7 +249,7 @@ export default function DrivesManagement() {
                             newRounds = newRounds.map((r, i) => ({ ...r, round_number: i + 1 }));
                             setForm({ ...form, rounds: newRounds });
                           }}
-                          className="p-2 text-[#555] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+                          className="p-2 text-[#888888] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -260,7 +260,7 @@ export default function DrivesManagement() {
               </div>
 
               {/* Application Form Fields Selector */}
-              <div className="border-t border-white/5 pt-6">
+              <div className="border-t border-[#1B2A4A]/5 pt-6">
                 <div className="mb-4">
                   <p className="text-[10px] font-black text-primary-accent uppercase tracking-[0.2em] mb-1">Application Form Fields</p>
                   <p className="text-[11px] text-tertiary-muted">Select which fields students must fill when applying to this drive. Leave empty to use default (Name + Email).</p>
@@ -276,7 +276,7 @@ export default function DrivesManagement() {
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-[11px] font-bold border transition-all text-left ${
                           selected
                             ? 'bg-[#FF4D26]/15 border-[#FF4D26]/50 text-primary-accent'
-                            : 'bg-white/5 border-white/5 text-secondary-muted hover:border-white/20 hover:text-white'
+                            : 'bg-[#1B2A4A]/5 border-[#1B2A4A]/5 text-secondary-muted hover:border-[#1B2A4A]/20 hover:text-[#1B2A4A]'
                         }`}
                       >
                         {selected ? <CheckSquare size={13} className="shrink-0" /> : <Square size={13} className="shrink-0 opacity-30" />}
@@ -295,7 +295,7 @@ export default function DrivesManagement() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-neon-gradient shadow-neon-glow text-white py-3.5 rounded-xl font-bold disabled:opacity-50 hover:-translate-y-0.5 transition-all"
+                className="w-full bg-neon-gradient shadow-neon-glow text-[#1B2A4A] py-3.5 rounded-xl font-bold disabled:opacity-50 hover:-translate-y-0.5 transition-all"
               >
                 {loading ? 'Saving...' : (editingId ? 'Save Changes' : 'Launch Drive')}
               </button>
@@ -307,7 +307,7 @@ export default function DrivesManagement() {
       {/* Drives Grid */}
       {loading && !showForm ? (
         <div className="flex items-center justify-center py-20">
-          <div className="w-8 h-8 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#1B2A4A] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -328,7 +328,7 @@ export default function DrivesManagement() {
                     <Briefcase size={16} />
                   </div>
                   <div>
-                    <h3 className="font-black text-sm text-white leading-tight">{drive.company_name}</h3>
+                    <h3 className="font-black text-sm text-[#1B2A4A] leading-tight">{drive.company_name}</h3>
                     <p className="text-[10px] text-secondary-muted font-bold uppercase tracking-wider">{drive.course}</p>
                   </div>
                 </div>
@@ -346,7 +346,7 @@ export default function DrivesManagement() {
                 </p>
               )}
 
-              <div className="flex items-center justify-between pt-3 border-t border-white/5 relative z-10">
+              <div className="flex items-center justify-between pt-3 border-t border-[#1B2A4A]/5 relative z-10">
                 <div className="flex items-center gap-1.5 text-[10px] text-tertiary-muted font-bold">
                   <Calendar size={11} />
                   <span>{new Date(drive.deadline).toLocaleDateString()}</span>
@@ -354,7 +354,7 @@ export default function DrivesManagement() {
                 <div className="flex items-center gap-1.5">
                   {canCreate && (
                     <>
-                      <button onClick={() => handleEdit(drive)} className="p-1.5 rounded-lg text-secondary-muted hover:text-primary-accent hover:bg-white/5 transition-colors" title="Edit">
+                      <button onClick={() => handleEdit(drive)} className="p-1.5 rounded-lg text-secondary-muted hover:text-primary-accent hover:bg-[#1B2A4A]/5 transition-colors" title="Edit">
                         <Edit2 size={13} />
                       </button>
                       {user?.role === 'admin' && (
@@ -374,8 +374,8 @@ export default function DrivesManagement() {
 
           {drives.length === 0 && (
             <div className="col-span-full py-20 text-center border border-dashed border-[#181818] rounded-3xl">
-              <p className="text-[#888] font-bold">No placement drives yet.</p>
-              {canCreate && <p className="text-[#555] text-xs mt-2">Click "New Drive" above to create the first one.</p>}
+              <p className="text-[#888888555] font-bold">No placement drives yet.</p>
+              {canCreate && <p className="text-[#888888] text-xs mt-2">Click "New Drive" above to create the first one.</p>}
             </div>
           )}
         </div>

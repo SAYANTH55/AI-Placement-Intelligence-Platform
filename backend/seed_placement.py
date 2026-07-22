@@ -114,18 +114,25 @@ def seed(force=False):
         drives = []
         companies = ["Google", "Amazon", "Microsoft", "TCS", "Infosys"]
         roles = ["Software Engineer", "Data Analyst", "Systems Engineer"]
+        descriptions = [
+            "Join our core infrastructure team building planetary-scale distributed systems in Python and Go.",
+            "Drive business insights by analyzing petabytes of customer transaction data and developing ML models.",
+            "Build scalable microservices for Azure cloud enterprise customers using modern .NET and Java stacks.",
+            "Kickstart your career as a system engineer handling IT infrastructure and global network operations.",
+            "Work on our next-generation digital consulting platforms focused on AI transformation for clients."
+        ]
         
         for i, company in enumerate(companies):
             drive = Drive(
                 company_name=company,
                 role=roles[i % len(roles)],
-                description=f"Great opportunity at {company}",
+                description=descriptions[i],
                 job_description=f"We are looking for a {roles[i % len(roles)]} with expertise in {'Python, SQL' if i % 2 == 0 else 'Java, Cloud'}.",
                 eligibility_criteria="CGPA > 7.5",
                 ctc=f"{8 + i} LPA",
                 course="ALL" if i < 2 else ("MCA" if i == 2 else "MSAIM"),
                 created_by=admin.id,
-                deadline=datetime.now() + timedelta(days=7),
+                deadline=datetime.now() + timedelta(days=7 + i*3),
                 status="open" if i < 3 else "closed",
                 department_id=mca_dept.id if i == 2 else (ai_dept.id if i == 3 else None)
             )

@@ -55,8 +55,8 @@ const PlacementModule = () => {
         <div className="space-y-10 animate-in fade-in duration-700">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-white tracking-tight mb-2">Placement Opportunities</h1>
-                <p className="text-[#555] text-sm">Track your applications and apply to new drives matching your profile.</p>
+                <h1 className="text-3xl font-black text-[#1B2A4A] tracking-tight mb-2">Placement Opportunities</h1>
+                <p className="text-[#888888] text-sm">Track your applications and apply to new drives matching your profile.</p>
             </div>
 
             {/* Notification Bar */}
@@ -82,8 +82,8 @@ const PlacementModule = () => {
                 {/* Available Drives */}
                 <div className="xl:col-span-2 space-y-6">
                     <div className="flex items-center gap-3 mb-2">
-                        <Briefcase className="text-[#F97316]" size={20} />
-                        <h2 className="text-xl font-black text-white">Active Drives</h2>
+                        <Briefcase className="text-[#1B2A4A]" size={20} />
+                        <h2 className="text-xl font-black text-[#1B2A4A]">Active Drives</h2>
                     </div>
 
                     {loading ? (
@@ -93,21 +93,21 @@ const PlacementModule = () => {
                     ) : drives.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {drives.map(drive => (
-                                <div key={drive.id} className="bg-[#08080A] border border-[#181818] rounded-3xl p-6 hover:border-[#F97316]/30 transition-all relative overflow-hidden group">
+                                <div key={drive.id} className="bg-[#08080A] border border-[#181818] rounded-3xl p-6 hover:border-[#1B2A4A]/30 transition-all relative overflow-hidden group">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <h3 className="text-lg font-black text-white group-hover:text-[#F97316] transition-colors">{drive.company_name}</h3>
-                                            <p className="text-[10px] uppercase font-black tracking-widest text-[#555] mt-0.5">{drive.role}</p>
+                                            <h3 className="text-lg font-black text-[#1B2A4A] group-hover:text-[#1B2A4A] transition-colors">{drive.company_name}</h3>
+                                            <p className="text-[10px] uppercase font-black tracking-widest text-[#888888] mt-0.5">{drive.role}</p>
                                         </div>
                                         {isApplied(drive.id) ? (
-                                            <span className="bg-[#F97316]/10 text-[#F97316] p-1.5 rounded-lg"><CheckCircle size={14} /></span>
+                                            <span className="bg-[#1B2A4A]/10 text-[#1B2A4A] p-1.5 rounded-lg"><CheckCircle size={14} /></span>
                                         ) : (
-                                            <div className="w-8 h-8 rounded-lg bg-white/2 flex items-center justify-center text-[#333]"><Target size={14} /></div>
+                                            <div className="w-8 h-8 rounded-lg bg-[#1B2A4A]/2 flex items-center justify-center text-[#333]"><Target size={14} /></div>
                                         )}
                                     </div>
                                     
                                     <div className="space-y-3 mb-6">
-                                        <div className="flex items-center gap-2 text-[10px] text-[#444] font-bold">
+                                        <div className="flex items-center gap-2 text-[10px] text-[#888888] font-bold">
                                             <Clock size={12} /> Deadline: {new Date(drive.deadline).toLocaleDateString()}
                                         </div>
                                     </div>
@@ -117,8 +117,8 @@ const PlacementModule = () => {
                                         disabled={isApplied(drive.id) || applyingId === drive.id}
                                         className={`w-full py-3 rounded-xl font-black text-xs transition-all ${
                                             isApplied(drive.id) 
-                                            ? 'bg-white/5 text-[#444] cursor-not-allowed'
-                                            : 'bg-[#F97316] text-white hover:bg-orange-600 shadow-[0_0_20px_rgba(249,115,22,0.2)]'
+                                            ? 'bg-[#1B2A4A]/5 text-[#888888] cursor-not-allowed'
+                                            : 'bg-[#1B2A4A] text-white hover:bg-[#9ECCFA] shadow-[0_0_20px_rgba(27,42,74,0.2)]'
                                         }`}
                                     >
                                         {applyingId === drive.id ? 'Submitting...' : isApplied(drive.id) ? 'Applied' : 'Apply Now'}
@@ -128,7 +128,7 @@ const PlacementModule = () => {
                         </div>
                     ) : (
                         <div className="bg-[#08080A] border border-dashed border-[#181818] rounded-3xl p-12 text-center">
-                            <p className="text-[#444] text-sm">No new placement drives at the moment.</p>
+                            <p className="text-[#888888] text-sm">No new placement drives at the moment.</p>
                         </div>
                     )}
                 </div>
@@ -137,7 +137,7 @@ const PlacementModule = () => {
                 <div className="space-y-6">
                     <div className="flex items-center gap-3 mb-2">
                         <Clock className="text-[#818CF8]" size={20} />
-                        <h2 className="text-xl font-black text-white">My Progress</h2>
+                        <h2 className="text-xl font-black text-[#1B2A4A]">My Progress</h2>
                     </div>
 
                     <div className="space-y-3">
@@ -147,12 +147,12 @@ const PlacementModule = () => {
                             <div key={app.id} className="bg-[#08080A] border border-[#181818] rounded-2xl p-5 relative overflow-hidden">
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <p className="text-sm font-black text-white">{app.company_name}</p>
-                                        <p className="text-[10px] text-[#555] font-bold">{app.role}</p>
+                                        <p className="text-sm font-black text-[#1B2A4A]">{app.company_name}</p>
+                                        <p className="text-[10px] text-[#888888] font-bold">{app.role}</p>
                                     </div>
                                     <span className={`text-[9px] px-2 py-0.5 rounded-md font-black uppercase tracking-widest ${
                                         app.status === 'Placed' ? 'bg-green-500/10 text-green-400' : 
-                                        app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-[#888]'
+                                        app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-[#1B2A4A]/5 text-[#888888555]'
                                     }`}>
                                         {app.status}
                                     </span>
@@ -164,8 +164,8 @@ const PlacementModule = () => {
                                         <div 
                                             key={step}
                                             className={`h-1 flex-1 rounded-full ${
-                                                step < app.current_round ? 'bg-[#F97316]' : 
-                                                step === app.current_round ? 'bg-[#F97316]/30' : 'bg-white/5'
+                                                step < app.current_round ? 'bg-[#1B2A4A]' : 
+                                                step === app.current_round ? 'bg-[#1B2A4A]/30' : 'bg-[#1B2A4A]/5'
                                             }`}
                                         />
                                     ))}
@@ -177,7 +177,7 @@ const PlacementModule = () => {
                                 </div>
                             </div>
                         )) : (
-                            <div className="p-8 text-center bg-white/1 rounded-2xl border border-dashed border-[#181818]">
+                            <div className="p-8 text-center bg-[#1B2A4A]/1 rounded-2xl border border-dashed border-[#181818]">
                                 <p className="text-[10px] text-[#333] font-bold uppercase tracking-widest">No Active Applications</p>
                             </div>
                         )}

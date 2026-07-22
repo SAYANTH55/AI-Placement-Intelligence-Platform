@@ -56,7 +56,7 @@ export default function StaffManagement() {
         <div className="max-w-3xl mx-auto space-y-6">
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-black tracking-tight flex items-center gap-2 text-white">
+                    <h1 className="text-2xl font-black tracking-tight flex items-center gap-2 text-[#1B2A4A]">
                         <Shield className="text-primary-accent" size={24} /> Manage Staff Access
                     </h1>
                     <p className="text-xs text-secondary-muted mt-1">Create and manage accounts for Admins and Placement Officers (PRs)</p>
@@ -65,7 +65,7 @@ export default function StaffManagement() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
                 <form onSubmit={handleCreateStaff} className="glass-panel shadow-card-depth rounded-3xl p-8 space-y-6">
-                    <h2 className="text-lg font-black text-white flex items-center gap-2 mb-4">
+                    <h2 className="text-lg font-black text-[#1B2A4A] flex items-center gap-2 mb-4">
                         <Users size={18} className="text-tertiary-muted" /> Create New Account
                     </h2>
                     
@@ -77,7 +77,7 @@ export default function StaffManagement() {
                                 value={form.fullName}
                                 onChange={e => setForm({...form, fullName: e.target.value})}
                                 placeholder="Enter full name"
-                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                             />
                         </div>
                         <div className="space-y-1.5">
@@ -87,7 +87,7 @@ export default function StaffManagement() {
                                 value={form.email}
                                 onChange={e => setForm({...form, email: e.target.value})}
                                 placeholder="name@college.edu"
-                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                             />
                         </div>
                     </div>
@@ -99,7 +99,7 @@ export default function StaffManagement() {
                             value={form.password}
                             onChange={e => setForm({...form, password: e.target.value})}
                             placeholder="Minimum 8 characters"
-                            className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-white placeholder-tertiary-muted"
+                            className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none transition-colors text-[#1B2A4A] placeholder-tertiary-muted"
                         />
                     </div>
 
@@ -109,7 +109,7 @@ export default function StaffManagement() {
                             <select
                                 value={form.role}
                                 onChange={e => setForm({...form, role: e.target.value})}
-                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none text-white transition-colors"
+                                className="w-full glass-search p-4 rounded-2xl text-sm focus:border-primary-accent outline-none text-[#1B2A4A] transition-colors"
                             >
                                 <option value="pr">Placement Officer (PR)</option>
                                 <option value="admin">Administrator</option>
@@ -141,7 +141,7 @@ export default function StaffManagement() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-neon-gradient text-white py-4 rounded-2xl font-black shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2"
+                        className="w-full bg-neon-gradient text-[#1B2A4A] py-4 rounded-2xl font-black shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex justify-center items-center gap-2"
                     >
                         {loading ? 'Creating Account...' : <><Plus size={18} /> Create Account</>}
                     </button>
@@ -150,14 +150,14 @@ export default function StaffManagement() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                 <div className="glass-panel shadow-card-depth rounded-3xl p-8 space-y-6">
-                    <h2 className="text-lg font-black text-white flex items-center gap-2 mb-4">
+                    <h2 className="text-lg font-black text-[#1B2A4A] flex items-center gap-2 mb-4">
                         <UserCheck size={18} className="text-tertiary-muted" /> Active Staff Accounts
                     </h2>
                     
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
                             <thead>
-                                <tr className="border-b border-white/5 bg-white/[0.02]">
+                                <tr className="border-b border-[#1B2A4A]/5 bg-[#1B2A4A]/[0.02]">
                                     <th className="px-4 py-3 font-black uppercase tracking-widest text-secondary-muted">Name</th>
                                     <th className="px-4 py-3 font-black uppercase tracking-widest text-secondary-muted">Role</th>
                                     <th className="px-4 py-3 font-black uppercase tracking-widest text-secondary-muted">Department</th>
@@ -171,9 +171,9 @@ export default function StaffManagement() {
                                     <tr><td colSpan="4" className="px-4 py-8 text-center text-tertiary-muted">No active staff accounts found.</td></tr>
                                 ) : (
                                     staffList.map((staff) => (
-                                        <tr key={staff.id} className="hover:bg-white/[0.05] transition-colors">
+                                        <tr key={staff.id} className="hover:bg-[#1B2A4A]/[0.05] transition-colors">
                                             <td className="px-4 py-3">
-                                                <p className="font-bold text-white">{staff.name}</p>
+                                                <p className="font-bold text-[#1B2A4A]">{staff.name}</p>
                                                 <p className="text-[10px] text-tertiary-muted">{staff.email}</p>
                                             </td>
                                             <td className="px-4 py-3">
@@ -186,7 +186,7 @@ export default function StaffManagement() {
                                                 {user?.id !== staff.id && (
                                                     <button
                                                         onClick={() => handleDeleteStaff(staff.id, staff.name)}
-                                                        className="p-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-white transition-all inline-flex items-center gap-1.5"
+                                                        className="p-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg hover:bg-red-500 hover:text-[#1B2A4A] transition-all inline-flex items-center gap-1.5"
                                                         title="Revoke Access"
                                                     >
                                                         <Trash2 size={14} /> <span className="text-[10px] font-black uppercase tracking-wider hidden sm:inline">Revoke</span>

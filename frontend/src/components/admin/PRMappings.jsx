@@ -83,7 +83,7 @@ export default function PRMappings() {
         <div className="space-y-6">
             {/* Header */}
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-                <h1 className="text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <h1 className="text-2xl font-black tracking-tight text-[#1B2A4A] flex items-center gap-2">
                     <Link2 className="text-primary-accent" size={24} /> PR — Student Mappings
                 </h1>
                 <p className="text-xs text-secondary-muted mt-1">Assign students to Placement Representatives. {totalAssigned}/{totalStudents} students assigned.</p>
@@ -96,7 +96,7 @@ export default function PRMappings() {
                         <p className="text-xs font-bold text-tertiary-muted">Overall Assignment Progress</p>
                         <p className="text-xs font-black text-primary-accent">{Math.round((totalAssigned / totalStudents) * 100)}%</p>
                     </div>
-                    <div className="w-full h-2 bg-white/5 border border-white/5 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-[#1B2A4A]/5 border border-[#1B2A4A]/5 rounded-full overflow-hidden">
                         <motion.div initial={{ width: 0 }} animate={{ width: `${(totalAssigned / totalStudents) * 100}%` }} transition={{ duration: 1 }} className="h-full bg-neon-gradient shadow-neon-glow rounded-full" />
                     </div>
                 </motion.div>
@@ -107,7 +107,7 @@ export default function PRMappings() {
                 {/* LEFT: PR Cards */}
                 <div className="lg:col-span-2 space-y-3">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-sm font-black text-white flex items-center gap-2"><Users size={16} className="text-tertiary-muted" /> Placement Reps ({prs.length})</h2>
+                        <h2 className="text-sm font-black text-[#1B2A4A] flex items-center gap-2"><Users size={16} className="text-tertiary-muted" /> Placement Reps ({prs.length})</h2>
                         <button onClick={fetchData} className="p-1.5 text-tertiary-muted hover:text-primary-accent transition-colors" title="Refresh"><RefreshCw size={14} /></button>
                     </div>
                     <BatchSelector selectedBatch={batch} onBatchChange={setBatch} />
@@ -123,17 +123,17 @@ export default function PRMappings() {
                             transition={{ delay: i * 0.05 }}
                             onClick={() => { setSelectedPR(pr); setSelectedStudents([]); setSearch(''); }}
                             className={`glass-panel shadow-card-depth rounded-2xl p-5 cursor-pointer transition-all hover:-translate-y-0.5 ${
-                                selectedPR?.id === pr.id ? 'border-primary-accent/50 shadow-neon-glow' : 'hover:border-white/10'
+                                selectedPR?.id === pr.id ? 'border-primary-accent/50 shadow-neon-glow' : 'hover:border-[#1B2A4A]/10'
                             }`}
                         >
                             <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black ${
-                                    selectedPR?.id === pr.id ? 'bg-primary-accent text-white' : 'bg-white/5 border border-white/10 text-secondary-muted'
+                                    selectedPR?.id === pr.id ? 'bg-primary-accent text-[#1B2A4A]' : 'bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 text-secondary-muted'
                                 }`}>
                                     {pr.name?.[0] || '?'}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-white text-sm truncate">{pr.name}</p>
+                                    <p className="font-bold text-[#1B2A4A] text-sm truncate">{pr.name}</p>
                                     <p className="text-[10px] text-tertiary-muted truncate">{pr.email}</p>
                                 </div>
                                 <div className="text-right shrink-0">
@@ -156,9 +156,9 @@ export default function PRMappings() {
                         <>
                             {/* Selected PR info */}
                             <div className="glass-panel shadow-card-depth rounded-2xl p-4 flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-primary-accent flex items-center justify-center text-white font-black text-xs">{selectedPR.name?.[0]}</div>
+                                <div className="w-8 h-8 rounded-full bg-primary-accent flex items-center justify-center text-[#1B2A4A] font-black text-xs">{selectedPR.name?.[0]}</div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-bold text-white">Managing: {selectedPR.name}</p>
+                                    <p className="text-sm font-bold text-[#1B2A4A]">Managing: {selectedPR.name}</p>
                                     <p className="text-[10px] text-tertiary-muted">{assignedToSelected.length} students assigned</p>
                                 </div>
                             </div>
@@ -166,16 +166,16 @@ export default function PRMappings() {
                             {/* Assigned students */}
                             {assignedToSelected.length > 0 && (
                                 <div className="glass-panel shadow-card-depth rounded-2xl overflow-hidden">
-                                    <div className="px-5 py-3 border-b border-white/5 flex items-center justify-between">
-                                        <h3 className="text-xs font-black text-white flex items-center gap-2"><UserCheck size={14} className="text-[#34D399]" /> Assigned ({assignedToSelected.length})</h3>
+                                    <div className="px-5 py-3 border-b border-[#1B2A4A]/5 flex items-center justify-between">
+                                        <h3 className="text-xs font-black text-[#1B2A4A] flex items-center gap-2"><UserCheck size={14} className="text-[#34D399]" /> Assigned ({assignedToSelected.length})</h3>
                                         <button onClick={() => handleUnassign(assignedToSelected.map(s => s.id))} className="text-[10px] font-bold text-red-400 hover:text-red-300 transition-colors">Unassign All</button>
                                     </div>
                                     <div className="max-h-48 overflow-y-auto divide-y divide-white/5">
                                         {assignedToSelected.map(s => (
-                                            <div key={s.id} className="px-5 py-2.5 flex items-center justify-between hover:bg-white/[0.03] transition-colors">
+                                            <div key={s.id} className="px-5 py-2.5 flex items-center justify-between hover:bg-[#1B2A4A]/[0.03] transition-colors">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-6 h-6 rounded-full bg-[#34D399]/15 border border-[#34D399]/30 flex items-center justify-center text-[9px] font-black text-[#34D399]">{s.name?.[0]}</div>
-                                                    <div><p className="text-xs font-medium text-white">{s.name}</p><p className="text-[9px] text-tertiary-muted">{s.roll_number}</p></div>
+                                                    <div><p className="text-xs font-medium text-[#1B2A4A]">{s.name}</p><p className="text-[9px] text-tertiary-muted">{s.roll_number}</p></div>
                                                 </div>
                                                 <button onClick={() => handleUnassign([s.id])} className="text-[10px] text-red-400/60 hover:text-red-400 transition-colors">Remove</button>
                                             </div>
@@ -186,12 +186,12 @@ export default function PRMappings() {
 
                             {/* Unassigned students */}
                             <div className="glass-panel shadow-card-depth rounded-2xl overflow-hidden">
-                                <div className="px-5 py-3 border-b border-white/5">
+                                <div className="px-5 py-3 border-b border-[#1B2A4A]/5">
                                     <div className="flex items-center justify-between mb-3">
-                                        <h3 className="text-xs font-black text-white flex items-center gap-2"><Users size={14} className="text-tertiary-muted" /> Unassigned ({unassigned.length})</h3>
+                                        <h3 className="text-xs font-black text-[#1B2A4A] flex items-center gap-2"><Users size={14} className="text-tertiary-muted" /> Unassigned ({unassigned.length})</h3>
                                         {selectedStudents.length > 0 && (
                                             <button onClick={handleAssign} disabled={assigning}
-                                                className="px-4 py-1.5 rounded-lg text-[10px] font-black bg-neon-gradient text-white shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-1.5">
+                                                className="px-4 py-1.5 rounded-lg text-[10px] font-black bg-neon-gradient text-[#1B2A4A] shadow-neon-glow hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-1.5">
                                                 {assigning ? 'Assigning...' : <><ArrowRight size={12} /> Assign {selectedStudents.length} to {selectedPR.name}</>}
                                             </button>
                                         )}
@@ -199,7 +199,7 @@ export default function PRMappings() {
                                     <div className="flex items-center gap-2">
                                         <div className="flex items-center gap-2 glass-search rounded-lg px-3 flex-1">
                                             <Search size={12} className="text-tertiary-muted" />
-                                            <input type="text" placeholder="Search unassigned..." className="bg-transparent border-none outline-none text-[11px] text-white py-2 w-full placeholder-tertiary-muted" value={search} onChange={e => setSearch(e.target.value)} />
+                                            <input type="text" placeholder="Search unassigned..." className="bg-transparent border-none outline-none text-[11px] text-[#1B2A4A] py-2 w-full placeholder-tertiary-muted" value={search} onChange={e => setSearch(e.target.value)} />
                                         </div>
                                         <button onClick={selectAllVisible} className="text-[10px] font-bold text-secondary-muted hover:text-primary-accent transition-colors whitespace-nowrap">
                                             {filteredUnassigned.length > 0 && filteredUnassigned.every(s => selectedStudents.includes(s.id)) ? 'Deselect All' : 'Select All'}
@@ -213,14 +213,14 @@ export default function PRMappings() {
                                             {unassigned.length === 0 ? 'All students are assigned!' : 'No matches found.'}
                                         </div>
                                     ) : filteredUnassigned.map(s => (
-                                        <div key={s.id} onClick={() => toggleStudent(s.id)} className="px-5 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-white/[0.03] transition-colors">
+                                        <div key={s.id} onClick={() => toggleStudent(s.id)} className="px-5 py-2.5 flex items-center gap-3 cursor-pointer hover:bg-[#1B2A4A]/[0.03] transition-colors">
                                             {selectedStudents.includes(s.id) ? (
                                                 <CheckSquare size={16} className="text-primary-accent shrink-0" />
                                             ) : (
                                                 <Square size={16} className="text-tertiary-muted shrink-0" />
                                             )}
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-xs font-medium text-white truncate">{s.name}</p>
+                                                <p className="text-xs font-medium text-[#1B2A4A] truncate">{s.name}</p>
                                                 <p className="text-[9px] text-tertiary-muted">{s.roll_number} · {s.course} · {s.batch}</p>
                                             </div>
                                         </div>

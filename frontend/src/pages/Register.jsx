@@ -117,7 +117,7 @@ export default function Register() {
   const sources = [
     { value: 'LinkedIn', label: 'LinkedIn', icon: <Users size={16} className="text-[#0077B5]" /> },
     { value: 'Google Search', label: 'Google Search', icon: <Search size={16} className="text-[#4285F4]" /> },
-    { value: 'Friend / Referral', label: 'Friend / Referral', icon: <Users size={16} className="text-[#F97316]" /> },
+    { value: 'Friend / Referral', label: 'Friend / Referral', icon: <Users size={16} className="text-[#1B2A4A]" /> },
     { value: 'College / University', label: 'College / University', icon: <BookOpen size={16} className="text-[#6366F1]" /> },
     { value: 'YouTube', label: 'YouTube', icon: <Play size={16} className="text-[#FF0000]" /> },
     { value: 'Instagram', label: 'Instagram', icon: <Camera size={16} className="text-[#E4405F]" /> },
@@ -174,7 +174,7 @@ export default function Register() {
       {/* Back button */}
       <button
         onClick={() => navigate('/')}
-        className="fixed top-6 left-6 flex items-center gap-2 text-sm text-gray-500 hover:text-[#F97316] transition-colors font-medium group"
+        className="fixed top-6 left-6 flex items-center gap-2 text-sm text-gray-500 hover:text-[#1B2A4A] transition-colors font-medium group"
       >
         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
         Back to Home
@@ -196,7 +196,7 @@ export default function Register() {
 
         {success ? (
           <div className="bg-orange-50 border border-orange-100 rounded-[2rem] p-10 text-center animate-scale-in">
-            <div className="w-20 h-20 bg-orange-100 text-[#F97316] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-20 h-20 bg-orange-100 text-[#1B2A4A] rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={40} />
             </div>
             <h3 className="text-2xl font-black text-gray-900">Account Created!</h3>
@@ -217,7 +217,7 @@ export default function Register() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Full Name</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                     <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#F97316] transition-colors">
+                     <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#1B2A4A] transition-colors">
                        <User size={18} />
                      </div>
                   </div>
@@ -229,7 +229,7 @@ export default function Register() {
                     placeholder="Enter your full name"
                     autoComplete="off"
                     name="fullName"
-                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
+                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
                   />
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Register() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#F97316] transition-colors">
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#1B2A4A] transition-colors">
                       <Mail size={18} />
                     </div>
                   </div>
@@ -250,7 +250,7 @@ export default function Register() {
                     onChange={handleInputChange}
                     placeholder="Enter your email address"
                     name="email"
-                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
+                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
                   />
                 </div>
               </div>
@@ -308,7 +308,7 @@ export default function Register() {
                   </div>
                   <div className="relative flex-1 group">
                     <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                      <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#F97316] transition-colors">
+                      <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#1B2A4A] transition-colors">
                         <Phone size={18} />
                       </div>
                     </div>
@@ -319,7 +319,7 @@ export default function Register() {
                       onChange={handleInputChange}
                       placeholder="Enter phone number"
                       name="phoneNumber"
-                      className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
+                      className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
                     />
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default function Register() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#F97316] transition-colors">
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#1B2A4A] transition-colors">
                       <Lock size={18} />
                     </div>
                   </div>
@@ -341,12 +341,12 @@ export default function Register() {
                     onChange={handleInputChange}
                     placeholder="Enter password"
                     name="password"
-                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-12 focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
+                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-12 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#F97316] transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#1B2A4A] transition-colors"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -358,7 +358,7 @@ export default function Register() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Confirm</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#F97316] transition-colors">
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400 group-focus-within:text-[#1B2A4A] transition-colors">
                       <Lock size={18} />
                     </div>
                   </div>
@@ -369,12 +369,12 @@ export default function Register() {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     placeholder="Confirm password"
-                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-12 focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
+                    className="w-full bg-gray-50 border border-transparent text-gray-900 placeholder:text-gray-400 rounded-2xl py-4 pl-12 pr-12 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-semibold shadow-sm hover:bg-gray-100"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#F97316] transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-[#1B2A4A] transition-colors"
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -387,7 +387,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setIsSourceOpen(!isSourceOpen)}
-                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
+                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
                 >
                   <div className="flex items-center gap-3">
                     {formData.source ? (
@@ -397,7 +397,7 @@ export default function Register() {
                       </>
                     ) : (
                       <>
-                        <Globe size={18} className="text-gray-300 group-focus-within:text-[#F97316]" />
+                        <Globe size={18} className="text-gray-300 group-focus-within:text-[#1B2A4A]" />
                         <span className="text-gray-400">Select an option</span>
                       </>
                     )}
@@ -417,7 +417,7 @@ export default function Register() {
                             setIsSourceOpen(false);
                           }}
                           className={`w-full flex items-center gap-4 px-6 py-4 hover:bg-orange-50 transition-all font-bold text-sm ${
-                            formData.source === source.value ? 'text-[#F97316] bg-orange-50/50' : 'text-gray-700'
+                            formData.source === source.value ? 'text-[#1B2A4A] bg-orange-50/50' : 'text-gray-700'
                           }`}
                         >
                           <div className={`w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm border border-gray-100 ${formData.source === source.value ? 'border-orange-200' : ''}`}>
@@ -437,7 +437,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setIsCourseOpen(!isCourseOpen)}
-                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
+                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
                 >
                   <span className={formData.course ? 'text-gray-900' : 'text-gray-400'}>
                     {formData.course || 'Select Course'}
@@ -469,7 +469,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setIsDeptOpen(!isDeptOpen)}
-                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#F97316] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
+                  className="w-full bg-gray-50 border border-transparent text-gray-900 rounded-2xl py-4 px-5 flex items-center justify-between focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-bold shadow-sm hover:bg-gray-100 group"
                 >
                   <span className={formData.department_id ? 'text-gray-900' : 'text-gray-400'}>
                     {departments.find(d => d.id === formData.department_id)?.name || 'Select Dept'}
@@ -505,7 +505,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-3 bg-[#F97316] text-white py-5 rounded-2xl font-black text-lg hover:bg-orange-600 hover:shadow-2xl hover:shadow-orange-200 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mt-4 shadow-xl active:scale-[0.97]"
+              className="w-full flex justify-center items-center gap-3 bg-[#1B2A4A] text-white py-5 rounded-2xl font-black text-lg hover:bg-[#9ECCFA] hover:shadow-2xl hover:shadow-orange-200 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mt-4 shadow-xl active:scale-[0.97]"
             >
               {loading ? <Loader2 className="animate-spin" size={22} /> : null}
               {loading ? 'Processing...' : 'Ready to Launch'}
@@ -524,7 +524,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => navigate('/login')}
-                  className="text-[#F97316] font-black hover:underline underline-offset-8"
+                  className="text-[#1B2A4A] font-black hover:underline underline-offset-8"
                 >
                   Sign In
                 </button>
@@ -536,7 +536,7 @@ export default function Register() {
 
       {/* Legal Footer */}
       <p className="mt-12 text-[10px] font-bold text-gray-400 text-center max-w-sm leading-relaxed uppercase tracking-tighter">
-        By creating an account, you agree to our <span className="text-gray-600 cursor-pointer hover:text-[#F97316]">Terms of Intelligence</span> and <span className="text-gray-600 cursor-pointer hover:text-[#F97316]">Data Protocols</span>.
+        By creating an account, you agree to our <span className="text-gray-600 cursor-pointer hover:text-[#1B2A4A]">Terms of Intelligence</span> and <span className="text-gray-600 cursor-pointer hover:text-[#1B2A4A]">Data Protocols</span>.
       </p>
 
       {/* Inline styles for custom scrollbar and animations */}

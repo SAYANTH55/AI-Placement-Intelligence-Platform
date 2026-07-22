@@ -6,6 +6,11 @@ venv/
 env/
 .env
 
+# Uploads & Reports Cache
+backend/uploads/
+backend/logs/
+backend/e2e_test.log
+
 # Node.js
 node_modules/
 dist/
@@ -34,4 +39,3 @@ __pycache__/
 
 # Logs
 *.log
-

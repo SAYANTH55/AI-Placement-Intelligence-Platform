@@ -85,7 +85,7 @@ function MagneticCard({ children, className, style }) {
       <motion.div
         className="absolute inset-0 pointer-events-none rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
         style={{
-          background: `radial-gradient(500px circle at ${mouseX}px ${mouseY}px, rgba(249,115,22,0.07), transparent 60%)`,
+          background: `radial-gradient(500px circle at ${mouseX}px ${mouseY}px, rgba(27,42,74,0.07), transparent 60%)`,
         }}
       />
       <div style={{ transform: 'translateZ(30px)' }} className="relative z-10">
@@ -112,46 +112,46 @@ function StepCard({ step, index }) {
     >
       {/* Card */}
       <div className="flex-1 group" style={{ perspective: 1000 }}>
-        <MagneticCard className="relative bg-[#0A0A0A] border border-[#1E1E1E] rounded-[2rem] p-8 lg:p-10 shadow-2xl cursor-pointer overflow-hidden">
+        <MagneticCard className="relative bg-[#FFFFFF] border border-[#C9C2AF] rounded-[2rem] p-8 lg:p-10 shadow-2xl cursor-pointer overflow-hidden">
           {/* Neon orange top border accent */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F97316] to-transparent opacity-80" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#1B2A4A] to-transparent opacity-80" />
 
           {/* Step tag */}
           <div className="flex items-center justify-between mb-8">
-            <span className="inline-flex items-center gap-2 bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] text-[10px] font-black uppercase tracking-[0.3em] px-4 py-2 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] animate-pulse" />
+            <span className="inline-flex items-center gap-2 bg-[#1B2A4A]/10 border border-[#1B2A4A]/30 text-[#1B2A4A] text-[10px] font-black uppercase tracking-[0.3em] px-4 py-2 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1B2A4A] animate-pulse" />
               {step.tag}
             </span>
-            <span className="font-black text-[#1A1A1A] text-5xl font-mono tracking-tighter select-none">
+            <span className="font-black text-[#C9C2AF] text-5xl font-mono tracking-tighter select-none">
               {step.step}
             </span>
           </div>
 
           {/* Icon */}
           <div className="mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-[#F97316] flex items-center justify-center text-white shadow-[0_0_30px_rgba(249,115,22,0.4)]">
+            <div className="w-16 h-16 rounded-2xl bg-[#1B2A4A] flex items-center justify-center text-white shadow-[0_0_30px_rgba(27,42,74,0.4)]">
               {step.icon}
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-white font-black text-2xl lg:text-3xl mb-4 leading-tight tracking-tight">
+          <h3 className="text-[#1B2A4A] font-black text-2xl lg:text-3xl mb-4 leading-tight tracking-tight">
             {step.title}
           </h3>
 
           {/* Description */}
-          <p className="text-[#888] text-sm lg:text-base leading-loose">
+          <p className="text-[#888888555] text-sm lg:text-base leading-loose">
             {step.desc}
           </p>
 
           {/* Stat Pill */}
-          <div className="mt-8 inline-flex items-center gap-3 bg-[#F97316]/5 border border-[#F97316]/20 rounded-2xl px-5 py-3">
-            <span className="text-[#F97316] font-black text-2xl">{step.stat}</span>
+          <div className="mt-8 inline-flex items-center gap-3 bg-[#1B2A4A]/5 border border-[#1B2A4A]/20 rounded-2xl px-5 py-3">
+            <span className="text-[#1B2A4A] font-black text-2xl">{step.stat}</span>
             <span className="text-[#666] text-xs uppercase tracking-widest">{step.statLabel}</span>
           </div>
 
           {/* Bottom glow */}
-          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#F97316]/10 blur-3xl rounded-full pointer-events-none" />
+          <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#1B2A4A]/10 blur-3xl rounded-full pointer-events-none" />
         </MagneticCard>
       </div>
 
@@ -161,9 +161,9 @@ function StepCard({ step, index }) {
           initial={{ scale: 0 }}
           animate={isInView ? { scale: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3, type: 'spring', stiffness: 400 }}
-          className="w-14 h-14 rounded-full border-2 border-[#F97316] bg-[#0A0A0A] flex items-center justify-center shadow-[0_0_25px_rgba(249,115,22,0.4)] z-10"
+          className="w-14 h-14 rounded-full border-2 border-[#1B2A4A] bg-[#FFFFFF] flex items-center justify-center shadow-[0_0_25px_rgba(27,42,74,0.4)] z-10"
         >
-          <span className="text-[#F97316] font-black text-sm font-mono">{step.step}</span>
+          <span className="text-[#1B2A4A] font-black text-sm font-mono">{step.step}</span>
         </motion.div>
       </div>
 
@@ -205,7 +205,7 @@ export default function HowItWorks() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-[#060606] overflow-hidden py-24 px-4 sm:px-8"
+      className="relative min-h-screen bg-[#F4EFE4] overflow-hidden py-24 px-4 sm:px-8"
       onMouseEnter={() => setIsOnPage(true)}
       onMouseLeave={() => setIsOnPage(false)}
     >
@@ -216,16 +216,16 @@ export default function HowItWorks() {
           style={{
             left: cursor.x - 400,
             top: cursor.y - 400,
-            background: 'radial-gradient(circle, rgba(249,115,22,0.04) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(27,42,74,0.04) 0%, transparent 70%)',
           }}
         />
       )}
 
       {/* Background grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(27,42,74,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(27,42,74,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       {/* Top vignette fade */}
-      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#060606] to-transparent pointer-events-none z-10" />
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#F4EFE4] to-transparent pointer-events-none z-10" />
 
       <div className="max-w-5xl mx-auto relative z-10">
 
@@ -240,15 +240,15 @@ export default function HowItWorks() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-[#F97316]/10 border border-[#F97316]/30 text-[#F97316] text-xs font-bold uppercase tracking-[0.3em] px-5 py-2.5 rounded-full mb-8"
+            className="inline-flex items-center gap-2 bg-[#1B2A4A]/10 border border-[#1B2A4A]/30 text-[#1B2A4A] text-xs font-bold uppercase tracking-[0.3em] px-5 py-2.5 rounded-full mb-8"
           >
-            <Zap size={12} className="fill-[#F97316]" />
+            <Zap size={12} className="fill-[#1B2A4A]" />
             The Pipeline
           </motion.span>
 
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none">
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-[#1B2A4A] mb-8 tracking-tight leading-none">
             How It{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#FF8C3A] drop-shadow-[0_0_30px_rgba(249,115,22,0.6)]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1B2A4A] to-[#9ECCFA] drop-shadow-[0_0_30px_rgba(27,42,74,0.6)]">
               Works
             </span>
           </h1>
@@ -262,9 +262,9 @@ export default function HowItWorks() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            className="mt-16 flex flex-col items-center gap-2 text-[#444] text-xs tracking-widest uppercase"
+            className="mt-16 flex flex-col items-center gap-2 text-[#888888] text-xs tracking-widest uppercase"
           >
-            <div className="w-px h-12 bg-gradient-to-b from-transparent to-[#F97316]/50" />
+            <div className="w-px h-12 bg-gradient-to-b from-transparent to-[#1B2A4A]/50" />
             <span>Scroll to explore</span>
           </motion.div>
         </motion.div>
@@ -273,7 +273,7 @@ export default function HowItWorks() {
         <div ref={lineRef} className="relative">
 
           {/* The backbone vertical line */}
-          <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-[#1A1A1A]" />
+          <div className="hidden lg:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-[#C9C2AF]" />
 
           {/* NEON LIGHT BEAM — travels down the spine as you scroll */}
           <motion.div
@@ -282,19 +282,19 @@ export default function HowItWorks() {
               top: 0,
               height: smoothBeamY,
               opacity: lightBeamOpacity,
-              background: 'linear-gradient(to bottom, transparent, #F97316, #FF8C3A)',
-              boxShadow: '0 0 12px 4px rgba(249,115,22,0.6), 0 0 40px 10px rgba(249,115,22,0.2)',
+              background: 'linear-gradient(to bottom, transparent, #1B2A4A, #9ECCFA)',
+              boxShadow: '0 0 12px 4px rgba(27,42,74,0.6), 0 0 40px 10px rgba(27,42,74,0.2)',
               maxHeight: '100%',
             }}
           />
 
           {/* Traveling NEON DOT at the tip of the beam */}
           <motion.div
-            className="hidden lg:absolute lg:block left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#F97316] -translate-x-[14px] z-30 pointer-events-none"
+            className="hidden lg:absolute lg:block left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#1B2A4A] -translate-x-[14px] z-30 pointer-events-none"
             style={{
               top: smoothBeamY,
               opacity: lightBeamOpacity,
-              boxShadow: '0 0 20px 8px rgba(249,115,22,0.8), 0 0 60px 20px rgba(249,115,22,0.3)',
+              boxShadow: '0 0 20px 8px rgba(27,42,74,0.8), 0 0 60px 20px rgba(27,42,74,0.3)',
             }}
           />
 
@@ -315,18 +315,18 @@ export default function HowItWorks() {
           className="mt-40 text-center relative"
         >
           {/* Glow behind button */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-[#F97316]/15 blur-[60px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-[#1B2A4A]/15 blur-[60px] rounded-full pointer-events-none" />
 
-          <h2 className="text-3xl sm:text-5xl font-black text-white mb-4 relative">
+          <h2 className="text-3xl sm:text-5xl font-black text-[#1B2A4A] mb-4 relative">
             Ready to launch?
           </h2>
-          <p className="text-[#555] mb-10 text-lg relative">No credit card · Results in under 5 seconds.</p>
+          <p className="text-[#888888] mb-10 text-lg relative">No credit card · Results in under 5 seconds.</p>
 
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(249,115,22,0.5)' }}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(27,42,74,0.5)' }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/login')}
-            className="relative inline-flex items-center gap-3 bg-[#F97316] text-white font-black text-lg px-12 py-5 rounded-full shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:bg-orange-500 transition-colors duration-200"
+            className="relative inline-flex items-center gap-3 bg-[#1B2A4A] text-white font-black text-lg px-12 py-5 rounded-full shadow-[0_0_30px_rgba(27,42,74,0.3)] hover:bg-[#1B2A4A] transition-colors duration-200"
           >
             Try It Now — It's Free
             <ArrowRight size={20} />
@@ -335,7 +335,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Bottom vignette fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#060606] to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#F4EFE4] to-transparent pointer-events-none z-10" />
     </div>
   );
 }

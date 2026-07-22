@@ -31,9 +31,9 @@ const GlassCard = ({ children, className = '', delay = 0 }) => (
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay }}
-    className={`glass-panel rounded-3xl p-6 relative overflow-hidden group hover:border-[#F97316]/30 transition-all shadow-card-depth ${className}`}
+    className={`glass-panel rounded-3xl p-6 relative overflow-hidden group hover:border-[#1B2A4A]/30 transition-all shadow-card-depth ${className}`}
   >
-    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/20 to-transparent" />
+    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1B2A4A]/20 to-transparent" />
     {children}
   </motion.div>
 );
@@ -266,31 +266,31 @@ export default function PlacementEngine() {
   const statusBadgeColor = (status) => {
     if (status === 'active' || status === 'open' || status === 'Active') return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
     if (status === 'closed' || status === 'Closed') return 'bg-red-500/10 text-red-400 border-red-500/20';
-    return 'bg-[#F97316]/10 text-[#F97316] border-[#F97316]/20';
+    return 'bg-[#1B2A4A]/10 text-[#1B2A4A] border-[#1B2A4A]/20';
   };
 
   const cardBorderColor = (status, applied = false) => {
     if (applied) return '!border-green-500/40 !shadow-[0_0_25px_rgba(34,197,94,0.2)] hover:!border-green-500/60 hover:!shadow-[0_0_35px_rgba(34,197,94,0.3)] bg-green-500/5';
     if (status === 'closed' || status === 'Closed') return '!border-red-500/30 !shadow-[0_0_20px_rgba(239,68,68,0.15)] hover:!border-red-500/50 hover:!shadow-[0_0_30px_rgba(239,68,68,0.25)] bg-red-500/5';
     if (status === 'active' || status === 'open' || status === 'Active') return '!border-blue-500/40 !shadow-[0_0_25px_rgba(59,130,246,0.2)] hover:!border-blue-500/60 hover:!shadow-[0_0_35px_rgba(59,130,246,0.3)] bg-blue-500/5';
-    return 'border-[#181818] hover:border-[#F97316]/30';
+    return 'border-[#181818] hover:border-[#1B2A4A]/30';
   };
 
   return (
-    <div className="min-h-screen bg-[#060606] text-white p-6 md:p-10 font-['Inter'] relative overflow-hidden">
+    <div className="min-h-screen bg-[#F4EFE4] text-[#1B2A4A] p-6 md:p-10 font-['Inter'] relative overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#F97316]/5 blur-[120px] -z-10 rounded-full" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1B2A4A]/5 blur-[120px] -z-10 rounded-full" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] -z-10 rounded-full" />
 
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-1.5 h-8 bg-gradient-to-b from-[#F97316] to-orange-600 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+            <div className="w-1.5 h-8 bg-gradient-to-b from-[#1B2A4A] to-[#9ECCFA] rounded-full shadow-[0_0_15px_rgba(27,42,74,0.5)]" />
             <h1 className="text-4xl font-black tracking-tight">Placement Engine</h1>
           </div>
-          <p className="text-[#555] text-sm ml-4.5 font-medium uppercase tracking-widest flex items-center gap-2">
-            <Zap size={14} className="text-[#F97316]" /> 
+          <p className="text-[#888888] text-sm ml-4.5 font-medium uppercase tracking-widest flex items-center gap-2">
+            <Zap size={14} className="text-[#1B2A4A]" /> 
             Institutional Career Intelligence
           </p>
         </div>
@@ -305,8 +305,8 @@ export default function PlacementEngine() {
                   onClick={() => setCourseFilter(c)}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${
                     courseFilter === c 
-                    ? 'bg-[#F97316] text-white shadow-[0_0_20px_rgba(249,115,22,0.3)]' 
-                    : 'text-[#555] hover:text-white hover:bg-white/5'
+                    ? 'bg-[#1B2A4A] text-[#1B2A4A] shadow-[0_0_20px_rgba(27,42,74,0.3)]' 
+                    : 'text-[#888888] hover:text-white hover:bg-[#1B2A4A]/5'
                   }`}
                 >
                   {c === 'MSAIM' ? 'MSc AI/ML' : c}
@@ -321,7 +321,7 @@ export default function PlacementEngine() {
           {isStaff && (
             <button 
               onClick={() => setShowPostDrive(true)}
-              className="bg-[#F97316] text-white px-6 py-3 rounded-2xl text-sm font-black shadow-[0_0_25px_rgba(249,115,22,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              className="bg-[#1B2A4A] text-white px-6 py-3 rounded-2xl text-sm font-black shadow-[0_0_25px_rgba(27,42,74,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
             >
               <Plus size={18} /> Launch Drive
             </button>
@@ -337,20 +337,20 @@ export default function PlacementEngine() {
           {(isStudent) && myApplications.length > 0 && (
             <section>
               <div className="flex items-center gap-3 mb-6">
-                <LayoutDashboard size={20} className="text-[#F97316]" />
-                <h2 className="text-xl font-black uppercase tracking-widest text-[#888]">My Applications</h2>
+                <LayoutDashboard size={20} className="text-[#1B2A4A]" />
+                <h2 className="text-xl font-black uppercase tracking-widest text-[#888888555]">My Applications</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {myApplications.map(app => (
-                  <GlassCard key={app.id} className="border-l-4 border-l-[#F97316]">
+                  <GlassCard key={app.id} className="border-l-4 border-l-[#1B2A4A]">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-black">{app.company_name}</h3>
-                        <p className="text-xs text-[#555] font-bold">{app.role}</p>
+                        <p className="text-xs text-[#888888] font-bold">{app.role}</p>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                         app.status === 'Placed' ? 'bg-green-500/10 text-green-400' :
-                        app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-orange-500/10 text-orange-400'
+                        app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-[#1B2A4A]/10 text-[#1B2A4A]'
                       }`}>
                         {app.status}
                       </span>
@@ -371,19 +371,19 @@ export default function PlacementEngine() {
           <section>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <Briefcase size={20} className="text-[#F97316]" />
-                <h2 className="text-xl font-black uppercase tracking-widest text-[#888]">Active Placement Drives</h2>
+                <Briefcase size={20} className="text-[#1B2A4A]" />
+                <h2 className="text-xl font-black uppercase tracking-widest text-[#888888555]">Active Placement Drives</h2>
               </div>
-              <span className="text-[10px] font-black text-[#444] tracking-[0.2em]">{drives.length} DISCOVERED</span>
+              <span className="text-[10px] font-black text-[#888888] tracking-[0.2em]">{drives.length} DISCOVERED</span>
             </div>
 
             {loading ? (
               <div className="flex items-center justify-center py-20">
-                <div className="w-10 h-10 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+                <div className="w-10 h-10 border-2 border-[#1B2A4A] border-t-transparent rounded-full animate-spin" />
               </div>
             ) : drives.length === 0 ? (
-              <div className="py-20 text-center bg-white/2 rounded-3xl border border-dashed border-[#181818]">
-                <p className="text-[#555] font-bold">No active drives matching your criteria.</p>
+              <div className="py-20 text-center bg-[#1B2A4A]/2 rounded-3xl border border-dashed border-[#181818]">
+                <p className="text-[#888888] font-bold">No active drives matching your criteria.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -421,8 +421,8 @@ export default function PlacementEngine() {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-black text-white mb-1 group-hover:text-[#F97316] transition-colors">{drive.company_name}</h3>
-                    <p className="text-xs text-[#F97316]/70 font-black uppercase tracking-widest mb-4">{drive.role}</p>
+                    <h3 className="text-xl font-black text-[#1B2A4A] mb-1 group-hover:text-[#1B2A4A] transition-colors">{drive.company_name}</h3>
+                    <p className="text-xs text-[#1B2A4A]/70 font-black uppercase tracking-widest mb-4">{drive.role}</p>
                     
                     <p className="text-xs text-[#999] line-clamp-2 mb-6 flex-1 italic">
                       "{drive.description}"
@@ -442,7 +442,7 @@ export default function PlacementEngine() {
                         isApplied(drive.id) ? (
                           <button 
                             onClick={() => handleOpenDrive(drive)}
-                            className="flex-1 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+                            className="flex-1 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 text-[#1B2A4A] py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 hover:bg-[#1B2A4A]/10 transition-all"
                           >
                             <CheckCircle size={14} className="text-green-400" /> Progress
                           </button>
@@ -451,7 +451,7 @@ export default function PlacementEngine() {
                         ) : (
                           <button 
                             onClick={() => handleApply(drive)}
-                            className="flex-1 bg-[#F97316] text-white py-2.5 rounded-xl text-xs font-black shadow-[0_0_15px_rgba(249,115,22,0.2)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all"
+                            className="flex-1 bg-[#1B2A4A] text-white py-2.5 rounded-xl text-xs font-black shadow-[0_0_15px_rgba(27,42,74,0.2)] hover:shadow-[0_0_25px_rgba(27,42,74,0.4)] transition-all"
                           >
                             Apply Now
                           </button>
@@ -459,14 +459,14 @@ export default function PlacementEngine() {
                       ) : (
                         <button 
                           onClick={() => handleOpenDrive(drive)}
-                          className="flex-1 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 hover:bg-white/10 transition-all"
+                          className="flex-1 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 text-[#1B2A4A] py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 hover:bg-[#1B2A4A]/10 transition-all"
                         >
                           View Applicants <ArrowRight size={14} />
                         </button>
                       )}
                       <button 
                         onClick={() => handleOpenDrive(drive)}
-                        className="p-2.5 bg-white/5 border border-white/10 rounded-xl hover:text-[#F97316] transition-all"
+                        className="p-2.5 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 rounded-xl hover:text-[#1B2A4A] transition-all"
                       >
                         <Search size={14} />
                       </button>
@@ -483,11 +483,11 @@ export default function PlacementEngine() {
           <section>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <Bell size={20} className="text-[#F97316]" />
-                <h2 className="text-lg font-black uppercase tracking-widest text-[#888]">Updates</h2>
+                <Bell size={20} className="text-[#1B2A4A]" />
+                <h2 className="text-lg font-black uppercase tracking-widest text-[#888888555]">Updates</h2>
               </div>
               {isStaff && (
-                <button onClick={() => setShowPostUpdate(true)} className="p-1.5 bg-white/5 rounded-lg text-[#555] hover:text-[#F97316] transition-all">
+                <button onClick={() => setShowPostUpdate(true)} className="p-1.5 bg-[#1B2A4A]/5 rounded-lg text-[#888888] hover:text-[#1B2A4A] transition-all">
                   <Plus size={14} />
                 </button>
               )}
@@ -500,8 +500,8 @@ export default function PlacementEngine() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className={`p-5 rounded-3xl border border-[#181818] bg-gradient-to-br transition-all hover:border-[#F97316]/30 relative group ${
-                    upd.update_type === 'test' ? 'from-orange-500/5 to-transparent' :
+                  className={`p-5 rounded-3xl border border-[#181818] bg-gradient-to-br transition-all hover:border-[#1B2A4A]/30 relative group ${
+                    upd.update_type === 'test' ? 'from-[#1B2A4A]/5 to-transparent' :
                     upd.update_type === 'workshop' ? 'from-blue-500/5 to-transparent' : 'from-gray-500/5 to-transparent'
                   }`}
                 >
@@ -517,20 +517,20 @@ export default function PlacementEngine() {
                   )}
                   <div className="flex items-center gap-2 mb-3">
                     <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${
-                      upd.update_type === 'test' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
+                      upd.update_type === 'test' ? 'bg-[#1B2A4A]/10 text-[#1B2A4A] border-[#1B2A4A]/20' :
                       upd.update_type === 'workshop' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-gray-500/10 text-gray-400 border-gray-500/20'
                     }`}>
                       {upd.update_type}
                     </span>
                     <CourseBadge course={upd.course} />
                   </div>
-                  <h4 className="text-sm font-black text-white mb-1">{upd.title}</h4>
+                  <h4 className="text-sm font-black text-[#1B2A4A] mb-1">{upd.title}</h4>
                   <p className="text-[11px] text-[#777] leading-relaxed mb-4">{upd.description}</p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-[#555] font-bold">{new Date(upd.created_at).toLocaleDateString()}</span>
+                    <span className="text-[9px] text-[#888888] font-bold">{new Date(upd.created_at).toLocaleDateString()}</span>
                     {upd.action_url && (
-                      <a href={upd.action_url} target="_blank" rel="noreferrer" className="text-[10px] font-black text-[#F97316] flex items-center gap-1 hover:underline">
+                      <a href={upd.action_url} target="_blank" rel="noreferrer" className="text-[10px] font-black text-[#1B2A4A] flex items-center gap-1 hover:underline">
                         {upd.action_label || 'View'} <ExternalLink size={10} />
                       </a>
                     )}
@@ -541,12 +541,12 @@ export default function PlacementEngine() {
           </section>
 
           {/* Quick Stats / Info */}
-          <GlassCard className="bg-gradient-to-br from-[#F97316]/5 to-transparent border-none">
-            <h4 className="text-xs font-black text-[#F97316] uppercase tracking-[0.2em] mb-4">Placement Notice</h4>
-            <p className="text-[11px] text-[#888] leading-relaxed mb-4">
+          <GlassCard className="bg-gradient-to-br from-[#1B2A4A]/5 to-transparent border-none">
+            <h4 className="text-xs font-black text-[#1B2A4A] uppercase tracking-[0.2em] mb-4">Placement Notice</h4>
+            <p className="text-[11px] text-[#888888555] leading-relaxed mb-4">
               All students are required to keep their Profile Intelligence score above 70% to be eligible for priority drives.
             </p>
-            <div className="flex items-center gap-2 text-[10px] font-black text-white/50">
+            <div className="flex items-center gap-2 text-[10px] font-black text-[#1B2A4A]/50">
               <AlertCircle size={12} /> Verify your documents today.
             </div>
           </GlassCard>
@@ -569,17 +569,17 @@ export default function PlacementEngine() {
               className="relative w-full max-w-2xl glass-panel shadow-2xl h-full flex flex-col overflow-hidden"
             >
               {/* Drive Header Banner */}
-              <div className="relative bg-gradient-to-br from-[#F97316]/20 via-transparent to-transparent border-b border-[#F97316]/20">
+              <div className="relative bg-gradient-to-br from-[#1B2A4A]/20 via-transparent to-transparent border-b border-[#1B2A4A]/20">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvc3ZnPg==')] opacity-50" />
                 <div className="relative p-8">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 bg-[#F97316] rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(249,115,22,0.3)]">
-                        <Briefcase size={28} className="text-white" />
+                      <div className="w-16 h-16 bg-[#1B2A4A] rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(27,42,74,0.3)]">
+                        <Briefcase size={28} className="text-[#1B2A4A]" />
                       </div>
                       <div>
-                        <h2 className="text-2xl font-black text-white leading-tight">{selectedDrive.company_name}</h2>
-                        <p className="text-sm text-[#F97316] font-black uppercase tracking-[0.15em] mt-1">{selectedDrive.role}</p>
+                        <h2 className="text-2xl font-black text-[#1B2A4A] leading-tight">{selectedDrive.company_name}</h2>
+                        <p className="text-sm text-[#1B2A4A] font-black uppercase tracking-[0.15em] mt-1">{selectedDrive.role}</p>
                         <div className="flex items-center gap-3 mt-2">
                           <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase ${
                             selectedDrive.status === 'open' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
@@ -592,13 +592,13 @@ export default function PlacementEngine() {
                       {role === 'admin' && (
                         <button 
                           onClick={() => handleDeleteDrive(selectedDrive.id)}
-                          className="p-2.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white transition-all text-xs font-black flex items-center gap-1.5"
+                          className="p-2.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-[#1B2A4A] transition-all text-xs font-black flex items-center gap-1.5"
                           title="Delete Drive"
                         >
                           <Trash2 size={16} /> Delete
                         </button>
                       )}
-                      <button onClick={() => setSelectedDrive(null)} className="p-2.5 bg-white/5 rounded-xl text-[#888] hover:text-white hover:bg-white/10 transition-all">
+                      <button onClick={() => setSelectedDrive(null)} className="p-2.5 bg-[#1B2A4A]/5 rounded-xl text-[#888888555] hover:text-[#1B2A4A] hover:bg-[#1B2A4A]/10 transition-all">
                         <X size={20} />
                       </button>
                     </div>
@@ -609,32 +609,32 @@ export default function PlacementEngine() {
               <div className="p-8 flex-1 overflow-y-auto space-y-10 custom-scrollbar">
                 {/* Drive Metadata */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-white/2 rounded-3xl border border-[#181818]">
-                    <p className="text-[10px] font-black text-[#555] uppercase tracking-widest mb-1">Package / CTC</p>
+                  <div className="p-5 bg-[#1B2A4A]/2 rounded-3xl border border-[#181818]">
+                    <p className="text-[10px] font-black text-[#888888] uppercase tracking-widest mb-1">Package / CTC</p>
                     <p className="text-xl font-black text-green-400">{selectedDrive.ctc || 'Not Disclosed'}</p>
                   </div>
-                  <div className="p-5 bg-white/2 rounded-3xl border border-[#181818]">
-                    <p className="text-[10px] font-black text-[#555] uppercase tracking-widest mb-1">Deadline</p>
+                  <div className="p-5 bg-[#1B2A4A]/2 rounded-3xl border border-[#181818]">
+                    <p className="text-[10px] font-black text-[#888888] uppercase tracking-widest mb-1">Deadline</p>
                     <p className="text-lg font-bold">{new Date(selectedDrive.deadline).toLocaleString()}</p>
                   </div>
                 </div>
 
                 {/* Job Description Area */}
                 <section>
-                  <h3 className="text-xs font-black text-[#F97316] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <h3 className="text-xs font-black text-[#1B2A4A] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                     <FileText size={14} /> Full Job Description
                   </h3>
-                  <div className="p-6 bg-white/2 rounded-3xl border border-[#181818] text-sm text-[#888] leading-relaxed whitespace-pre-wrap">
+                  <div className="p-6 bg-[#1B2A4A]/2 rounded-3xl border border-[#181818] text-sm text-[#888888555] leading-relaxed whitespace-pre-wrap">
                     {selectedDrive.job_description || selectedDrive.description || "No detailed description provided."}
                   </div>
                 </section>
 
                 {/* Eligibility */}
                 <section>
-                  <h3 className="text-xs font-black text-[#F97316] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <h3 className="text-xs font-black text-[#1B2A4A] uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                     <CheckCircle size={14} /> Eligibility Criteria
                   </h3>
-                  <p className="text-sm text-[#888] bg-white/2 p-4 rounded-2xl border border-[#181818]">
+                  <p className="text-sm text-[#888888555] bg-[#1B2A4A]/2 p-4 rounded-2xl border border-[#181818]">
                     {selectedDrive.eligibility_criteria}
                   </p>
                 </section>
@@ -643,7 +643,7 @@ export default function PlacementEngine() {
                 {(isStudent) ? (
                   isApplied(selectedDrive.id) && (
                     <section>
-                      <h3 className="text-xs font-black text-[#F97316] uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                      <h3 className="text-xs font-black text-[#1B2A4A] uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                         <LayoutDashboard size={14} /> Application Tracking
                       </h3>
                       <div className="space-y-4">
@@ -652,7 +652,7 @@ export default function PlacementEngine() {
                             <div className="flex flex-col items-center gap-1">
                               <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-black text-xs ${
                                 r.status === 'Pass' ? 'border-green-500 bg-green-500/10 text-green-400' :
-                                r.status === 'Fail' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-[#222] bg-[#111] text-[#444]'
+                                r.status === 'Fail' ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-[#222] bg-[#FFFFFF] text-[#888888]'
                               }`}>
                                 {i + 1}
                               </div>
@@ -664,12 +664,12 @@ export default function PlacementEngine() {
                               <div className="flex items-center justify-between mb-1">
                                 <h4 className="font-black text-sm">{r.round_name}</h4>
                                 <span className={`text-[10px] font-black uppercase ${
-                                  r.status === 'Pass' ? 'text-green-400' : r.status === 'Fail' ? 'text-red-400' : 'text-[#444]'
+                                  r.status === 'Pass' ? 'text-green-400' : r.status === 'Fail' ? 'text-red-400' : 'text-[#888888]'
                                 }`}>
                                   {r.status}
                                 </span>
                               </div>
-                              <p className="text-xs text-[#555]">Completed evaluation for this stage.</p>
+                              <p className="text-xs text-[#888888]">Completed evaluation for this stage.</p>
                             </div>
                           </div>
                         ))}
@@ -679,44 +679,44 @@ export default function PlacementEngine() {
                 ) : (
                   <section>
                     <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-xs font-black text-[#F97316] uppercase tracking-[0.2em] flex items-center gap-2">
+                      <h3 className="text-xs font-black text-[#1B2A4A] uppercase tracking-[0.2em] flex items-center gap-2">
                         <Users size={14} /> Registered Applicants
                       </h3>
-                      <button className="text-[10px] font-black text-[#F97316] uppercase hover:underline">Export CSV</button>
+                      <button className="text-[10px] font-black text-[#1B2A4A] uppercase hover:underline">Export CSV</button>
                     </div>
 
                     <div className="bg-[#050505] border border-[#181818] rounded-3xl overflow-hidden">
                       <table className="w-full text-left text-xs">
                         <thead>
-                          <tr className="bg-white/2 border-b border-[#181818]">
-                            <th className="p-4 font-black text-[#555] uppercase tracking-widest">Student</th>
-                            <th className="p-4 font-black text-[#555] uppercase tracking-widest">AI Match</th>
-                            <th className="p-4 font-black text-[#555] uppercase tracking-widest">Status</th>
+                          <tr className="bg-[#1B2A4A]/2 border-b border-[#181818]">
+                            <th className="p-4 font-black text-[#888888] uppercase tracking-widest">Student</th>
+                            <th className="p-4 font-black text-[#888888] uppercase tracking-widest">AI Match</th>
+                            <th className="p-4 font-black text-[#888888] uppercase tracking-widest">Status</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#181818]">
                           {drawerLoading ? (
-                            <tr><td colSpan="3" className="p-10 text-center text-[#444]">Syncing data...</td></tr>
+                            <tr><td colSpan="3" className="p-10 text-center text-[#888888]">Syncing data...</td></tr>
                           ) : applicants.length === 0 ? (
-                            <tr><td colSpan="3" className="p-10 text-center text-[#444]">No applicants yet.</td></tr>
+                            <tr><td colSpan="3" className="p-10 text-center text-[#888888]">No applicants yet.</td></tr>
                           ) : applicants.sort((a,b) => (b.ai_match_score||0) - (a.ai_match_score||0)).map(app => (
-                            <tr key={app.id} className="hover:bg-white/1 transition-colors">
+                            <tr key={app.id} className="hover:bg-[#1B2A4A]/1 transition-colors">
                               <td className="p-4">
                                 <p className="font-bold">{app.student_name}</p>
-                                <p className="text-[10px] text-[#444]">Batch {app.student_batch}</p>
+                                <p className="text-[10px] text-[#888888]">Batch {app.student_batch}</p>
                               </td>
                               <td className="p-4">
                                 <div className="flex items-center gap-2">
-                                  <div className="flex-1 h-1.5 bg-[#111] rounded-full overflow-hidden w-16">
-                                    <div className="h-full bg-[#F97316]" style={{ width: `${app.ai_match_score || 0}%` }} />
+                                  <div className="flex-1 h-1.5 bg-[#FFFFFF] rounded-full overflow-hidden w-16">
+                                    <div className="h-full bg-[#1B2A4A]" style={{ width: `${app.ai_match_score || 0}%` }} />
                                   </div>
-                                  <span className="font-black text-[#F97316]">{app.ai_match_score || 0}%</span>
+                                  <span className="font-black text-[#1B2A4A]">{app.ai_match_score || 0}%</span>
                                 </div>
                               </td>
                               <td className="p-4 flex items-center gap-3">
                                 <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
                                   app.status === 'Placed' ? 'bg-green-500/10 text-green-400' :
-                                  app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-orange-500/10 text-orange-400'
+                                  app.status === 'Rejected' ? 'bg-red-500/10 text-red-400' : 'bg-[#1B2A4A]/10 text-[#1B2A4A]'
                                 }`}>
                                   {app.status}
                                 </span>
@@ -739,7 +739,7 @@ export default function PlacementEngine() {
                 <div className="p-8 border-t border-[#181818] bg-[#050505]">
                   <button 
                     onClick={() => handleApply(selectedDrive)}
-                    className="w-full bg-[#F97316] text-white py-4 rounded-2xl font-black shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_35px_rgba(249,115,22,0.5)] transition-all"
+                    className="w-full bg-[#1B2A4A] text-white py-4 rounded-2xl font-black shadow-[0_0_20px_rgba(27,42,74,0.3)] hover:shadow-[0_0_35px_rgba(27,42,74,0.5)] transition-all"
                   >
                     Confirm Application
                   </button>
@@ -757,7 +757,7 @@ export default function PlacementEngine() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowPostDrive(false)} className="absolute inset-0 bg-black/90 backdrop-blur-md" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative glass-panel shadow-card-depth rounded-[2rem] p-10 max-w-2xl w-full">
               <h2 className="text-2xl font-black mb-2">Launch New Drive</h2>
-              <p className="text-[#555] text-sm mb-8">Establish a new institutional placement record.</p>
+              <p className="text-[#888888] text-sm mb-8">Establish a new institutional placement record.</p>
               
               <div className="space-y-4">
                 <input value={form.company_name} onChange={e => setForm({...form, company_name: e.target.value})} placeholder="Company Name" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
@@ -765,10 +765,10 @@ export default function PlacementEngine() {
                 <textarea value={form.job_description} onChange={e => setForm({...form, job_description: e.target.value, description: e.target.value.substring(0, 100) + '...'})} placeholder="Job Description (Detailed for AI Match)" className="w-full glass-search p-4 rounded-2xl text-sm outline-none h-32" />
                 <div className="grid grid-cols-2 gap-4">
                   <input value={form.ctc} onChange={e => setForm({...form, ctc: e.target.value})} placeholder="CTC / Package" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
-                  <input value={form.deadline} onChange={e => setForm({...form, deadline: e.target.value})} type="date" className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#555]" />
+                  <input value={form.deadline} onChange={e => setForm({...form, deadline: e.target.value})} type="date" className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#888888]" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <select value={form.course} onChange={e => setForm({...form, course: e.target.value})} className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#555]">
+                  <select value={form.course} onChange={e => setForm({...form, course: e.target.value})} className="w-full glass-search p-4 rounded-2xl text-sm outline-none text-[#888888]">
                     <option value="ALL">All Courses</option>
                     <option value="MCA">MCA</option>
                     <option value="MSAIM">MSc AI/ML</option>
@@ -776,8 +776,8 @@ export default function PlacementEngine() {
                   <input value={form.eligibility_criteria} onChange={e => setForm({...form, eligibility_criteria: e.target.value})} placeholder="Eligibility (e.g. 7.0 CGPA)" className="w-full glass-search p-4 rounded-2xl text-sm outline-none" />
                 </div>
 
-                <div className="border-t border-white/5 pt-6">
-                  <p className="text-[10px] font-black text-[#F97316] uppercase tracking-[0.2em] mb-4">Required Application Fields</p>
+                <div className="border-t border-[#1B2A4A]/5 pt-6">
+                  <p className="text-[10px] font-black text-[#1B2A4A] uppercase tracking-[0.2em] mb-4">Required Application Fields</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {AVAILABLE_FIELDS.map(field => (
                       <button
@@ -793,8 +793,8 @@ export default function PlacementEngine() {
                         }}
                         className={`px-3 py-2 rounded-xl text-[10px] font-bold border transition-all ${
                           form.application_form_fields?.includes(field.id)
-                            ? 'bg-[#F97316]/20 border-[#F97316] text-[#F97316]'
-                            : 'bg-white/2 border-white/5 text-[#444] hover:border-white/10'
+                            ? 'bg-[#1B2A4A]/20 border-[#1B2A4A] text-[#1B2A4A]'
+                            : 'bg-[#1B2A4A]/2 border-[#1B2A4A]/5 text-[#888888] hover:border-[#1B2A4A]/10'
                         }`}
                       >
                         {field.label}
@@ -802,7 +802,7 @@ export default function PlacementEngine() {
                     ))}
                   </div>
                 </div>
-                <button onClick={handleLaunchDrive} className="w-full bg-[#F97316] text-white py-4 rounded-2xl font-black mt-4 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:scale-[1.02] active:scale-95 transition-all">Establish Drive</button>
+                <button onClick={handleLaunchDrive} className="w-full bg-[#1B2A4A] text-white py-4 rounded-2xl font-black mt-4 shadow-[0_0_20px_rgba(27,42,74,0.3)] hover:scale-[1.02] active:scale-95 transition-all">Establish Drive</button>
               </div>
             </motion.div>
           </div>
@@ -818,9 +818,9 @@ export default function PlacementEngine() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-2xl font-black">Post Placement Update</h2>
-                  <p className="text-[#555] text-sm mt-1">Announcements, tests, or workshops for students.</p>
+                  <p className="text-[#888888] text-sm mt-1">Announcements, tests, or workshops for students.</p>
                 </div>
-                <button onClick={() => setShowPostUpdate(false)} className="p-2 hover:bg-white/5 rounded-full text-[#555] hover:text-white transition-all">
+                <button onClick={() => setShowPostUpdate(false)} className="p-2 hover:bg-[#1B2A4A]/5 rounded-full text-[#888888] hover:text-[#1B2A4A] transition-all">
                   <X size={20} />
                 </button>
               </div>
@@ -844,7 +844,7 @@ export default function PlacementEngine() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-black text-[#555] uppercase tracking-widest mb-2">Type</label>
+                    <label className="block text-[10px] font-black text-[#888888] uppercase tracking-widest mb-2">Type</label>
                     <select
                       value={updateForm.update_type}
                       onChange={e => setUpdateForm({...updateForm, update_type: e.target.value})}
@@ -856,7 +856,7 @@ export default function PlacementEngine() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-[#555] uppercase tracking-widest mb-2">Target Course</label>
+                    <label className="block text-[10px] font-black text-[#888888] uppercase tracking-widest mb-2">Target Course</label>
                     <select
                       value={updateForm.course}
                       onChange={e => setUpdateForm({...updateForm, course: e.target.value})}
@@ -887,7 +887,7 @@ export default function PlacementEngine() {
                 <button
                   type="submit"
                   disabled={updateLoading}
-                  className="w-full bg-gradient-to-r from-[#F97316] to-[#fb923c] text-white py-4 rounded-2xl font-black shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-[#1B2A4A] to-[#1B2A4A] text-[#1B2A4A] py-4 rounded-2xl font-black shadow-[0_0_20px_rgba(27,42,74,0.3)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
                 >
                   {updateLoading ? 'Posting...' : 'Post Update'}
                 </button>
@@ -906,28 +906,28 @@ export default function PlacementEngine() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }} 
               animate={{ scale: 1, opacity: 1, y: 0 }} 
               exit={{ scale: 0.9, opacity: 0, y: 20 }} 
-              className="relative glass-panel shadow-card-depth rounded-[2.5rem] p-8 max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-[#F97316]/10"
+              className="relative glass-panel shadow-card-depth rounded-[2.5rem] p-8 max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl shadow-[#1B2A4A]/10"
             >
               {/* Modal Header */}
               <div className="flex justify-between items-start mb-8">
                 <div>
-                  <h2 className="text-2xl font-black text-white">Apply for {applyingTo.role}</h2>
-                  <p className="text-[#555] text-sm mt-1">{applyingTo.company_name} · Complete the form to establish your candidacy.</p>
+                  <h2 className="text-2xl font-black text-[#1B2A4A]">Apply for {applyingTo.role}</h2>
+                  <p className="text-[#888888] text-sm mt-1">{applyingTo.company_name} · Complete the form to establish your candidacy.</p>
                 </div>
-                <button onClick={() => setShowApplyModal(false)} className="p-2.5 bg-white/5 rounded-2xl text-[#555] hover:text-white transition-all">
+                <button onClick={() => setShowApplyModal(false)} className="p-2.5 bg-[#1B2A4A]/5 rounded-2xl text-[#888888] hover:text-[#1B2A4A] transition-all">
                   <X size={20} />
                 </button>
               </div>
 
               {/* Easy Apply Banner */}
-              <div className="mb-8 p-4 bg-gradient-to-r from-[#F97316]/20 to-transparent border border-[#F97316]/30 rounded-2xl flex items-center justify-between group">
+              <div className="mb-8 p-4 bg-gradient-to-r from-[#1B2A4A]/20 to-transparent border border-[#1B2A4A]/30 rounded-2xl flex items-center justify-between group">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#F97316] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.4)]">
-                    <Zap size={20} className="text-white fill-white" />
+                  <div className="w-10 h-10 bg-[#1B2A4A] rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(27,42,74,0.4)]">
+                    <Zap size={20} className="text-[#1B2A4A] fill-white" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-white">Instant Data Sync</h4>
-                    <p className="text-[11px] text-[#F97316] font-bold uppercase tracking-wider">Use verified profile data</p>
+                    <h4 className="text-sm font-black text-[#1B2A4A]">Instant Data Sync</h4>
+                    <p className="text-[11px] text-[#1B2A4A] font-bold uppercase tracking-wider">Use verified profile data</p>
                   </div>
                 </div>
                 <button 
@@ -947,7 +947,7 @@ export default function PlacementEngine() {
 
                     return (
                       <div key={fieldId} className={['experience', 'projects', 'backlog_history'].includes(fieldId) ? 'md:col-span-2' : ''}>
-                        <label className="block text-[10px] font-black text-[#555] uppercase tracking-widest mb-2 px-1">{field.label}</label>
+                        <label className="block text-[10px] font-black text-[#888888] uppercase tracking-widest mb-2 px-1">{field.label}</label>
                         {fieldId === 'experience' || fieldId === 'backlog_history' ? (
                           <textarea 
                             value={applyForm[fieldId] || ''} 
@@ -982,7 +982,7 @@ export default function PlacementEngine() {
                                   alert("Failed to upload file");
                                 }
                               }}
-                              className="w-full text-sm text-[#888] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#F97316] file:text-white hover:file:bg-[#ea580c] transition-all bg-black/50 border border-[#181818] p-2 rounded-2xl focus:border-[#F97316] outline-none"
+                              className="w-full text-sm text-[#888888555] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#1B2A4A] file:text-white hover:file:bg-[#9ECCFA] transition-all bg-black/50 border border-[#181818] p-2 rounded-2xl focus:border-[#1B2A4A] outline-none"
                             />
                             {applyForm[fieldId] && (
                               <p className="mt-2 text-[10px] text-green-400 font-bold truncate">✓ Ready: {applyForm[fieldId].split('/').pop()}</p>
@@ -1005,7 +1005,7 @@ export default function PlacementEngine() {
                 <div className="pt-6">
                   <button 
                     type="submit"
-                    className="w-full bg-[#F97316] text-white py-4 rounded-2xl font-black shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:shadow-[0_0_50px_rgba(249,115,22,0.5)] transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-[#1B2A4A] text-white py-4 rounded-2xl font-black shadow-[0_0_30px_rgba(27,42,74,0.3)] hover:shadow-[0_0_50px_rgba(27,42,74,0.5)] transition-all flex items-center justify-center gap-2"
                   >
                     Submit Application <ArrowRight size={18} />
                   </button>

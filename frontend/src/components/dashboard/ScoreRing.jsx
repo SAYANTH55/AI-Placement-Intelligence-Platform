@@ -9,13 +9,13 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
     let label = 'Strong';
     let labelColor = '#16A34A';
     if (cappedScore < 50) { color = '#EF4444'; label = 'Needs Work'; labelColor = '#DC2626'; }
-    else if (cappedScore < 75) { color = '#F97316'; label = 'Good'; labelColor = '#EA580C'; }
+    else if (cappedScore < 75) { color = '#1B2A4A'; label = 'Good'; labelColor = '#1B2A4A'; }
 
     // Uncertainty styling
     const uncertaintyColors = {
-        'low': '#4ade80',
-        'medium': '#fbbf24',
-        'high': '#f87171'
+        'low': '#27500A',
+        'medium': '#854F0B',
+        'high': '#791F1F'
     };
 
     return (
@@ -28,7 +28,7 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
                         cy={size / 2}
                         r={radius}
                         fill="none"
-                        stroke="#1E1E1E"
+                        stroke="#C9C2AF"
                         strokeWidth={strokeWidth}
                     />
                     {/* Progress */}
@@ -50,7 +50,7 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-2">
                     <span 
-                        className="font-black text-white leading-none" 
+                        className="font-black text-[#1B2A4A] leading-none" 
                         style={{ fontSize: Math.max(size * 0.28, 14) }}
                     >
                         {cappedScore}
@@ -68,15 +68,15 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
                 <span className="text-xs font-black uppercase tracking-tighter" style={{ color: labelColor }}>{label}</span>
                 
                 {/* Honesty Metrics */}
-                <div className="flex items-center gap-2 mt-1 px-2 py-1 bg-black/40 rounded-full border border-white/5">
+                <div className="flex items-center gap-2 mt-1 px-3 py-1 bg-[#F4EFE4] rounded-full border border-[#C9C2AF]">
                     <div className="flex items-center gap-1">
-                        <span className="text-[9px] text-gray-500 font-bold uppercase">Confidence:</span>
-                        <span className="text-[9px] text-white font-black">{Math.round(confidence * 100)}%</span>
+                        <span className="text-[13px] text-[#6B6B63] font-bold uppercase">Confidence:</span>
+                        <span className="text-[13px] text-[#1B2A4A] font-black">{Math.round(confidence * 100)}%</span>
                     </div>
-                    <div className="w-[1px] h-2 bg-gray-700"></div>
+                    <div className="w-[1px] h-3 bg-[#C9C2AF]"></div>
                     <div className="flex items-center gap-1">
-                        <span className="text-[9px] text-gray-500 font-bold uppercase">Uncertainty:</span>
-                        <span className="text-[9px] font-black uppercase" style={{ color: uncertaintyColors[uncertainty] }}>{uncertainty}</span>
+                        <span className="text-[13px] text-[#6B6B63] font-bold uppercase">Uncertainty:</span>
+                        <span className="text-[13px] font-black uppercase" style={{ color: uncertaintyColors[uncertainty] }}>{uncertainty}</span>
                     </div>
                 </div>
             </div>

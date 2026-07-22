@@ -18,13 +18,13 @@ export default class ErrorBoundary extends React.Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div style={{ color: '#F87171', padding: '40px', background: '#0A0A0A', height: '100vh', width: '100vw', overflow: 'auto', fontFamily: 'monospace' }}>
+                <div style={{ color: '#F87171', padding: '40px', background: '#FFFFFF', height: '100vh', width: '100vw', overflow: 'auto', fontFamily: 'monospace' }}>
                     <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>UI Crash Detected</h1>
-                    <div style={{ padding: '20px', background: '#1A1A1A', borderRadius: '12px', border: '1px solid #333' }}>
+                    <div style={{ padding: '20px', background: '#C9C2AF', borderRadius: '12px', border: '1px solid #333' }}>
                         <p style={{ fontWeight: 'bold', fontSize: '18px', marginBottom: '10px' }}>{this.state.error?.message}</p>
-                        <pre style={{ whiteSpace: 'pre-wrap', color: '#888', fontSize: '12px' }}>{this.state.error?.stack}</pre>
+                        <pre style={{ whiteSpace: 'pre-wrap', color: '#888888555', fontSize: '12px' }}>{this.state.error?.stack}</pre>
                         <hr style={{ borderColor: '#333', margin: '20px 0' }} />
-                        <pre style={{ whiteSpace: 'pre-wrap', color: '#F97316', fontSize: '12px' }}>{this.state.info?.componentStack}</pre>
+                        <pre style={{ whiteSpace: 'pre-wrap', color: '#1B2A4A', fontSize: '12px' }}>{this.state.info?.componentStack}</pre>
                     </div>
                 </div>
             );

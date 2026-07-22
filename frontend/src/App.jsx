@@ -35,7 +35,7 @@ function AppContent() {
 
   return (
     <div
-      className={`relative bg-[#060606] flex flex-col ${isDashboard || isAdmin ? 'h-screen overflow-hidden' : 'min-h-screen'}`}
+      className={`relative bg-[#F4EFE4] flex flex-col ${isDashboard || isAdmin ? 'h-screen overflow-hidden' : 'min-h-screen'}`}
       style={{ fontFamily: 'Inter, sans-serif' }}
     >
       <EdgeGlow />

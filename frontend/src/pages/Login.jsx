@@ -58,16 +58,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060606] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-[#F4EFE4] flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
       {/* Grid background */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(249,115,22,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(27,42,74,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(27,42,74,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[#F97316]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[#1B2A4A]/5 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Back button */}
       <button
         onClick={() => navigate('/')}
-        className="absolute top-6 left-6 flex items-center gap-2 text-sm text-[#555] hover:text-white transition-colors z-10"
+        className="absolute top-6 left-6 flex items-center gap-2 text-sm text-[#888888] hover:text-[#1B2A4A] transition-colors z-10"
       >
         <ArrowLeft size={16} />
         Back to Home
@@ -83,18 +83,18 @@ export default function Login() {
         initial={{ opacity: 0, y: 30, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md bg-[#0A0A0A] rounded-[2rem] border border-[#1E1E1E] shadow-[0_40px_80px_rgba(0,0,0,0.5)] p-8 relative z-10 overflow-hidden"
+        className="w-full max-w-md bg-[#FFFFFF] rounded-[2rem] border border-[#C9C2AF] shadow-[0_40px_80px_rgba(0,0,0,0.5)] p-8 relative z-10 overflow-hidden"
       >
         {/* Top neon line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#F97316] to-transparent opacity-70" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#1B2A4A] to-transparent opacity-70" />
 
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-[#F97316]/10 border border-[#F97316]/30 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#F97316] shadow-[0_0_20px_rgba(249,115,22,0.2)]">
+          <div className="w-14 h-14 bg-[#1B2A4A]/10 border border-[#1B2A4A]/30 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#1B2A4A] shadow-[0_0_20px_rgba(27,42,74,0.2)]">
             <Lock size={26} />
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">Welcome Back</h1>
-          <p className="text-[#555] text-sm mt-1">Sign in to your Career Intelligence Portal</p>
+          <h1 className="text-2xl font-black text-[#1B2A4A] tracking-tight">Welcome Back</h1>
+          <p className="text-[#888888] text-sm mt-1">Sign in to your Career Intelligence Portal</p>
         </div>
 
         <form className="space-y-4" onSubmit={handleLogin}>
@@ -108,9 +108,9 @@ export default function Login() {
 
           {/* Email */}
           <div>
-            <label className="block text-xs font-bold text-[#555] uppercase tracking-widest mb-2">Email Address</label>
+            <label className="block text-xs font-bold text-[#888888] uppercase tracking-widest mb-2">Email Address</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#444]">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#888888]">
                 <Mail size={16} />
               </div>
               <input
@@ -120,16 +120,16 @@ export default function Login() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 autoComplete="off"
-                className="w-full bg-[#0F0F0F] border border-[#1E1E1E] text-white placeholder:text-[#444] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#F97316]/50 focus:bg-[#111] transition-all text-sm font-medium"
+                className="w-full bg-[#0F0F0F] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
               />
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-xs font-bold text-[#555] uppercase tracking-widest mb-2">Password</label>
+            <label className="block text-xs font-bold text-[#888888] uppercase tracking-widest mb-2">Password</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#444]">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#888888]">
                 <Lock size={16} />
               </div>
               <input
@@ -139,21 +139,21 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 autoComplete="new-password"
-                className="w-full bg-[#0F0F0F] border border-[#1E1E1E] text-white placeholder:text-[#444] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#F97316]/50 focus:bg-[#111] transition-all text-sm font-medium"
+                className="w-full bg-[#0F0F0F] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
               />
             </div>
           </div>
 
           {/* Remember + forgot */}
           <div className="flex items-center justify-between pt-1">
-            <label className="flex items-center gap-2 text-sm text-[#555] cursor-pointer">
-              <input type="checkbox" className="rounded border-[#333] bg-[#111] text-[#F97316] focus:ring-[#F97316]" />
+            <label className="flex items-center gap-2 text-sm text-[#888888] cursor-pointer">
+              <input type="checkbox" className="rounded border-[#333] bg-[#FFFFFF] text-[#1B2A4A] focus:ring-[#1B2A4A]" />
               Remember me
             </label>
             <button
               type="button"
               onClick={() => navigate('/forgot-password')}
-              className="text-sm text-[#F97316] font-semibold hover:underline"
+              className="text-sm text-[#1B2A4A] font-semibold hover:underline"
             >
               Forgot password?
             </button>
@@ -161,11 +161,11 @@ export default function Login() {
 
           {/* Submit */}
           <motion.button
-            whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(249,115,22,0.4)' }}
+            whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(27,42,74,0.4)' }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center items-center gap-2 bg-[#F97316] text-white py-4 rounded-xl font-black text-sm hover:bg-orange-500 transition-colors duration-200 shadow-[0_0_20px_rgba(249,115,22,0.2)] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+            className="w-full flex justify-center items-center gap-2 bg-[#1B2A4A] text-white py-4 rounded-xl font-black text-sm hover:bg-[#1B2A4A] transition-colors duration-200 shadow-[0_0_20px_rgba(27,42,74,0.2)] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
           >
             {loading ? <Loader2 className="animate-spin" size={18} /> : <Zap size={16} className="fill-white" />}
             {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
@@ -173,9 +173,9 @@ export default function Login() {
         </form>
 
         {/* Demo credentials */}
-        <div className="mt-5 bg-[#0F0F0F] border border-[#1E1E1E] rounded-xl p-4">
-          <p className="text-xs font-bold text-[#F97316] uppercase tracking-wider mb-1.5">Demo Access Credentials</p>
-          <div className="text-xs text-[#888] font-mono bg-[#0A0A0A] p-2 rounded-lg border border-[#1A1A1A] space-y-1">
+        <div className="mt-5 bg-[#0F0F0F] border border-[#C9C2AF] rounded-xl p-4">
+          <p className="text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-1.5">Demo Access Credentials</p>
+          <div className="text-xs text-[#888888555] font-mono bg-[#FFFFFF] p-2 rounded-lg border border-[#C9C2AF] space-y-1">
             <div className="flex justify-between">
               <span>{DEMO_EMAIL}</span> <span className="text-[#333]">|</span> <span>{DEMO_PASSWORD}</span>
             </div>
@@ -189,12 +189,12 @@ export default function Login() {
         </div>
 
         {/* Register Link */}
-        <p className="mt-6 text-center text-sm font-medium text-[#555]">
+        <p className="mt-6 text-center text-sm font-medium text-[#888888]">
           Don't have an account?{' '}
           <button
             type="button"
             onClick={() => navigate('/register')}
-            className="text-[#F97316] font-bold hover:underline underline-offset-4"
+            className="text-[#1B2A4A] font-bold hover:underline underline-offset-4"
           >
             Create one now
           </button>

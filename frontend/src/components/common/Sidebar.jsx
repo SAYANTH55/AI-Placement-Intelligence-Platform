@@ -2,7 +2,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../context/AppContext';
 import {
   LayoutDashboard, FileText, Target, Activity, Briefcase,
-  Zap, Sparkles, ChevronDown, BarChart2, User, BookOpen
+  Zap, Sparkles, ChevronDown, BarChart2, User, BookOpen, CheckCircle
 } from 'lucide-react';
 import Logo from '../Logo';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,7 +24,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const profileRoutes = ['/dashboard/profile', '/dashboard/analysis', '/dashboard/skills', '/dashboard/score', '/dashboard/recommendations'];
+  const profileRoutes = ['/dashboard/profile', '/dashboard/analysis', '/dashboard/ats-checker', '/dashboard/skills', '/dashboard/score', '/dashboard/recommendations'];
   const isProfileActive = profileRoutes.some(route => location.pathname === route);
 
   const mainItems = [
@@ -32,33 +32,34 @@ export default function Sidebar() {
       name: 'Dashboard Hub',
       path: '/dashboard',
       icon: LayoutDashboard,
-      color: '#888',
+      color: '#888888555',
       exact: true,
     },
     {
       name: 'Profile Intelligence',
       path: '/dashboard/profile',
       icon: Target,
-      color: '#F97316',
+      color: '#1B2A4A',
       isEngine: true,
       isActive: isProfileActive,
     },
     { name: 'Preparation Engine', path: '/dashboard/preparation', icon: BookOpen,      color: '#34D399' },
     { name: 'Practice Engine',    path: '/dashboard/practice',    icon: Sparkles,      color: '#818CF8' },
     { name: 'Tracking Engine',    path: '/dashboard/tracking',    icon: BarChart2,     color: '#F59E0B' },
-    { name: 'Placement Engine',   path: '/dashboard/placement',   icon: Briefcase,     color: '#F97316' },
+    { name: 'Placement Engine',   path: '/dashboard/placement',   icon: Briefcase,     color: '#1B2A4A' },
   ];
 
   if (user?.role === 'student') {
-    mainItems.push({ name: 'My Profile', path: '/dashboard/my-profile', icon: User, color: '#888' });
+    mainItems.push({ name: 'My Profile', path: '/dashboard/my-profile', icon: User, color: '#888888555' });
   }
 
   const profileSubItems = [
-    { name: 'Overview',         path: '/dashboard/profile',          icon: Activity,  color: '#F97316' },
-    { name: 'Resume Analysis',  path: '/dashboard/analysis',         icon: FileText,  color: '#888' },
-    { name: 'Skill Gap',        path: '/dashboard/skills',           icon: Target,    color: '#888' },
-    { name: 'Score',            path: '/dashboard/score',            icon: Activity,  color: '#888' },
-    { name: 'Recommendations',  path: '/dashboard/recommendations',  icon: Zap,       color: '#888' },
+    { name: 'Overview',         path: '/dashboard/profile',          icon: Activity,  color: '#1B2A4A' },
+    { name: 'Resume Analysis',  path: '/dashboard/analysis',         icon: FileText,  color: '#888888555' },
+    { name: 'ATS Checker',      path: '/dashboard/ats-checker',      icon: CheckCircle,color: '#888888555' },
+    { name: 'Skill Gap',        path: '/dashboard/skills',           icon: Target,    color: '#888888555' },
+    { name: 'Score',            path: '/dashboard/score',            icon: Activity,  color: '#888888555' },
+    { name: 'Recommendations',  path: '/dashboard/recommendations',  icon: Zap,       color: '#888888555' },
   ];
 
   const handleLogout = () => {
@@ -82,7 +83,7 @@ export default function Sidebar() {
       {/* Nav */}
       <div className="flex-1 py-5 px-3 relative z-10 overflow-y-auto">
         {/* Section label */}
-        <p className="text-[10px] font-black uppercase tracking-[0.25em] mb-3 px-3" style={{ color: '#333' }}>
+        <p className="text-[10px] font-black uppercase tracking-[0.25em] mb-3 px-3 text-[#6B6B63]">
           System Modules
         </p>
 
@@ -111,10 +112,10 @@ export default function Sidebar() {
                       >
                         <div className="flex items-center gap-3">
                           {/* Rounded-square icon container — matches reference exactly */}
-                          <EngineIcon icon={item.icon} color={active ? item.color : '#333'} />
+                          <EngineIcon icon={item.icon} color={active ? item.color : '#6B6B63'} />
                           <span
-                            className="text-sm font-semibold transition-colors duration-150"
-                            style={{ color: active ? '#ffffff' : '#555' }}
+                            className="text-sm font-bold transition-colors duration-150"
+                            style={{ color: active ? '#1B2A4A' : '#6B6B63' }}
                           >
                             {item.name}
                           </span>
@@ -124,7 +125,7 @@ export default function Sidebar() {
                           <ChevronDown
                             size={13}
                             style={{
-                              color: active ? item.color : '#333',
+                              color: active ? item.color : '#6B6B63',
                               transform: item.isActive ? 'rotate(180deg)' : 'rotate(0deg)',
                               transition: 'transform 0.3s',
                             }}
@@ -156,7 +157,7 @@ export default function Sidebar() {
                       transition={{ duration: 0.25, ease: 'circOut' }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-1 ml-5 pl-4 py-1 space-y-0.5" style={{ borderLeft: '1px solid #1e1e1e' }}>
+                      <div className="mt-1 ml-5 pl-4 py-1 space-y-0.5" style={{ borderLeft: '1px solid #C9C2AF' }}>
                         {profileSubItems.map((sub) => (
                           <NavLink
                             key={sub.name}
@@ -164,14 +165,14 @@ export default function Sidebar() {
                             className={({ isActive }) =>
                               `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150 ${
                                 isActive
-                                  ? 'text-[#F97316] bg-[#F97316]/8'
-                                  : 'text-[#444] hover:text-[#888]'
+                                  ? 'text-[#1B2A4A] bg-[#1B2A4A]/10 font-bold'
+                                  : 'text-[#6B6B63] hover:text-[#1B2A4A]'
                               }`
                             }
                           >
                             {({ isActive }) => (
                               <>
-                                <sub.icon size={12} style={{ color: isActive ? '#F97316' : '#333', flexShrink: 0 }} />
+                                <sub.icon size={12} style={{ color: isActive ? '#1B2A4A' : '#6B6B63', flexShrink: 0 }} />
                                 {sub.name}
                               </>
                             )}
@@ -187,27 +188,6 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* AI Advisor card at bottom — matches reference orange CTA */}
-      <div className="px-3 pb-4 flex-shrink-0 relative z-10">
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="relative overflow-hidden rounded-2xl p-4 cursor-default"
-          style={{ background: 'linear-gradient(135deg, #F97316 0%, #FF8C3A 100%)' }}
-        >
-          {/* Shimmer sweep */}
-          <motion.div
-            className="absolute inset-0 skew-x-12"
-            style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }}
-            animate={{ left: ['-100%', '200%'] }}
-            transition={{ repeat: Infinity, duration: 3, ease: 'linear', repeatDelay: 2 }}
-          />
-          <Zap size={16} className="text-white mb-2 relative z-10" />
-          <h4 className="font-black text-sm text-white mb-0.5 relative z-10">AI Advisor</h4>
-          <p className="text-xs relative z-10" style={{ color: 'rgba(255,255,255,0.75)' }}>
-            Your career intelligence is live.
-          </p>
-        </motion.div>
-      </div>
     </motion.aside>
   );
 }

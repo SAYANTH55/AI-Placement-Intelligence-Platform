@@ -51,7 +51,7 @@ export default function ForgotPassword() {
       <div className="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-lg p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-orange-500">
+          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#1B2A4A]">
             <Mail size={26} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Forgot Password?</h1>
@@ -87,7 +87,7 @@ export default function ForgotPassword() {
                   value={identifier}
                   onChange={e => setIdentifier(e.target.value)}
                   placeholder="name@email.com or 9876543210"
-                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-orange-400 focus:bg-white transition-all text-sm font-medium"
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A] focus:bg-white transition-all text-sm font-medium"
                 />
               </div>
               <p className="text-xs text-gray-400 mt-1.5 ml-1">
@@ -100,7 +100,7 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={loading || !identifier}
-              className="w-full flex justify-center items-center gap-2 bg-[#F97316] text-white py-4 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex justify-center items-center gap-2 bg-[#1B2A4A] text-white py-4 rounded-xl font-bold text-sm hover:bg-[#9ECCFA] transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : null}
               {loading ? 'Sending Code...' : 'Send Security Code'}

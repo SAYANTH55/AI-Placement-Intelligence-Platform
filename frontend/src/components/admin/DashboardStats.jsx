@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 // Circular icon button used in top right of cards
 const CardAction = () => (
-    <div className="w-10 h-10 rounded-full bg-white/[0.04] border border-white/5 flex items-center justify-center hover:bg-white/[0.1] transition-colors cursor-pointer text-secondary-muted hover:text-white">
+    <div className="w-10 h-10 rounded-full bg-[#1B2A4A]/[0.04] border border-[#1B2A4A]/5 flex items-center justify-center hover:bg-[#1B2A4A]/[0.1] transition-colors cursor-pointer text-secondary-muted hover:text-[#1B2A4A]">
         <ArrowUpRight size={18} />
     </div>
 );
@@ -23,7 +23,7 @@ const ThickBarChart = ({ data, labels }) => {
                 <div key={i} className="flex flex-col items-center gap-4 group w-12">
                     <div className="w-full relative h-[100px] flex items-end">
                         {/* Background Track */}
-                        <div className="absolute inset-0 bg-white/[0.02] rounded-xl border border-white/5" />
+                        <div className="absolute inset-0 bg-[#1B2A4A]/[0.02] rounded-xl border border-[#1B2A4A]/5" />
                         {/* Fill */}
                         <motion.div
                             initial={{ height: 0 }}
@@ -32,11 +32,11 @@ const ThickBarChart = ({ data, labels }) => {
                             className={`w-full rounded-xl relative z-10 flex items-start justify-center pt-2 ${
                                 i === activeIndex 
                                 ? 'bg-neon-gradient shadow-neon-glow' 
-                                : 'bg-white/[0.05] group-hover:bg-white/[0.1]'
+                                : 'bg-[#1B2A4A]/[0.05] group-hover:bg-[#1B2A4A]/[0.1]'
                             }`}
                         >
                             {i === activeIndex && (
-                                <span className="text-white text-xs font-bold">{val}</span>
+                                <span className="text-[#1B2A4A] text-xs font-bold">{val}</span>
                             )}
                         </motion.div>
                     </div>
@@ -96,8 +96,8 @@ const SegmentedGauge = ({ growth }) => {
                 </svg>
             </div>
             
-            <div className="border border-white/10 rounded-full px-5 py-2.5 bg-white/[0.02]">
-                <p className="text-[11px] text-white font-medium">
+            <div className="border border-[#1B2A4A]/10 rounded-full px-5 py-2.5 bg-[#1B2A4A]/[0.02]">
+                <p className="text-[11px] text-[#1B2A4A] font-medium">
                     Placement rate has increased by <span className="font-bold">{growth}%</span>
                 </p>
             </div>
@@ -156,7 +156,7 @@ export default function DashboardStats() {
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
                     <div className="flex justify-between items-start mb-10">
                         <div>
-                            <h2 className="text-[56px] font-normal leading-none text-white tracking-tight mb-2">
+                            <h2 className="text-[56px] font-normal leading-none text-[#1B2A4A] tracking-tight mb-2">
                                 {totalStudents.toLocaleString()}
                             </h2>
                             <p className="text-[13px] text-secondary-muted font-medium">Total Registered Students</p>
@@ -165,14 +165,14 @@ export default function DashboardStats() {
                     </div>
                     
                     {/* Massive Progress Bar */}
-                    <div className="relative h-10 bg-white/[0.03] rounded-full overflow-hidden flex items-center border border-white/5 p-1 mb-4">
+                    <div className="relative h-10 bg-[#1B2A4A]/[0.03] rounded-full overflow-hidden flex items-center border border-[#1B2A4A]/5 p-1 mb-4">
                         <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: `${placementRate}%` }}
                             transition={{ duration: 1.5, ease: 'easeOut' }}
                             className="h-full bg-neon-gradient rounded-full shadow-neon-glow flex items-center justify-end pr-3"
                         >
-                            <div className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center text-white">
+                            <div className="w-6 h-6 rounded-full bg-black/20 flex items-center justify-center text-[#1B2A4A]">
                                 <ArrowUpRight size={14} />
                             </div>
                         </motion.div>
@@ -188,7 +188,7 @@ export default function DashboardStats() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h3 className="text-2xl font-medium text-white mb-1">Monthly Apps</h3>
+                                <h3 className="text-2xl font-medium text-[#1B2A4A] mb-1">Monthly Apps</h3>
                                 <p className="text-[11px] text-secondary-muted">Statistics by Month</p>
                             </div>
                             <CardAction />
@@ -203,7 +203,7 @@ export default function DashboardStats() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <h3 className="text-2xl font-medium text-white mb-1">{placementRate}%</h3>
+                                <h3 className="text-2xl font-medium text-[#1B2A4A] mb-1">{placementRate}%</h3>
                                 <p className="text-[11px] text-secondary-muted">Placement Ratio</p>
                             </div>
                             <CardAction />
@@ -218,7 +218,7 @@ export default function DashboardStats() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
                         <div className="flex justify-between items-start mb-8">
                             <div>
-                                <h3 className="text-2xl font-medium text-white mb-1">Batch Stats</h3>
+                                <h3 className="text-2xl font-medium text-[#1B2A4A] mb-1">Batch Stats</h3>
                                 <p className="text-[11px] text-secondary-muted">Performance by year</p>
                             </div>
                             <CardAction />
@@ -227,12 +227,12 @@ export default function DashboardStats() {
                             {batchStats.length > 0 ? batchStats.map((item, i) => (
                                 <div key={i} className="flex justify-between items-center py-2 border-b border-white/[0.03] last:border-0">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-white/[0.03] flex items-center justify-center text-white/50">
+                                        <div className="w-8 h-8 rounded-full bg-[#1B2A4A]/[0.03] flex items-center justify-center text-[#1B2A4A]/50">
                                             <Users size={14} />
                                         </div>
                                         <span className="text-[13px] text-secondary-muted font-medium">{item.name}</span>
                                     </div>
-                                    <span className="text-lg text-white font-medium">{item.val}</span>
+                                    <span className="text-lg text-[#1B2A4A] font-medium">{item.val}</span>
                                 </div>
                             )) : (
                                 <p className="text-xs text-tertiary-muted italic">No batch data available</p>
@@ -243,7 +243,7 @@ export default function DashboardStats() {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="flex-1 glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03]">
                         <div className="flex justify-between items-start mb-8">
                             <div>
-                                <h3 className="text-2xl font-medium text-white mb-1">Recent Activity</h3>
+                                <h3 className="text-2xl font-medium text-[#1B2A4A] mb-1">Recent Activity</h3>
                                 <p className="text-[11px] text-secondary-muted">Latest system events</p>
                             </div>
                             <CardAction />
@@ -252,12 +252,12 @@ export default function DashboardStats() {
                             {recentActivity.length > 0 ? recentActivity.map((item, i) => (
                                 <div key={i} className="flex justify-between items-center py-2 border-b border-white/[0.03] last:border-0">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-white/[0.03] flex items-center justify-center text-white/50">
+                                        <div className="w-8 h-8 rounded-full bg-[#1B2A4A]/[0.03] flex items-center justify-center text-[#1B2A4A]/50">
                                             {item.type === 'drive' ? <Briefcase size={14} /> : <Bell size={14} />}
                                         </div>
                                         <span className="text-[13px] text-secondary-muted font-medium">{item.name}</span>
                                     </div>
-                                    <span className="text-sm text-white font-medium">{item.val}</span>
+                                    <span className="text-sm text-[#1B2A4A] font-medium">{item.val}</span>
                                 </div>
                             )) : (
                                 <p className="text-xs text-tertiary-muted italic">No recent activity</p>
@@ -274,7 +274,7 @@ export default function DashboardStats() {
                 {/* Top 2x2 Grid Panel */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="glass-panel p-8 rounded-[32px] shadow-card-depth border border-white/[0.03] flex-1">
                     <div className="flex justify-between items-start mb-10">
-                        <h2 className="text-3xl font-medium text-white leading-tight pr-10">
+                        <h2 className="text-3xl font-medium text-[#1B2A4A] leading-tight pr-10">
                             Key Platform<br />Metrics
                         </h2>
                         <CardAction />
@@ -287,9 +287,9 @@ export default function DashboardStats() {
                             { label: 'Selection Rate', val: `${selectionRate}%` },
                             { label: 'Placed Students', val: placedStudents }
                         ].map((stat, i) => (
-                            <div key={i} className="bg-white/[0.02] border border-white/[0.03] rounded-2xl p-6 hover:bg-white/[0.04] transition-colors">
+                            <div key={i} className="bg-[#1B2A4A]/[0.02] border border-white/[0.03] rounded-2xl p-6 hover:bg-[#1B2A4A]/[0.04] transition-colors">
                                 <p className="text-[11px] text-secondary-muted mb-3">{stat.label}</p>
-                                <p className="text-[28px] text-white font-medium">{stat.val}</p>
+                                <p className="text-[28px] text-[#1B2A4A] font-medium">{stat.val}</p>
                             </div>
                         ))}
                     </div>
@@ -311,7 +311,7 @@ export default function DashboardStats() {
                         </svg>
                     </div>
 
-                    <h2 className="text-[32px] font-medium text-white leading-[1.1] relative z-10 w-4/5">
+                    <h2 className="text-[32px] font-medium text-[#1B2A4A] leading-[1.1] relative z-10 w-4/5">
                         Analyze Placement<br />Intelligence instantly
                     </h2>
                 </motion.div>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
 
-const StatCard = ({ label, value, color = 'text-white', suffix = '' }) => (
-    <div className="bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-6 shadow-[0_0_20px_rgba(249,115,22,0.03)] flex flex-col justify-center">
-        <p className="text-xs uppercase tracking-widest text-[#555] font-bold mb-2">{label}</p>
+const StatCard = ({ label, value, color = 'text-[#1B2A4A]', suffix = '' }) => (
+    <div className="bg-[#08080A] border border-[#181818] rounded-[1.5rem] p-6 shadow-[0_0_20px_rgba(27,42,74,0.03)] flex flex-col justify-center">
+        <p className="text-xs uppercase tracking-widest text-[#888888] font-bold mb-2">{label}</p>
         <p className={`text-3xl font-black ${color}`}>
             {value ?? <span className="text-[#333]">—</span>}{suffix}
         </p>
@@ -36,13 +36,13 @@ const AdminPlacementDashboard = () => {
     }, []);
 
     return (
-        <div className="p-8 bg-[#060606] min-h-screen text-white w-full">
-            <h1 className="text-[#F97316] mb-2 text-3xl font-black tracking-tight">Placement Admin Dashboard</h1>
-            <p className="text-[#555] text-sm mb-8">Platform-wide placement analytics and management.</p>
+        <div className="p-8 bg-[#F4EFE4] min-h-screen text-[#1B2A4A] w-full">
+            <h1 className="text-[#1B2A4A] mb-2 text-3xl font-black tracking-tight">Placement Admin Dashboard</h1>
+            <p className="text-[#888888] text-sm mb-8">Platform-wide placement analytics and management.</p>
 
             {loading && (
                 <div className="flex items-center justify-center py-20">
-                    <div className="w-8 h-8 border-2 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-[#1B2A4A] border-t-transparent rounded-full animate-spin" />
                 </div>
             )}
 
@@ -59,7 +59,7 @@ const AdminPlacementDashboard = () => {
                         <StatCard
                             label="Total Students"
                             value={stats?.total_students}
-                            color="text-white"
+                            color="text-[#1B2A4A]"
                         />
                         <StatCard
                             label="Placed Students"
@@ -79,12 +79,12 @@ const AdminPlacementDashboard = () => {
                         <StatCard
                             label="Avg Apps / Drive"
                             value={driveStats?.applications_per_drive}
-                            color="text-[#F97316]"
+                            color="text-[#1B2A4A]"
                         />
                         <StatCard
                             label="Selection Rate"
                             value={driveStats?.selection_rate}
-                            color="text-[#F97316]"
+                            color="text-[#1B2A4A]"
                             suffix="%"
                         />
                         <StatCard
@@ -103,22 +103,22 @@ const AdminPlacementDashboard = () => {
                     {/* Management Sections */}
                     <div className="space-y-6 w-full max-w-6xl">
                         <section className="p-6 bg-[#08080A] border border-[#181818] rounded-[1.5rem]">
-                            <h3 className="text-lg text-white font-black">PR Management</h3>
-                            <p className="text-sm text-[#555] mt-2">
+                            <h3 className="text-lg text-[#1B2A4A] font-black">PR Management</h3>
+                            <p className="text-sm text-[#888888] mt-2">
                                 Manage Placement Representatives and assign student batches.
                             </p>
                         </section>
 
                         <section className="p-6 bg-[#08080A] border border-[#181818] rounded-[1.5rem]">
-                            <h3 className="text-lg text-white font-black">Drive Management</h3>
-                            <p className="text-sm text-[#555] mt-2">
+                            <h3 className="text-lg text-[#1B2A4A] font-black">Drive Management</h3>
+                            <p className="text-sm text-[#888888] mt-2">
                                 Create and configure upcoming placement drives and their designated rounds.
                             </p>
                         </section>
 
                         <section className="p-6 bg-[#08080A] border border-[#181818] rounded-[1.5rem]">
-                            <h3 className="text-lg text-white font-black">Application &amp; Round Overview</h3>
-                            <p className="text-sm text-[#555] mt-2">
+                            <h3 className="text-lg text-[#1B2A4A] font-black">Application &amp; Round Overview</h3>
+                            <p className="text-sm text-[#888888] mt-2">
                                 Check drive applications globally and view round progress statistics.
                             </p>
                         </section>

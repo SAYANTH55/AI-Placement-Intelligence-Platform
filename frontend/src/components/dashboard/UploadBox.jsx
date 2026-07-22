@@ -101,6 +101,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
         allDetected: raw.skills,
         extractedText: raw.extractedText,
         prediction: raw.prediction,
+        raw_profile: raw.student_profile, // Added so ATS Analyzer can read structure
         // Map the real role matches from the backend (includes present & missing skills)
         jobRoles: raw.roleMatches.map(m => ({
           title: m.role,
@@ -122,7 +123,10 @@ export default function UploadBox({ onAnalyzeComplete }) {
         
         // Engine Data (v3.0.0)
         preparation_plan: raw.preparation_plan || null,
-        practice_set: raw.practice_set || null
+        practice_set: raw.practice_set || null,
+
+        // Candidate Intelligence Layer (v4.0.0)
+        executive_intelligence: raw.executive_intelligence || null,
       };
 
       console.log('✅ Analysis complete:', formattedResult);
@@ -167,17 +171,17 @@ export default function UploadBox({ onAnalyzeComplete }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="relative rounded-[1.5rem] p-8 overflow-hidden"
-      style={{ background: '#111', border: '1px solid #1c1c1c', boxShadow: '0 4px 24px rgba(0,0,0,0.6)' }}
+      style={{ background: '#FFFFFF', border: '1px solid #E4DED0', boxShadow: '0 4px 24px rgba(27,42,74,0.08)' }}
     >
       {/* Top neon accent */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1B2A4A]/40 to-transparent" />
 
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-1 h-5 rounded-full bg-[#F97316] shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
-          <h3 className="text-lg font-black text-white">Resume Intelligence</h3>
+          <div className="w-1 h-5 rounded-full bg-[#1B2A4A] shadow-[0_0_8px_rgba(27,42,74,0.8)]" />
+          <h3 className="text-lg font-black text-[#1B2A4A]">Resume Intelligence</h3>
         </div>
-        <p className="text-[#555] text-sm ml-3">Upload your resume to extract skills, map gaps, and predict placement readiness.</p>
+        <p className="text-[#6B6B63] text-sm ml-3">Upload your resume to extract skills, map gaps, and predict placement readiness.</p>
       </div>
 
       <AnimatePresence mode="wait">
@@ -187,8 +191,8 @@ export default function UploadBox({ onAnalyzeComplete }) {
               {...getRootProps()}
               className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 overflow-hidden ${
                 isDragActive
-                  ? 'border-[#F97316] bg-[#F97316]/5 scale-[1.01]'
-                  : 'border-[#222] hover:border-[#F97316]/50 hover:bg-[#F97316]/3'
+                  ? 'border-[#1B2A4A] bg-[#1B2A4A]/5 scale-[1.01]'
+                  : 'border-[#C9C2AF] hover:border-[#1B2A4A]/50 hover:bg-[#1B2A4A]/3'
               }`}
             >
               <input {...getInputProps()} />
@@ -196,7 +200,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
               {/* Scanning grid line */}
               {isDragActive && (
                 <motion.div
-                  className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#F97316] to-transparent"
+                  className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#1B2A4A] to-transparent"
                   animate={{ top: ['0%', '100%'] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                 />
@@ -206,27 +210,27 @@ export default function UploadBox({ onAnalyzeComplete }) {
                 animate={isDragActive ? { scale: 1.1 } : { scale: 1 }}
                 className={`w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center transition-all duration-300 ${
                   isDragActive
-                    ? 'bg-[#F97316]/15 border border-[#F97316]/40 text-[#F97316] shadow-[0_0_25px_rgba(249,115,22,0.3)]'
-                    : 'bg-[#111] border border-[#222] text-[#444] group-hover:border-[#F97316]/30'
+                    ? 'bg-[#1B2A4A]/15 border border-[#1B2A4A]/40 text-[#1B2A4A] shadow-[0_0_25px_rgba(27,42,74,0.3)]'
+                    : 'bg-[#F4EFE4] border border-[#C9C2AF] text-[#1B2A4A] group-hover:border-[#1B2A4A]/30'
                 }`}
               >
                 <UploadCloud className="h-8 w-8" />
               </motion.div>
 
-              <p className="text-white font-black text-base mb-1">
+              <p className="text-[#1B2A4A] font-black text-base mb-1">
                 {isDragActive ? 'Drop it — we\'ll take it from here' : 'Drag & drop your resume'}
               </p>
-              <p className="text-[#444] text-xs mb-5">or click to browse files</p>
+              <p className="text-[#6B6B63] text-xs mb-5">or click to browse files</p>
 
               <motion.span
-                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(249,115,22,0.4)' }}
+                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(27,42,74,0.4)' }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-block bg-[#F97316] text-white text-sm font-black px-6 py-2.5 rounded-full cursor-pointer shadow-[0_0_15px_rgba(249,115,22,0.2)]"
+                className="inline-block bg-[#1B2A4A] text-white text-sm font-black px-6 py-2.5 rounded-full cursor-pointer shadow-[0_0_15px_rgba(27,42,74,0.2)]"
               >
                 Browse Files
               </motion.span>
 
-              <p className="text-[#333] text-[11px] mt-4">Supports PDF, DOCX · Max 5MB</p>
+              <p className="text-[#6B6B63] text-[11px] mt-4">Supports PDF, DOCX · Max 5MB</p>
             </div>
           </motion.div>
         ) : (
@@ -236,24 +240,24 @@ export default function UploadBox({ onAnalyzeComplete }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             className="border rounded-2xl p-5"
-            style={{ background: '#0d0d0d', borderColor: '#1c1c1c' }}
+            style={{ background: '#F4EFE4', borderColor: '#E4DED0' }}
           >
             {/* File header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="bg-[#F97316]/10 border border-[#F97316]/20 p-3 rounded-xl text-[#F97316] flex-shrink-0">
+                <div className="bg-[#1B2A4A]/10 border border-[#1B2A4A]/20 p-3 rounded-xl text-[#1B2A4A] flex-shrink-0">
                   <FileText size={22} />
                 </div>
                 <div>
-                  <p className="font-black text-white truncate text-sm">{file.name}</p>
-                  <p className="text-xs text-[#444] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB · Ready to analyze</p>
+                  <p className="font-black text-[#1B2A4A] truncate text-sm">{file.name}</p>
+                  <p className="text-xs text-[#6B6B63] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB · Ready to analyze</p>
                 </div>
               </div>
 
               {status === 'idle' && (
                 <button
                   onClick={handleRemove}
-                  className="p-1.5 rounded-lg text-[#444] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                  className="p-1.5 rounded-lg text-[#6B6B63] hover:text-red-600 hover:bg-red-500/10 transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -263,7 +267,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="flex items-center text-green-400 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full text-xs font-black gap-1.5"
+                  className="flex items-center text-[#27500A] bg-[#EAF3DE] border border-[#97C459] px-3 py-1.5 rounded-full text-xs font-black gap-1.5"
                 >
                   <CheckCircle size={14} />
                   Done
@@ -276,8 +280,8 @@ export default function UploadBox({ onAnalyzeComplete }) {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <Target size={14} className="text-[#F97316]" />
-                    <h4 className="text-xs font-black text-white uppercase tracking-widest">Select Target Role (Optional)</h4>
+                    <Target size={14} className="text-[#1B2A4A]" />
+                    <h4 className="text-xs font-black text-[#1B2A4A] uppercase tracking-widest">Select Target Role (Optional)</h4>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {COMMON_ROLES.map((role) => (
@@ -286,8 +290,8 @@ export default function UploadBox({ onAnalyzeComplete }) {
                         onClick={() => setSelectedRole(role === selectedRole ? '' : role)}
                         className={`text-[10px] sm:text-xs font-bold px-2 py-2 rounded-lg border transition-all ${
                           selectedRole === role
-                            ? 'bg-[#F97316] border-[#F97316] text-white shadow-[0_0_10px_rgba(249,115,22,0.3)]'
-                            : 'bg-[#111] border-[#222] text-[#666] hover:text-[#888] hover:border-[#444]'
+                            ? 'bg-[#1B2A4A] border-[#1B2A4A] text-white shadow-[0_0_10px_rgba(27,42,74,0.3)]'
+                            : 'bg-[#FFFFFF] border-[#C9C2AF] text-[#1B2A4A] hover:bg-[#F4EFE4] hover:border-[#1B2A4A]'
                         }`}
                       >
                         {role}
@@ -297,10 +301,10 @@ export default function UploadBox({ onAnalyzeComplete }) {
                 </div>
 
                 <motion.button
-                  whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(249,115,22,0.4)' }}
+                  whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(27,42,74,0.4)' }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAnalyze}
-                  className="relative w-full overflow-hidden flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-black text-sm text-white bg-[#F97316] transition-all duration-200 shadow-[0_0_20px_rgba(249,115,22,0.2)]"
+                  className="relative w-full overflow-hidden flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl font-black text-sm text-white bg-[#1B2A4A] transition-all duration-200 shadow-[0_0_20px_rgba(27,42,74,0.2)]"
                 >
                   {/* Button shimmer */}
                   <motion.div
@@ -318,25 +322,25 @@ export default function UploadBox({ onAnalyzeComplete }) {
             {status === 'analyzing' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="flex justify-between items-center text-sm font-bold mb-3">
-                  <span className="flex items-center gap-2 text-[#888]">
+                  <span className="flex items-center gap-2 text-[#6B6B63]">
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                      className="w-4 h-4 border-2 border-[#F97316]/30 border-t-[#F97316] rounded-full"
+                      className="w-4 h-4 border-2 border-[#1B2A4A]/30 border-t-[#1B2A4A] rounded-full"
                     />
                     Analyzing intelligence layers...
                   </span>
-                  <span className="text-[#F97316]">{progress}%</span>
+                  <span className="text-[#1B2A4A]">{progress}%</span>
                 </div>
-                <div className="w-full bg-[#111] border border-[#1A1A1A] rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-[#FFFFFF] border border-[#C9C2AF] rounded-full h-2 overflow-hidden">
                   <motion.div
                     className="h-2 rounded-full"
-                    style={{ background: 'linear-gradient(90deg, #F97316, #FF8C3A)', boxShadow: '0 0 10px rgba(249,115,22,0.5)' }}
+                    style={{ background: 'linear-gradient(90deg, #1B2A4A, #9ECCFA)', boxShadow: '0 0 10px rgba(27,42,74,0.5)' }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.2 }}
                   />
                 </div>
-                <p className="text-[11px] text-[#444] mt-2">Cross-referencing against 50,000+ placement records...</p>
+                <p className="text-[11px] text-[#6B6B63] mt-2">Cross-referencing against 50,000+ placement records...</p>
               </motion.div>
             )}
 
@@ -345,7 +349,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
               <motion.div
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-center gap-2 text-green-400 bg-green-500/8 border border-green-500/15 p-3 rounded-xl font-black text-sm"
+                className="flex items-center justify-center gap-2 text-[#27500A] bg-[#EAF3DE] border border-[#97C459] p-3 rounded-xl font-black text-sm"
               >
                 <CheckCircle size={16} />
                 Analysis complete — generating your career intelligence
@@ -357,23 +361,23 @@ export default function UploadBox({ onAnalyzeComplete }) {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl text-center mt-4"
+                className="bg-[#FCEBEB] border border-[#F09595] p-6 rounded-2xl text-center mt-4"
               >
-                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-                  <X className="text-red-400" size={24} />
+                <div className="w-12 h-12 bg-[#FCEBEB] border border-[#F09595] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <X className="text-[#791F1F]" size={24} />
                 </div>
-                <h3 className="text-lg font-black text-red-400 mb-2">Document Validation Failed</h3>
-                <p className="text-sm text-[#ccc] mb-4">
-                  Uploaded file appears to be: <span className="text-white font-bold">{invalidDocData.type.replace(/_/g, ' ').toUpperCase()}</span>
+                <h3 className="text-lg font-black text-[#791F1F] mb-2">Document Validation Failed</h3>
+                <p className="text-sm text-[#6B6B63] mb-4">
+                  Uploaded file appears to be: <span className="text-[#1B2A4A] font-bold">{invalidDocData.type.replace(/_/g, ' ').toUpperCase()}</span>
                   <br />
-                  <span className="text-[#888] text-xs font-mono">Confidence: {invalidDocData.confidence}%</span>
+                  <span className="text-[#6B6B63] text-xs font-mono">Confidence: {invalidDocData.confidence}%</span>
                 </p>
-                <div className="bg-[#111] p-3 rounded-xl border border-[#222] mb-5">
-                  <p className="text-xs text-[#888]">This platform only supports resumes and CVs. Please upload a valid resume.</p>
+                <div className="bg-[#FFFFFF] p-3 rounded-xl border border-[#E4DED0] mb-5">
+                  <p className="text-xs text-[#6B6B63]">This platform only supports resumes and CVs. Please upload a valid resume.</p>
                 </div>
                 <button
                   onClick={handleRemove}
-                  className="bg-red-500 hover:bg-red-600 text-white text-sm font-black py-2.5 px-8 rounded-xl transition-all shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                  className="bg-[#1B2A4A] hover:bg-[#2C3E63] text-white text-sm font-black py-2.5 px-8 rounded-xl transition-all shadow-sm"
                 >
                   Try Again
                 </button>

@@ -103,7 +103,7 @@ export default function VerifyOTP() {
 
       <div className="w-full max-w-md bg-white rounded-3xl border border-gray-100 shadow-lg p-8">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-orange-500">
+          <div className="w-14 h-14 bg-orange-50 rounded-2xl mx-auto mb-4 flex items-center justify-center text-[#1B2A4A]">
             <ShieldCheck size={26} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Security Check</h1>
@@ -140,7 +140,7 @@ export default function VerifyOTP() {
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-14 text-center text-xl font-bold bg-gray-50 border border-gray-200 rounded-xl focus:border-orange-500 focus:bg-white focus:outline-none transition-all"
+                  className="w-12 h-14 text-center text-xl font-bold bg-gray-50 border border-gray-200 rounded-xl focus:border-[#1B2A4A] focus:bg-white focus:outline-none transition-all"
                 />
               ))}
             </div>
@@ -150,7 +150,7 @@ export default function VerifyOTP() {
                 type="button"
                 onClick={handleResend}
                 disabled={timer > 0 || loading}
-                className="flex items-center gap-2 mx-auto text-sm font-semibold text-orange-500 hover:text-orange-600 disabled:text-gray-400 transition-colors"
+                className="flex items-center gap-2 mx-auto text-sm font-semibold text-[#1B2A4A] hover:text-[#9ECCFA] disabled:text-gray-400 transition-colors"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
                 {timer > 0 ? `Resend code in ${timer}s` : 'Resend Code Now'}
@@ -160,7 +160,7 @@ export default function VerifyOTP() {
             <button
               type="submit"
               disabled={loading || otp.join('').length !== 6}
-              className="w-full flex justify-center items-center gap-2 bg-[#F97316] text-white py-4 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex justify-center items-center gap-2 bg-[#1B2A4A] text-white py-4 rounded-xl font-bold text-sm hover:bg-[#9ECCFA] transition-colors duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : null}
               {loading ? 'Verifying...' : 'Verify Code'}

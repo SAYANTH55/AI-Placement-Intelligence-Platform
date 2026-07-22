@@ -41,15 +41,15 @@ export default function StudentsBatchView() {
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="flex flex-col md:flex-row gap-4 md:items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-black tracking-tight text-white">Student Batches</h1>
+                        <h1 className="text-2xl font-black tracking-tight text-[#1B2A4A]">Student Batches</h1>
                         <p className="text-xs text-secondary-muted mt-1">Track student application status across placement drives</p>
                     </div>
                     <div className="flex gap-2">
-                        <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none focus:border-primary-accent"
+                        <select className="glass-search p-2.5 rounded-xl text-xs text-[#1B2A4A] outline-none focus:border-primary-accent"
                             value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
                             {batches.map(b => <option key={b} value={b}>Batch {b}</option>)}
                         </select>
-                        <select className="glass-search p-2.5 rounded-xl text-xs text-white outline-none focus:border-primary-accent"
+                        <select className="glass-search p-2.5 rounded-xl text-xs text-[#1B2A4A] outline-none focus:border-primary-accent"
                             value={selectedDrive} onChange={e => setSelectedDrive(e.target.value)}>
                             {drives.map(d => <option key={d.id} value={d.id}>{d.company_name}</option>)}
                         </select>
@@ -62,10 +62,10 @@ export default function StudentsBatchView() {
                 className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-white/20">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg"><Users size={16} className="text-white" /></div>
+                        <div className="p-2 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 rounded-lg"><Users size={16} className="text-[#1B2A4A]" /></div>
                         <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">Total Students</p>
                     </div>
-                    <p className="text-2xl font-black text-white">{filtered.length}</p>
+                    <p className="text-2xl font-black text-[#1B2A4A]">{filtered.length}</p>
                 </div>
                 <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-primary-accent">
                     <div className="flex items-center gap-3 mb-3">
@@ -76,7 +76,7 @@ export default function StudentsBatchView() {
                 </div>
                 <div className="glass-panel shadow-card-depth rounded-2xl p-5 border-l-2 border-l-white/10">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-white/5 border border-white/10 rounded-lg"><Users size={16} className="text-tertiary-muted" /></div>
+                        <div className="p-2 bg-[#1B2A4A]/5 border border-[#1B2A4A]/10 rounded-lg"><Users size={16} className="text-tertiary-muted" /></div>
                         <p className="text-[10px] uppercase tracking-widest text-secondary-muted font-bold">Not Applied</p>
                     </div>
                     <p className="text-2xl font-black text-tertiary-muted">{notAppliedCount}</p>
@@ -91,7 +91,7 @@ export default function StudentsBatchView() {
                         <p className="text-xs font-bold text-tertiary-muted">Application Rate</p>
                         <p className="text-xs font-black text-primary-accent">{Math.round((appliedCount / filtered.length) * 100)}%</p>
                     </div>
-                    <div className="w-full h-2 bg-white/5 border border-white/5 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-[#1B2A4A]/5 border border-[#1B2A4A]/5 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(appliedCount / filtered.length) * 100}%` }}
@@ -105,7 +105,7 @@ export default function StudentsBatchView() {
             {/* Search */}
             <div className="flex items-center gap-2 glass-search shadow-card-depth rounded-xl px-4">
                 <Search size={14} className="text-tertiary-muted" />
-                <input type="text" placeholder="Search students..." className="bg-transparent border-none outline-none text-xs text-white p-3 w-full placeholder-tertiary-muted"
+                <input type="text" placeholder="Search students..." className="bg-transparent border-none outline-none text-xs text-[#1B2A4A] p-3 w-full placeholder-tertiary-muted"
                     value={search} onChange={e => setSearch(e.target.value)} />
             </div>
 
@@ -114,7 +114,7 @@ export default function StudentsBatchView() {
                 className="glass-panel shadow-card-depth rounded-3xl overflow-hidden">
                 <table className="w-full text-left text-xs">
                     <thead>
-                        <tr className="border-b border-white/5 bg-white/[0.02]">
+                        <tr className="border-b border-[#1B2A4A]/5 bg-[#1B2A4A]/[0.02]">
                             <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Student</th>
                             <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Contact</th>
                             <th className="px-6 py-4 font-black uppercase tracking-widest text-secondary-muted">Status</th>
@@ -129,14 +129,14 @@ export default function StudentsBatchView() {
                             <tr><td colSpan="3" className="px-6 py-20 text-center text-tertiary-muted">No students found</td></tr>
                         ) : filtered.map((s, idx) => (
                             <motion.tr key={s.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.02 }}
-                                className="hover:bg-white/[0.05] transition-colors">
+                                className="hover:bg-[#1B2A4A]/[0.05] transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-[#FF4D26]/20 border border-[#FF4D26]/50 flex items-center justify-center text-[10px] font-black text-white">
+                                        <div className="w-8 h-8 rounded-full bg-[#FF4D26]/20 border border-[#FF4D26]/50 flex items-center justify-center text-[10px] font-black text-[#1B2A4A]">
                                             {s.name?.[0] || '?'}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-white">{s.name}</p>
+                                            <p className="font-bold text-[#1B2A4A]">{s.name}</p>
                                             <p className="text-[10px] text-tertiary-muted">{s.email}</p>
                                         </div>
                                     </div>

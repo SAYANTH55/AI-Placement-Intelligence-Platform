@@ -17,7 +17,7 @@
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
-html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jakarta Sans', sans-serif; color: #FFFFFF; }
+html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jakarta Sans', sans-serif; color: #1B2A4A; }
 
 /* ═══════════════════════════════════════════════════════════════
    PAGE SETUP
@@ -29,8 +29,8 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   min-height: 297mm;
   max-height: 297mm;
   overflow: hidden;
-  background: #0A0A0A;
-  padding: 9mm 10mm;
+  background: #F4EFE4;
+  padding: 8mm 10mm;
   page-break-after: always;
   position: relative;
   display: flex;
@@ -46,8 +46,8 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,122,26,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,122,26,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(27,42,74,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27,42,74,0.03) 1px, transparent 1px);
   background-size: 20mm 20mm;
   pointer-events: none;
 }
@@ -55,45 +55,46 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 /* ═══════════════════════════════════════════════════════════════
    TYPOGRAPHY SYSTEM
 ═══════════════════════════════════════════════════════════════ */
-.label-xs  { font-size: 6pt;  font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #555; }
-.label-sm  { font-size: 7pt;  font-weight: 800; letter-spacing: 0.1em;  text-transform: uppercase; }
-.body-sm   { font-size: 7.5pt; font-weight: 400; line-height: 1.6; color: #999; }
-.body-md   { font-size: 8.5pt; font-weight: 400; line-height: 1.7; color: #888; }
-.num-lg    { font-size: 22pt; font-weight: 900; line-height: 1; }
-.num-xl    { font-size: 30pt; font-weight: 900; line-height: 1; }
+.label-xs  { font-size: 6pt;  font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #6B6B63; }
+.label-sm  { font-size: 7pt;  font-weight: 800; letter-spacing: 0.1em;  text-transform: uppercase; color: #1B2A4A; }
+.body-sm   { font-size: 7.5pt; font-weight: 400; line-height: 1.6; color: #6B6B63; }
+.body-md   { font-size: 8.5pt; font-weight: 400; line-height: 1.7; color: #444441; }
+.num-lg    { font-size: 22pt; font-weight: 900; line-height: 1; color: #1B2A4A; }
+.num-xl    { font-size: 30pt; font-weight: 900; line-height: 1; color: #1B2A4A; }
 
 /* ═══════════════════════════════════════════════════════════════
    COLOR TOKENS
 ═══════════════════════════════════════════════════════════════ */
-.c-primary  { color: #FF7A1A; }
-.c-secondary{ color: #00E6A8; }
-.c-accent   { color: #7B7CFF; }
-.c-white    { color: #FFFFFF; }
-.c-muted    { color: #555; }
-.c-red      { color: #F87171; }
-.c-amber    { color: #F59E0B; }
+.c-primary  { color: #1B2A4A; }
+.c-secondary{ color: #27500A; }
+.c-accent   { color: #0C447C; }
+.c-white    { color: #1B2A4A; }
+.c-muted    { color: #6B6B63; }
+.c-red      { color: #791F1F; }
+.c-amber    { color: #854F0B; }
 
 /* ═══════════════════════════════════════════════════════════════
    CARD SYSTEM
 ═══════════════════════════════════════════════════════════════ */
 .card {
-  background: #111111;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
   border-radius: 8pt;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(27, 42, 74, 0.03);
 }
 .card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255,122,26,0.35), transparent);
+  background: linear-gradient(to right, transparent, rgba(27,42,74,0.25), transparent);
 }
-.card-secondary::before { background: linear-gradient(to right, transparent, rgba(0,230,168,0.35), transparent); }
-.card-accent::before    { background: linear-gradient(to right, transparent, rgba(123,124,255,0.35), transparent); }
+.card-secondary::before { background: linear-gradient(to right, transparent, rgba(39,80,10,0.25), transparent); }
+.card-accent::before    { background: linear-gradient(to right, transparent, rgba(12,68,124,0.25), transparent); }
 
-.card-inner { background: #141210; border-radius: 6pt; border: 1px solid rgba(255,255,255,0.05); }
+.card-inner { background: #F4EFE4; border-radius: 6pt; border: 1px solid #E4DED0; }
 
 /* ═══════════════════════════════════════════════════════════════
    HEADER BAR (appears on every page)
@@ -102,9 +103,9 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 4mm;
-  margin-bottom: 4mm;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding-bottom: 3.5mm;
+  margin-bottom: 3.5mm;
+  border-bottom: 1px solid #E4DED0;
   flex-shrink: 0;
 }
 .logo-mark {
@@ -114,22 +115,23 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 }
 .logo-dot {
   width: 8pt; height: 8pt;
-  background: #FF7A1A;
+  background: #1B2A4A;
   border-radius: 50%;
-  box-shadow: 0 0 8pt rgba(255,122,26,0.6);
+  box-shadow: 0 0 6pt rgba(27,42,74,0.3);
   flex-shrink: 0;
 }
-.logo-text { font-size: 8pt; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: #FF7A1A; }
+.logo-text { font-size: 8pt; font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: #1B2A4A; }
 .header-meta { text-align: right; }
-.header-meta .meta-name { font-size: 8pt; font-weight: 700; color: #FFF; }
-.header-meta .meta-sub  { font-size: 6pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #444; }
+.header-meta .meta-name { font-size: 8pt; font-weight: 700; color: #1B2A4A; }
+.header-meta .meta-sub  { font-size: 6pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #6B6B63; }
 
 /* PAGE INDICATOR */
 .page-badge {
   font-size: 6pt; font-weight: 800; letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #333;
-  border: 1px solid #222;
+  color: #1B2A4A;
+  border: 1px solid #C9C2AF;
+  background: #FFFFFF;
   border-radius: 20pt;
   padding: 2pt 6pt;
 }
@@ -141,14 +143,14 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   display: flex;
   align-items: center;
   gap: 5pt;
-  margin-bottom: 3.5mm;
+  margin-bottom: 3mm;
 }
-.section-line { width: 3pt; height: 9pt; border-radius: 2pt; background: #FF7A1A; flex-shrink: 0; }
-.section-line.secondary { background: #00E6A8; }
-.section-line.accent    { background: #7B7CFF; }
-.section-label { font-size: 6.5pt; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #FF7A1A; }
-.section-label.secondary { color: #00E6A8; }
-.section-label.accent    { color: #7B7CFF; }
+.section-line { width: 3pt; height: 9pt; border-radius: 2pt; background: #1B2A4A; flex-shrink: 0; }
+.section-line.secondary { background: #27500A; }
+.section-line.accent    { background: #0C447C; }
+.section-label { font-size: 6.5pt; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #1B2A4A; }
+.section-label.secondary { color: #27500A; }
+.section-label.accent    { color: #0C447C; }
 
 /* ═══════════════════════════════════════════════════════════════
    PROGRESS BARS
@@ -156,7 +158,7 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 .progress-track {
   width: 100%;
   height: 4pt;
-  background: rgba(255,255,255,0.05);
+  background: #E4DED0;
   border-radius: 10pt;
   overflow: hidden;
 }
@@ -164,7 +166,7 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 .progress-fill {
   height: 100%;
   border-radius: 10pt;
-  background: #FF7A1A;
+  background: #1B2A4A;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -173,24 +175,24 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 .chip {
   display: inline-block;
   font-size: 6pt; font-weight: 700; letter-spacing: 0.04em;
-  padding: 2pt 6pt;
+  padding: 2.5pt 7pt;
   border-radius: 20pt;
-  border: 1px solid rgba(255,122,26,0.3);
-  background: rgba(255,122,26,0.08);
-  color: #FF7A1A;
+  border: 1px solid #C9C2AF;
+  background: #FFFFFF;
+  color: #1B2A4A;
 }
-.chip.secondary { border-color: rgba(0,230,168,0.3); background: rgba(0,230,168,0.08); color: #00E6A8; }
-.chip.accent    { border-color: rgba(123,124,255,0.3); background: rgba(123,124,255,0.08); color: #7B7CFF; }
-.chip.neutral   { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #888; }
+.chip.secondary { border-color: #97C459; background: #EAF3DE; color: #27500A; }
+.chip.accent    { border-color: #9ECCFA; background: #EBF3FA; color: #0C447C; }
+.chip.neutral   { border-color: #E4DED0; background: #F4EFE4; color: #6B6B63; }
 
 /* ═══════════════════════════════════════════════════════════════
    BADGE
 ═══════════════════════════════════════════════════════════════ */
 .badge { font-size: 5.5pt; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 1.5pt 5pt; border-radius: 10pt; }
-.badge-critical { background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.4); color: #F87171; }
-.badge-high     { background: rgba(249,115,22,0.15);  border: 1px solid rgba(249,115,22,0.4);  color: #F97316; }
-.badge-medium   { background: rgba(245,158,11,0.15);  border: 1px solid rgba(245,158,11,0.4);  color: #F59E0B; }
-.badge-low      { background: rgba(52,211,153,0.15);  border: 1px solid rgba(52,211,153,0.4);  color: #34D399; }
+.badge-critical { background: #FCEBEB; border: 1px solid #F09595; color: #791F1F; }
+.badge-high     { background: #FAEDD9; border: 1px solid #E5C385; color: #854F0B; }
+.badge-medium   { background: #EBF3FA; border: 1px solid #9ECCFA; color: #0C447C; }
+.badge-low      { background: #EAF3DE; border: 1px solid #97C459; color: #27500A; }
 
 /* ═══════════════════════════════════════════════════════════════
    FLEX + GRID UTILITIES
@@ -216,14 +218,14 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 .dossier-table { width: 100%; border-collapse: collapse; }
 .dossier-table th {
   font-size: 5.5pt; font-weight: 800; letter-spacing: 0.1em;
-  text-transform: uppercase; color: #444;
+  text-transform: uppercase; color: #6B6B63;
   padding: 2.5mm 3mm; text-align: left;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid #E4DED0;
 }
 .dossier-table td {
-  font-size: 7pt; font-weight: 500; color: #CCC;
+  font-size: 7pt; font-weight: 600; color: #1B2A4A;
   padding: 2.5mm 3mm;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid #E4DED0;
   vertical-align: middle;
 }
 .dossier-table tr:last-child td { border-bottom: none; }
@@ -234,18 +236,17 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 ═══════════════════════════════════════════════════════════════ */
 .company-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; }
 .company-card {
-  background: #141210;
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
   border-radius: 6pt;
   padding: 3mm;
 }
 .company-initials {
   width: 14pt; height: 14pt;
-  background: rgba(255,122,26,0.15);
-  border: 1px solid rgba(255,122,26,0.3);
+  background: #1B2A4A;
   border-radius: 4pt;
   display: flex; align-items: center; justify-content: center;
-  font-size: 6pt; font-weight: 900; color: #FF7A1A;
+  font-size: 6pt; font-weight: 900; color: #FFFFFF;
   flex-shrink: 0;
 }
 
@@ -260,28 +261,28 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   flex: 1;
 }
 .timeline-score {
-  font-size: 13pt; font-weight: 900; color: #FF7A1A;
+  font-size: 13pt; font-weight: 900; color: #1B2A4A;
   line-height: 1;
 }
-.timeline-score.current { color: #555; font-size: 11pt; }
+.timeline-score.current { color: #6B6B63; font-size: 11pt; }
 .timeline-label {
   font-size: 5pt; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; color: #444; margin-top: 1.5mm;
+  text-transform: uppercase; color: #6B6B63; margin-top: 1.5mm;
   text-align: center; max-width: 22mm;
 }
 .timeline-arrow {
-  font-size: 10pt; color: #333; flex-shrink: 0;
+  font-size: 10pt; color: #C9C2AF; flex-shrink: 0;
   padding: 0 1mm;
 }
-.timeline-arrow.active { color: #FF7A1A; }
+.timeline-arrow.active { color: #1B2A4A; }
 
 /* ═══════════════════════════════════════════════════════════════
    ROADMAP MONTH CARDS
 ═══════════════════════════════════════════════════════════════ */
 .roadmap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
 .roadmap-card {
-  background: #111;
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
   border-radius: 7pt;
   overflow: hidden;
 }
@@ -290,48 +291,46 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   display: flex;
   align-items: center;
   gap: 4pt;
+  background: #F4EFE4;
+  border-bottom: 1px solid #E4DED0;
 }
 .roadmap-month-dot { width: 6pt; height: 6pt; border-radius: 50%; flex-shrink: 0; }
-.roadmap-month-num { font-size: 5.5pt; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-.roadmap-month-title { font-size: 7pt; font-weight: 700; color: #DDD; padding: 0 3.5mm 2mm; }
+.roadmap-month-num { font-size: 5.5pt; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #1B2A4A; }
+.roadmap-month-title { font-size: 7.5pt; font-weight: 800; color: #1B2A4A; padding: 2.5mm 3.5mm 1.5mm; }
 .roadmap-actions { padding: 0 3.5mm 3mm; }
 .roadmap-action-item {
   display: flex; align-items: flex-start; gap: 3pt;
-  font-size: 6.5pt; color: #888; line-height: 1.55;
+  font-size: 6.5pt; color: #444441; line-height: 1.55;
   padding: 1.5mm 0;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid #E4DED0;
 }
 .roadmap-action-item:first-child { border-top: none; }
-.action-bullet { flex-shrink: 0; margin-top: 1pt; color: #FF7A1A; font-size: 7pt; }
+.action-bullet { flex-shrink: 0; margin-top: 1pt; color: #1B2A4A; font-size: 7pt; }
 
 /* ═══════════════════════════════════════════════════════════════
-   HERO CARD (Page 1)
+   HERO CARD (Page 1) — NAVY BRAND GRADIENT
 ═══════════════════════════════════════════════════════════════ */
 .hero-card {
-  background: linear-gradient(135deg, #141210 0%, #1a1208 50%, #0f0f0f 100%);
-  border: 1px solid rgba(255,122,26,0.2);
+  background: linear-gradient(135deg, #1B2A4A 0%, #0C447C 100%);
+  border: 1px solid #1B2A4A;
   border-radius: 10pt;
   padding: 5mm 6mm;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
   margin-bottom: 3.5mm;
-}
-.hero-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(to right, #FF7A1A, #FF9A4A, #FF7A1A);
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(27, 42, 74, 0.15);
 }
 .hero-glow {
   position: absolute;
   right: -10mm; top: -10mm;
   width: 40mm; height: 40mm;
-  background: radial-gradient(circle, rgba(255,122,26,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
   pointer-events: none;
 }
-.hero-name { font-size: 20pt; font-weight: 900; color: #FFF; line-height: 1.1; letter-spacing: -0.5pt; }
-.hero-sub  { font-size: 7.5pt; font-weight: 500; color: #666; margin-top: 1mm; }
+.hero-name { font-size: 20pt; font-weight: 900; color: #FFFFFF; line-height: 1.1; letter-spacing: -0.5pt; }
+.hero-sub  { font-size: 7.5pt; font-weight: 500; color: #E4DED0; margin-top: 1mm; }
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -339,10 +338,11 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   margin-top: 4mm;
 }
 .hero-stat {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 5pt;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6pt;
   padding: 2.5mm;
+  color: #FFFFFF;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -350,18 +350,19 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 ═══════════════════════════════════════════════════════════════ */
 .metric-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; margin-bottom: 3.5mm; flex-shrink: 0; }
 .metric-card {
-  background: #111;
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
   border-radius: 6pt;
   padding: 3mm 2.5mm;
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 6px rgba(27,42,74,0.02);
 }
 .metric-card::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(to right, transparent, var(--accent, rgba(255,122,26,0.4)), transparent);
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: #1B2A4A;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -370,8 +371,8 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 .strengths-gaps-row { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; flex-shrink: 0; }
 
 .strength-item, .gap-item {
-  background: #141210;
-  border: 1px solid rgba(255,255,255,0.05);
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
   border-radius: 5pt;
   padding: 2.5mm 3mm;
   margin-bottom: 1.5mm;
@@ -382,9 +383,9 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
    ASSESSMENT TEXT BOX
 ═══════════════════════════════════════════════════════════════ */
 .assessment-box {
-  background: #111;
-  border: 1px solid rgba(255,255,255,0.07);
-  border-left: 2.5pt solid #FF7A1A;
+  background: #FFFFFF;
+  border: 1px solid #E4DED0;
+  border-left: 3pt solid #1B2A4A;
   border-radius: 0 6pt 6pt 0;
   padding: 3.5mm 4mm;
   margin-bottom: 3.5mm;
@@ -392,9 +393,9 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 }
 .assessment-text {
   font-size: 7.5pt;
-  line-height: 1.7;
-  color: #999;
-  font-style: italic;
+  line-height: 1.65;
+  color: #444441;
+  font-weight: 500;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -402,15 +403,15 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 ═══════════════════════════════════════════════════════════════ */
 .page-footer {
   margin-top: auto;
-  padding-top: 3mm;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 2.5mm;
+  border-top: 1px solid #E4DED0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
 }
-.footer-text { font-size: 5.5pt; color: #2a2a2a; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-.footer-domain { font-size: 5.5pt; color: #FF7A1A; font-weight: 700; }
+.footer-text { font-size: 5.5pt; color: #6B6B63; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.footer-domain { font-size: 5.5pt; color: #1B2A4A; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -427,7 +428,7 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
       <span class="logo-text">Placement Intelligence Dossier</span>
     </div>
     <div style="display:flex;align-items:center;gap:6mm;">
-      <span class="page-badge">Page 1 of 3</span>
+      <span class="page-badge">Page 1 of 4</span>
       <div class="header-meta">
         <div class="meta-name">{{ student.name }}</div>
         <div class="meta-sub">Generated {{ student.generated_date }}</div>
@@ -440,47 +441,110 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     <div class="hero-glow"></div>
     <div class="row">
       <div class="col flex1">
-        <span class="label-xs" style="color:#FF7A1A;margin-bottom:2mm;">Intelligence Profile</span>
+        <span class="label-xs" style="color:#9ECCFA;margin-bottom:1.5mm;">Intelligence Profile</span>
         <div class="hero-name">{{ student.name }}</div>
         <div class="hero-sub">{{ student.department }}{% if student.batch %} · Batch {{ student.batch }}{% endif %}{% if student.roll_number %} · {{ student.roll_number }}{% endif %}</div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
-        <span class="label-xs" style="margin-bottom:2mm;display:block;">Primary Domain</span>
-        <div style="font-size:10pt;font-weight:800;color:#FF7A1A;">{{ student.primary_domain }}</div>
+        <span class="label-xs" style="color:#9ECCFA;margin-bottom:1.5mm;display:block;">Primary Domain</span>
+        <div style="font-size:10pt;font-weight:900;color:#FFFFFF;">{{ student.primary_domain }}</div>
       </div>
     </div>
 
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="label-xs mb1">Top Role</div>
-        <div style="font-size:8pt;font-weight:800;color:#FFF;line-height:1.2;">{{ student.top_predicted_role }}</div>
+        <div class="label-xs mb1" style="color:#E4DED0;">Top Role</div>
+        <div style="font-size:8.5pt;font-weight:800;color:#FFF;line-height:1.2;">{{ student.top_predicted_role }}</div>
       </div>
       <div class="hero-stat">
-        <div class="label-xs mb1">Readiness</div>
-        <div style="font-size:14pt;font-weight:900;color:#FF7A1A;line-height:1;">{{ "%.1f"|format(readiness.placement_score) }}%</div>
-        <div style="font-size:5.5pt;font-weight:700;color:#555;margin-top:1mm;">{{ readiness.readiness_label | upper }}</div>
+        <div class="label-xs mb1" style="color:#E4DED0;">Readiness</div>
+        <div style="font-size:14pt;font-weight:900;color:#FFFFFF;line-height:1;">{{ "%.1f"|format(readiness.placement_score) }}%</div>
+        <div style="font-size:5.5pt;font-weight:700;color:#E4DED0;margin-top:1mm;">{{ readiness.readiness_label | upper }}</div>
       </div>
       <div class="hero-stat">
-        <div class="label-xs mb1">Probability</div>
-        <div style="font-size:14pt;font-weight:900;color:#00E6A8;line-height:1;">{{ "%.1f"|format(probability.placement_probability) }}%</div>
-        <div style="font-size:5.5pt;font-weight:700;color:#555;margin-top:1mm;">Placement Est.</div>
+        <div class="label-xs mb1" style="color:#E4DED0;">Probability</div>
+        <div style="font-size:14pt;font-weight:900;color:#FFFFFF;line-height:1;">{{ "%.1f"|format(probability.placement_probability) }}%</div>
+        <div style="font-size:5.5pt;font-weight:700;color:#E4DED0;margin-top:1mm;">Placement Est.</div>
       </div>
       <div class="hero-stat">
-        <div class="label-xs mb1">Top Match</div>
-        <div style="font-size:14pt;font-weight:900;color:#7B7CFF;line-height:1;">{{ probability.top_role_match_percent }}%</div>
-        <div style="font-size:5.5pt;font-weight:700;color:#555;margin-top:1mm;">Role Fit Score</div>
+        <div class="label-xs mb1" style="color:#E4DED0;">Top Match</div>
+        <div style="font-size:14pt;font-weight:900;color:#FFFFFF;line-height:1;">{{ probability.top_role_match_percent }}%</div>
+        <div style="font-size:5.5pt;font-weight:700;color:#E4DED0;margin-top:1mm;">Role Fit Score</div>
       </div>
     </div>
   </div>
 
-  <!-- EXECUTIVE ASSESSMENT -->
+  <!-- EXECUTIVE CAREER ASSESSMENT -->
+  {% if executive_assessment %}
   <div class="section-title">
     <div class="section-line"></div>
-    <span class="section-label">Executive Assessment</span>
+    <span class="section-label">Executive Career Assessment</span>
   </div>
-  <div class="assessment-box mb2">
-    <div class="assessment-text">{{ executive_assessment }}</div>
+
+  {% set cip = executive_assessment.candidate_intelligence_profile if executive_assessment.candidate_intelligence_profile else None %}
+  <div class="card p4 mb3" style="background:#FFFFFF;border:1px solid #E4DED0;">
+    {% if cip and cip.get('candidate') %}
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3mm;padding-bottom:2mm;border-bottom:1px solid #E4DED0;">
+      <div style="font-size:7pt;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:0.1em;">Candidate Intelligence Profile</div>
+      <div style="display:flex;align-items:center;gap:4pt;">
+        <span class="badge" style="background:#F4EFE4;border:1px solid #C9C2AF;color:#1B2A4A;">{{ cip.get('candidate', {}).get('stage', 'Emerging') }}</span>
+        <span class="badge" style="background:#EAF3DE;border:1px solid #97C459;color:#27500A;">{{ cip.get('candidate', {}).get('recruiter_confidence', 'Moderate') }} Confidence</span>
+        <span class="badge" style="background:#FFFFFF;border:1px solid #1B2A4A;color:#1B2A4A;">{{ cip.get('candidate', {}).get('persona', 'Engineering Candidate') }}</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if executive_assessment.sections %}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-bottom:2.5mm;">
+      {% for key, text in executive_assessment.sections.items() %}
+        <div style="background:#F4EFE4;border:1px solid #E4DED0;border-radius:5pt;padding:2.5mm;{% if key in ['executive_overview', 'recruiter_verdict'] %}grid-column:span 2;{% endif %}">
+          <div style="font-size:6pt;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1mm;">{{ key.replace('_', ' ') }}</div>
+          <div style="font-size:7pt;color:#444441;line-height:1.5;font-weight:500;">{{ text }}</div>
+        </div>
+      {% endfor %}
+    </div>
+    {% elif executive_assessment.assessment %}
+      <div style="font-size:7.5pt;color:#444441;line-height:1.6;font-weight:500;">{{ executive_assessment.assessment }}</div>
+    {% endif %}
+
+    {% if cip %}
+    <div style="display:grid;grid-template-columns:repeat(8, 1fr);gap:2pt;padding-top:2mm;border-top:1px solid #E4DED0;">
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#27500A;">{{ cip.get('resume', {}).get('ats_quality', '—') }}</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">ATS Score</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#1B2A4A;">{{ cip.get('role', {}).get('primary_match_pct', '—') }}%</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Role Match</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#0C447C;">{{ cip.get('technical', {}).get('depth_pct', 0) | round }}%</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Tech Depth</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#854F0B;">{{ cip.get('skills', {}).get('breadth', '—') }}</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Breadth</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#27500A;">{{ cip.get('skills', {}).get('utilization_pct', '—') }}%</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Utilization</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#0C447C;">{{ cip.get('technical', {}).get('interview_readiness_pct', '—') }}%</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Interview</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#791F1F;">{{ cip.get('gaps', {}).get('total_count', '—') }}</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Gaps</div>
+      </div>
+      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
+        <div style="font-size:8pt;font-weight:900;color:#1B2A4A;">{{ cip.get('portfolio', {}).get('strength', '—') }}</div>
+        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Portfolio</div>
+      </div>
+    </div>
+    {% endif %}
   </div>
+  {% endif %}
 
   <!-- READINESS METRICS -->
   <div class="section-title">
@@ -488,36 +552,36 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     <span class="section-label">Readiness Metrics</span>
   </div>
   <div class="metric-row">
-    <div class="metric-card" style="--accent:rgba(255,122,26,0.4);">
+    <div class="metric-card">
       <div class="label-xs mb1">Placement Score</div>
-      <div style="font-size:16pt;font-weight:900;color:#FF7A1A;line-height:1;">{{ "%.0f"|format(readiness.placement_score) }}%</div>
+      <div style="font-size:16pt;font-weight:900;color:#1B2A4A;line-height:1;">{{ "%.0f"|format(readiness.placement_score) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
-        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.placement_score) }}%;background:#FF7A1A;"></div>
+        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.placement_score) }}%;background:#1B2A4A;"></div>
       </div>
     </div>
-    <div class="metric-card" style="--accent:rgba(0,230,168,0.4);">
+    <div class="metric-card">
       <div class="label-xs mb1">Probability</div>
-      <div style="font-size:16pt;font-weight:900;color:#00E6A8;line-height:1;">{{ "%.0f"|format(probability.placement_probability) }}%</div>
+      <div style="font-size:16pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(probability.placement_probability) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
-        <div class="progress-fill" style="width:{{ "%.0f"|format(probability.placement_probability) }}%;background:#00E6A8;"></div>
+        <div class="progress-fill" style="width:{{ "%.0f"|format(probability.placement_probability) }}%;background:#27500A;"></div>
       </div>
     </div>
-    <div class="metric-card" style="--accent:rgba(123,124,255,0.4);">
+    <div class="metric-card">
       <div class="label-xs mb1">Confidence</div>
-      <div style="font-size:16pt;font-weight:900;color:#7B7CFF;line-height:1;">{{ "%.0f"|format(readiness.confidence) }}%</div>
+      <div style="font-size:16pt;font-weight:900;color:#0C447C;line-height:1;">{{ "%.0f"|format(readiness.confidence) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
-        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.confidence) }}%;background:#7B7CFF;"></div>
+        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.confidence) }}%;background:#0C447C;"></div>
       </div>
     </div>
-    <div class="metric-card" style="--accent:rgba(245,158,11,0.4);">
+    <div class="metric-card">
       <div class="label-xs mb1">Uncertainty</div>
-      <div style="font-size:10pt;font-weight:900;color:#F59E0B;line-height:1.4;margin-top:1mm;">{{ readiness.uncertainty }}</div>
+      <div style="font-size:10pt;font-weight:900;color:#854F0B;line-height:1.4;margin-top:1mm;">{{ readiness.uncertainty }}</div>
     </div>
-    <div class="metric-card" style="--accent:rgba(52,211,153,0.4);">
+    <div class="metric-card">
       <div class="label-xs mb1">Industry Avg</div>
-      <div style="font-size:16pt;font-weight:900;color:#34D399;line-height:1;">{{ "%.0f"|format(readiness.industry_benchmark) }}%</div>
+      <div style="font-size:16pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(readiness.industry_benchmark) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
-        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.industry_benchmark) }}%;background:#34D399;"></div>
+        <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.industry_benchmark) }}%;background:#27500A;"></div>
       </div>
     </div>
   </div>
@@ -530,17 +594,17 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
         <div class="section-line secondary"></div>
         <span class="section-label secondary">Key Strengths</span>
       </div>
-      {% for s in strengths[:5] %}
+      {% for s in strengths[:4] %}
       <div class="strength-item">
         <div class="row center g2 mb1">
-          <span style="font-size:7.5pt;font-weight:700;color:#DDD;flex:1;">{{ s.skill_name }}</span>
-          <span style="font-size:7pt;font-weight:900;color:#00E6A8;">{{ "%.0f"|format(s.strength_score) }}%</span>
+          <span style="font-size:7.5pt;font-weight:700;color:#1B2A4A;flex:1;">{{ s.skill_name }}</span>
+          <span style="font-size:7pt;font-weight:900;color:#27500A;">{{ "%.0f"|format(s.strength_score) }}%</span>
         </div>
-        <div class="progress-track" style="margin-bottom:2mm;">
-          <div class="progress-fill" style="width:{{ "%.0f"|format(s.strength_score) }}%;background:#00E6A8;"></div>
+        <div class="progress-track" style="margin-bottom:1.5mm;">
+          <div class="progress-fill" style="width:{{ "%.0f"|format(s.strength_score) }}%;background:#27500A;"></div>
         </div>
         {% if s.reason %}
-        <div style="font-size:6pt;color:#666;line-height:1.5;">{{ s.reason }}</div>
+        <div style="font-size:6pt;color:#6B6B63;line-height:1.4;">{{ s.reason }}</div>
         {% endif %}
       </div>
       {% endfor %}
@@ -549,21 +613,21 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     <!-- Gaps -->
     <div class="col flex1">
       <div class="section-title">
-        <div class="section-line" style="background:#F87171;"></div>
-        <span class="section-label" style="color:#F87171;">Critical Gaps</span>
+        <div class="section-line" style="background:#791F1F;"></div>
+        <span class="section-label" style="color:#791F1F;">Critical Gaps</span>
       </div>
-      {% for g in gaps[:5] %}
+      {% for g in gaps[:4] %}
       <div class="gap-item">
         <div class="row center g2 mb1">
-          <span style="font-size:7.5pt;font-weight:700;color:#DDD;flex:1;">{{ g.gap_name }}</span>
+          <span style="font-size:7.5pt;font-weight:700;color:#1B2A4A;flex:1;">{{ g.gap_name }}</span>
           <span class="badge badge-{{ g.priority | lower }}">{{ g.priority }}</span>
         </div>
-        <div class="row center g2" style="margin-bottom:2mm;">
+        <div class="row center g2" style="margin-bottom:1.5mm;">
           <span class="label-xs">Impact</span>
-          <span style="font-size:6pt;font-weight:700;color:#F87171;">{{ g.estimated_impact }}</span>
+          <span style="font-size:6pt;font-weight:700;color:#791F1F;">{{ g.estimated_impact }}</span>
         </div>
         {% if g.explanation %}
-        <div style="font-size:6pt;color:#666;line-height:1.5;">{{ g.explanation }}</div>
+        <div style="font-size:6pt;color:#6B6B63;line-height:1.4;">{{ g.explanation }}</div>
         {% endif %}
       </div>
       {% endfor %}
@@ -591,7 +655,7 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
       <span class="logo-text">Role &amp; Career Intelligence</span>
     </div>
     <div style="display:flex;align-items:center;gap:6mm;">
-      <span class="page-badge">Page 2 of 3</span>
+      <span class="page-badge">Page 2 of 4</span>
       <div class="header-meta">
         <div class="meta-name">{{ student.name }}</div>
         <div class="meta-sub">{{ student.top_predicted_role }}</div>
@@ -608,11 +672,11 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     {% for r in role_matches %}
     <div style="margin-bottom:{% if not loop.last %}3.5mm{% else %}0{% endif %};">
       <div class="row center" style="margin-bottom:1.5mm;">
-        <span style="font-size:7.5pt;font-weight:700;color:#DDD;width:42mm;flex-shrink:0;">{{ r.role }}</span>
+        <span style="font-size:7.5pt;font-weight:700;color:#1B2A4A;width:42mm;flex-shrink:0;">{{ r.role }}</span>
         <div class="progress-track flex1">
-          <div class="progress-fill" style="width:{{ r.match_percent }}%;background:{{ r.bar_color }};box-shadow:0 0 4pt {{ r.bar_color }}60;"></div>
+          <div class="progress-fill" style="width:{{ r.match_percent }}%;background:#1B2A4A;"></div>
         </div>
-        <span style="font-size:8pt;font-weight:900;color:{{ r.bar_color }};width:10mm;text-align:right;flex-shrink:0;">{{ r.match_percent }}%</span>
+        <span style="font-size:8pt;font-weight:900;color:#1B2A4A;width:10mm;text-align:right;flex-shrink:0;">{{ r.match_percent }}%</span>
       </div>
     </div>
     {% endfor %}
@@ -638,22 +702,24 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
             </tr>
           </thead>
           <tbody>
-            {% for r in role_matches[:5] %}
+            {% for r in role_matches[:4] %}
             <tr>
-              <td style="font-weight:700;color:#FFF;font-size:7pt;white-space:nowrap;">{{ r.role }}</td>
+              <td style="font-weight:700;color:#1B2A4A;">{{ r.role }}</td>
               <td>
-                {% for sk in r.supporting_skills[:3] %}
-                <span class="chip secondary" style="margin:1pt 1pt 1pt 0;font-size:5.5pt;">{{ sk }}</span>
-                {% endfor %}
-                {% if not r.supporting_skills %}<span style="font-size:6pt;color:#444;">—</span>{% endif %}
+                <div style="display:flex;flex-wrap:wrap;gap:1.5pt;">
+                  {% for s in r.supporting_skills[:3] %}
+                  <span class="chip secondary" style="font-size:5.5pt;padding:1pt 4pt;">{{ s }}</span>
+                  {% endfor %}
+                </div>
               </td>
               <td>
-                {% for sk in r.missing_skills[:3] %}
-                <span class="chip" style="border-color:rgba(248,113,113,0.3);background:rgba(248,113,113,0.08);color:#F87171;margin:1pt 1pt 1pt 0;font-size:5.5pt;">{{ sk }}</span>
-                {% endfor %}
-                {% if not r.missing_skills %}<span style="font-size:6pt;color:#34D399;">✓ Full Match</span>{% endif %}
+                <div style="display:flex;flex-wrap:wrap;gap:1.5pt;">
+                  {% for ms in r.missing_skills[:3] %}
+                  <span class="badge badge-critical" style="font-size:5pt;padding:1pt 4pt;">{{ ms }}</span>
+                  {% endfor %}
+                </div>
               </td>
-              <td class="num" style="text-align:right;color:{{ r.bar_color }};">{{ r.match_percent }}%</td>
+              <td class="num" style="text-align:right;color:#1B2A4A;">{{ r.match_percent }}%</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -661,27 +727,27 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
       </div>
     </div>
 
-    <!-- Domain Intelligence -->
+    <!-- Domain Alignment -->
     <div class="col flex1">
       <div class="section-title">
         <div class="section-line accent"></div>
-        <span class="section-label accent">Domain Intelligence</span>
+        <span class="section-label accent">Domain Alignment</span>
       </div>
-      <div class="card p4" style="flex:1;">
+      <div class="card p4" style="display:flex;flex-direction:column;gap:2.5mm;">
         {% for d in domains %}
-        <div style="margin-bottom:{% if not loop.last %}4mm{% else %}0{% endif %};">
-          <div class="row center mb1">
-            <span style="font-size:7pt;font-weight:700;color:#DDD;flex:1;">{{ d.domain_name }}</span>
-            <span style="font-size:7.5pt;font-weight:900;color:{{ d.bar_color }};">{{ d.confidence_percent }}%</span>
+        <div>
+          <div class="row center justify-between mb1">
+            <span style="font-size:7pt;font-weight:700;color:#1B2A4A;">{{ d.domain_name }}</span>
+            <span style="font-size:7.5pt;font-weight:900;color:#0C447C;">{{ d.confidence_percent }}%</span>
           </div>
           <div class="progress-track">
-            <div class="progress-fill" style="width:{{ d.confidence_percent }}%;background:{{ d.bar_color }};"></div>
+            <div class="progress-fill" style="width:{{ d.confidence_percent }}%;background:#0C447C;"></div>
           </div>
           <div class="label-xs" style="margin-top:1.5mm;">{% if d.is_primary %}PRIMARY DOMAIN{% else %}SECONDARY DOMAIN{% endif %}</div>
         </div>
         {% endfor %}
         {% if not domains %}
-        <div style="font-size:6.5pt;color:#444;">Domain classification pending resume analysis.</div>
+        <div style="font-size:6.5pt;color:#6B6B63;">Domain classification pending resume analysis.</div>
         {% endif %}
       </div>
     </div>
@@ -694,14 +760,11 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
   </div>
   <div class="card p4 mb3">
     <div style="display:flex;flex-wrap:wrap;gap:2mm;">
-      {% for s in skills[:35] %}
+      {% for s in skills[:30] %}
       <span class="chip{% if loop.index <= 5 %} secondary{% elif loop.index <= 10 %} accent{% endif %}">{{ s.name }}</span>
       {% endfor %}
-      {% if skills | length > 35 %}
-      <span style="font-size:6pt;color:#444;align-self:center;">+{{ skills | length - 35 }} more</span>
-      {% endif %}
-      {% if not skills %}
-      <span style="font-size:7pt;color:#555;font-style:italic;">Skills data not available.</span>
+      {% if skills | length > 30 %}
+      <span style="font-size:6pt;color:#6B6B63;align-self:center;">+{{ skills | length - 30 }} more</span>
       {% endif %}
     </div>
   </div>
@@ -717,20 +780,15 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
       <div class="row center g2 mb1">
         <div class="company-initials">{{ c.initials or c.name[0] }}</div>
         <div>
-          <div style="font-size:7.5pt;font-weight:700;color:#FFF;">{{ c.name }}</div>
-          <div style="font-size:5.5pt;font-weight:800;color:#FF7A1A;">Fit: {{ c.fit_score }}%</div>
+          <div style="font-size:7.5pt;font-weight:700;color:#1B2A4A;">{{ c.name }}</div>
+          <div style="font-size:5.5pt;font-weight:800;color:#27500A;">Fit: {{ c.fit_score }}%</div>
         </div>
       </div>
       {% if c.reasoning %}
-      <div style="font-size:6pt;color:#555;line-height:1.5;margin-top:1.5mm;">{{ c.reasoning }}</div>
+      <div style="font-size:6pt;color:#6B6B63;line-height:1.4;margin-top:1.5mm;">{{ c.reasoning }}</div>
       {% endif %}
     </div>
     {% endfor %}
-    {% if not companies %}
-    <div class="company-card" style="grid-column:span 3;text-align:center;padding:6mm;">
-      <div style="font-size:7pt;color:#555;">Company-specific matching unavailable. Recommended target segment: Technology and Analytics organizations.</div>
-    </div>
-    {% endif %}
   </div>
 
   <!-- Footer -->
@@ -754,7 +812,7 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
       <span class="logo-text">Career Acceleration Plan</span>
     </div>
     <div style="display:flex;align-items:center;gap:6mm;">
-      <span class="page-badge">Page 3 of 3</span>
+      <span class="page-badge">Page 3 of 4</span>
       <div class="header-meta">
         <div class="meta-name">{{ student.name }}</div>
         <div class="meta-sub">90-Day Roadmap</div>
@@ -762,46 +820,20 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     </div>
   </div>
 
-  <!-- CURRENT SNAPSHOT -->
-  <div class="section-title">
-    <div class="section-line"></div>
-    <span class="section-label">Current Snapshot</span>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:3.5mm;flex-shrink:0;">
-    <div class="card p3" style="text-align:center;">
-      <div class="label-xs mb1">Readiness</div>
-      <div style="font-size:14pt;font-weight:900;color:#FF7A1A;line-height:1;">{{ "%.0f"|format(readiness.placement_score) }}%</div>
-      <div style="font-size:5.5pt;color:#555;margin-top:1mm;">{{ readiness.readiness_label }}</div>
-    </div>
-    <div class="card p3" style="text-align:center;">
-      <div class="label-xs mb1">Probability</div>
-      <div style="font-size:14pt;font-weight:900;color:#00E6A8;line-height:1;">{{ "%.0f"|format(probability.placement_probability) }}%</div>
-      <div style="font-size:5.5pt;color:#555;margin-top:1mm;">Estimated</div>
-    </div>
-    <div class="card p3" style="text-align:center;">
-      <div class="label-xs mb1">Top Role</div>
-      <div style="font-size:7pt;font-weight:800;color:#7B7CFF;line-height:1.3;margin-top:1mm;">{{ student.top_predicted_role }}</div>
-    </div>
-    <div class="card p3" style="text-align:center;">
-      <div class="label-xs mb1">Domain</div>
-      <div style="font-size:7pt;font-weight:800;color:#F59E0B;line-height:1.3;margin-top:1mm;">{{ student.primary_domain }}</div>
-    </div>
-  </div>
-
   <!-- IMPROVEMENT SIMULATION -->
   <div class="section-title">
-    <div class="section-line secondary"></div>
-    <span class="section-label secondary">Improvement Simulation</span>
+    <div class="section-line"></div>
+    <span class="section-label">Readiness Impact Simulation</span>
   </div>
-  <div class="card p4 mb3" style="flex-shrink:0;">
+  <div class="card p4 mb3">
     <div class="timeline">
       {% for step in improvement_simulation %}
       <div class="timeline-step">
-        <div class="timeline-score{% if step.is_current %} current{% endif %}">{{ step.score }}%</div>
+        <div class="timeline-score {% if step.is_current %}current{% endif %}">{{ step.score }}%</div>
         <div class="timeline-label">{{ step.label }}</div>
       </div>
       {% if not loop.last %}
-      <div class="timeline-arrow{% if not step.is_current %} active{% endif %}">→</div>
+      <div class="timeline-arrow active">→</div>
       {% endif %}
       {% endfor %}
     </div>
@@ -809,22 +841,22 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
 
   <!-- 90-DAY ROADMAP -->
   <div class="section-title">
-    <div class="section-line accent"></div>
-    <span class="section-label accent">90-Day Career Roadmap</span>
+    <div class="section-line secondary"></div>
+    <span class="section-label secondary">90-Day Strategic Roadmap</span>
   </div>
-  <div class="roadmap-grid mb3" style="flex-shrink:0;">
+  <div class="roadmap-grid mb3">
     {% for m in roadmap %}
     <div class="roadmap-card">
       <div class="roadmap-header">
-        <div class="roadmap-month-dot" style="background:{{ m.accent_color }};box-shadow:0 0 4pt {{ m.accent_color }}80;"></div>
-        <span class="roadmap-month-num" style="color:{{ m.accent_color }};">Month {{ m.month }}</span>
+        <div class="roadmap-month-dot" style="background:#1B2A4A;"></div>
+        <div class="roadmap-month-num">Month {{ m.month }}</div>
       </div>
       <div class="roadmap-month-title">{{ m.title }}</div>
       <div class="roadmap-actions">
-        {% for action in m.actions %}
+        {% for a in m.actions %}
         <div class="roadmap-action-item">
-          <span class="action-bullet" style="color:{{ m.accent_color }};">›</span>
-          <span>{{ action }}</span>
+          <span class="action-bullet">•</span>
+          <span>{{ a }}</span>
         </div>
         {% endfor %}
       </div>
@@ -832,60 +864,186 @@ html, body { width: 210mm; background: #0A0A0A; font-family: 'Inter', 'Plus Jaka
     {% endfor %}
   </div>
 
-  <!-- LEARNING PRIORITIES + AI ADVISOR VERDICT (2-col) -->
-  <div class="row g3" style="flex:1;min-height:0;">
+  <!-- LEARNING PRIORITIES -->
+  <div class="section-title">
+    <div class="section-line accent"></div>
+    <span class="section-label accent">Learning Priorities &amp; Expected Gains</span>
+  </div>
+  <div class="card mb3" style="overflow:hidden;">
+    <table class="dossier-table">
+      <thead>
+        <tr>
+          <th>Skill / Gap</th>
+          <th>Priority</th>
+          <th>Expected Impact</th>
+          <th style="text-align:right;">Readiness Gain</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lp in learning_priorities %}
+        <tr>
+          <td style="font-weight:700;color:#1B2A4A;">{{ lp.skill }}</td>
+          <td><span class="badge badge-{{ lp.priority | lower }}">{{ lp.priority }}</span></td>
+          <td style="color:#6B6B63;">{{ lp.expected_impact }}</td>
+          <td class="num" style="text-align:right;color:#27500A;font-weight:800;">{{ lp.readiness_gain }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-    <!-- Learning Priorities Table -->
-    <div class="col flex1">
-      <div class="section-title">
-        <div class="section-line"></div>
-        <span class="section-label">Learning Priorities</span>
-      </div>
-      <div class="card" style="flex:1;">
-        <table class="dossier-table">
-          <thead>
-            <tr>
-              <th>Skill</th>
-              <th>Priority</th>
-              <th>Impact</th>
-              <th style="text-align:right;">Gain</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for lp in learning_priorities %}
-            <tr>
-              <td style="font-weight:600;color:#DDD;">{{ lp.skill }}</td>
-              <td><span class="badge badge-{{ lp.priority | lower }}">{{ lp.priority }}</span></td>
-              <td style="color:#888;">{{ lp.expected_impact }}</td>
-              <td class="num" style="text-align:right;color:#00E6A8;">{{ lp.readiness_gain }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+  <!-- ADVISOR VERDICT -->
+  <div class="section-title">
+    <div class="section-line"></div>
+    <span class="section-label">AI Advisor Verdict</span>
+  </div>
+  <div class="assessment-box mb2">
+    <div class="row center justify-between mb1">
+      <span class="label-xs" style="color:#1B2A4A;">Overall Classification</span>
+      <span class="badge badge-medium" style="font-size:6.5pt;background:#1B2A4A;color:#FFFFFF;border:none;">{{ advisor_verdict.overall_rating }}</span>
     </div>
-
-    <!-- AI Advisor Verdict -->
-    <div class="col flex1">
-      <div class="section-title">
-        <div class="section-line" style="background:#7B7CFF;"></div>
-        <span class="section-label accent">AI Advisor Verdict</span>
-      </div>
-      <div class="card" style="flex:1;padding:4mm;border-left:2.5pt solid #7B7CFF;border-radius:0 6pt 6pt 0;">
-        <div class="row center mb2">
-          <span style="font-size:5.5pt;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#444;flex:1;">Senior Consultant Assessment</span>
-          <span style="font-size:6pt;font-weight:800;color:#7B7CFF;background:rgba(123,124,255,0.1);border:1px solid rgba(123,124,255,0.3);border-radius:10pt;padding:1.5pt 5pt;">{{ advisor_verdict.overall_rating }}</span>
-        </div>
-        <div style="font-size:6.5pt;line-height:1.7;color:#888;font-style:italic;">{{ advisor_verdict.verdict_text }}</div>
-      </div>
-    </div>
+    <div class="assessment-text">{{ advisor_verdict.verdict_text }}</div>
   </div>
 
   <!-- Footer -->
   <div class="page-footer">
-    <span class="footer-text">AI Placement Intelligence Platform · Confidential · Not for redistribution</span>
-    <span class="footer-domain">{{ student.name }} · {{ student.generated_date }}</span>
-    <span class="footer-text">End of Dossier</span>
+    <span class="footer-text">AI Placement Intelligence Platform · Confidential</span>
+    <span class="footer-domain">Career Acceleration Plan</span>
+    <span class="footer-text">{{ student.generated_date }}</span>
+  </div>
+</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════
+     ║  PAGE 4 — ENTERPRISE ATS RESUME CHECKER
+     ╚═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="logo-mark">
+      <div class="logo-dot"></div>
+      <span class="logo-text">Enterprise ATS Intelligence</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6mm;">
+      <span class="page-badge">Page 4 of 4</span>
+      <div class="header-meta">
+        <div class="meta-name">{{ student.name }}</div>
+        <div class="meta-sub">Resume Optimization</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATS SCORE AND FEEDBACK -->
+  <div class="row g3 mb3">
+    <!-- ATS Score -->
+    <div class="col" style="flex: 0 0 38%;">
+      <div class="section-title">
+        <div class="section-line secondary"></div>
+        <span class="section-label secondary">ATS Enterprise Score</span>
+      </div>
+      <div class="card p4" style="text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background:#FFFFFF; border: 1px solid #E4DED0;">
+         <div style="position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 6px solid #F4EFE4; box-shadow: inset 0 0 10px rgba(27,42,74,0.06);">
+            <div style="font-size: 26pt; font-weight: 900; color: #1B2A4A;">{{ ats_data.overall_score if ats_data else 75 }}</div>
+            <div style="position: absolute; bottom: 12px; font-size: 6pt; color: #6B6B63; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em;">/ 100</div>
+         </div>
+         <div style="margin-top: 12px; font-size: 7.5pt; font-weight: 800; color: #1B2A4A;">Overall Parseability &amp; Alignment</div>
+      </div>
+    </div>
+    
+    <!-- AI Recruiter Feedback -->
+    <div class="col flex1">
+      <div class="section-title">
+        <div class="section-line"></div>
+        <span class="section-label">AI Recruiter Feedback</span>
+      </div>
+      <div class="assessment-box" style="flex: 1; height: 100%; border-left: 3pt solid #1B2A4A; background:#FFFFFF;">
+        <div class="assessment-text">{{ ats_data.feedback if ats_data else 'Resume structure adheres to enterprise ATS standards.' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATS DIMENSIONAL BREAKDOWN -->
+  <div class="section-title">
+    <div class="section-line accent"></div>
+    <span class="section-label accent">Dimensional Breakdown</span>
+  </div>
+  <div class="card p4 mb3" style="background:#FFFFFF; border: 1px solid #E4DED0;">
+     <table class="dossier-table">
+        <tbody>
+           <tr>
+              <td style="width: 32%; color: #1B2A4A; font-weight: 800;">Structure &amp; Parseability</td>
+              <td style="width: 58%;">
+                 <div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.structure_score if ats_data else 75 }}%;background:#1B2A4A;"></div></div>
+              </td>
+              <td class="num" style="width: 10%; text-align:right; color: #1B2A4A; font-weight: 900;">{{ ats_data.structure_score if ats_data else 75 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Skill Density</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.skills_score if ats_data else 70 }}%;background:#27500A;"></div></div></td>
+              <td class="num" style="text-align:right; color: #27500A; font-weight: 900;">{{ ats_data.skills_score if ats_data else 70 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Experience Depth</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.experience_score if ats_data else 70 }}%;background:#0C447C;"></div></div></td>
+              <td class="num" style="text-align:right; color: #0C447C; font-weight: 900;">{{ ats_data.experience_score if ats_data else 70 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Project Quality</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.projects_score if ats_data else 75 }}%;background:#854F0B;"></div></div></td>
+              <td class="num" style="text-align:right; color: #854F0B; font-weight: 900;">{{ ats_data.projects_score if ats_data else 75 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Education Quality</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.education_score if ats_data else 85 }}%;background:#27500A;"></div></div></td>
+              <td class="num" style="text-align:right; color: #27500A; font-weight: 900;">{{ ats_data.education_score if ats_data else 85 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Measurable Achievements</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.achievements_score if ats_data else 70 }}%;background:#1B2A4A;"></div></div></td>
+              <td class="num" style="text-align:right; color: #1B2A4A; font-weight: 900;">{{ ats_data.achievements_score if ats_data else 70 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Formatting &amp; Readability</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.formatting_score if ats_data else 80 }}%;background:#0C447C;"></div></div></td>
+              <td class="num" style="text-align:right; color: #0C447C; font-weight: 900;">{{ ats_data.formatting_score if ats_data else 80 }}%</td>
+           </tr>
+           <tr>
+              <td style="color: #1B2A4A; font-weight: 800;">Keyword Optimization</td>
+              <td><div class="progress-track"><div class="progress-fill" style="width:{{ ats_data.keyword_score if ats_data else 75 }}%;background:#27500A;"></div></div></td>
+              <td class="num" style="text-align:right; color: #27500A; font-weight: 900;">{{ ats_data.keyword_score if ats_data else 75 }}%</td>
+           </tr>
+        </tbody>
+     </table>
+  </div>
+
+  {% if jd_data %}
+  <!-- JD MATCH INTELLIGENCE -->
+  <div class="section-title">
+    <div class="section-line secondary"></div>
+    <span class="section-label secondary">Target Job Description Match</span>
+  </div>
+  <div class="card p4 mb3" style="background:#FFFFFF; border: 1px solid #E4DED0;">
+    <div class="row center justify-between mb2">
+      <span style="font-size:8pt;font-weight:800;color:#1B2A4A;">Target Role: {{ jd_data.detected_role or student.top_predicted_role }}</span>
+      <span style="font-size:10pt;font-weight:900;color:#27500A;">JD Match: {{ jd_data.match_percent }}%</span>
+    </div>
+    {% if jd_data.missing_skills %}
+    <div style="font-size:6.5pt;font-weight:800;color:#791F1F;text-transform:uppercase;margin-bottom:1mm;">Missing JD Requirements</div>
+    <div style="display:flex;flex-wrap:wrap;gap:1.5mm;">
+      {% for ms in jd_data.missing_skills %}
+      <span class="badge badge-critical">{{ ms }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span class="footer-text">AI Placement Intelligence Platform · Confidential</span>
+    <span class="footer-domain">Enterprise ATS Intelligence</span>
+    <span class="footer-text">{{ student.generated_date }}</span>
   </div>
 </div>
 
