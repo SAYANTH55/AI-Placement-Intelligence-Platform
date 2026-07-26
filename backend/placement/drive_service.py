@@ -107,3 +107,41 @@ class DriveService:
         for r in rounds:
             db.refresh(r)
         return rounds
+
+    @staticmethod
+    def student_meets_eligibility(student, drive) -> tuple[bool, str]:
+        if not drive.structured_eligibility:
+            return True, ""
+            
+        # Check CGPA
+        min_cgpa = drive.structured_eligibility.get("min_cgpa")
+        if min_cgpa is not None:
+            if student.cgpa is None or student.cgpa < min_cgpa:
+                return False, f"Eligibility Failed: Minimum CGPA of {min_cgpa} required (Yours: {student.cgpa or 'N/A'})."
+                
+        # Check active backlogs
+        max_active_backlogs = drive.structured_eligibility.get("max_active_backlogs")
+        if max_active_backlogs is not None:
+            backlogs = 0 
+            if student.application_profile and student.application_profile.backlog_history:
+                try:
+                    backlogs = int(student.application_profile.backlog_history.strip())
+                except ValueError:
+                    import logging
+                    logging.getLogger(__name__).warning(f"Failed to parse backlog_history '{student.application_profile.backlog_history}' for student {student.id}. Defaulting to 0.")
+            if backlogs > max_active_backlogs:
+                return False, f"Eligibility Failed: Maximum of {max_active_backlogs} active backlogs allowed (Yours: {backlogs})."
+                
+        # Check allowed courses
+        allowed_courses = drive.structured_eligibility.get("allowed_courses")
+        if allowed_courses and isinstance(allowed_courses, list) and len(allowed_courses) > 0:
+            student_course = None
+            if student.application_profile and student.application_profile.course:
+                student_course = student.application_profile.course
+            elif student.user and getattr(student.user, "course", None):
+                student_course = student.user.course
+                
+            if student_course and student_course not in allowed_courses:
+                return False, f"Eligibility Failed: Course {student_course} is not eligible for this drive."
+                
+        return True, ""

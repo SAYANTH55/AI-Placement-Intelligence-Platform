@@ -4,7 +4,7 @@ color 0A
 echo.
 echo ================================================================
 echo  AI Placement Intelligence Platform - Startup Script
-echo  Version: 5.3.0 (Python 3.10 Compatible + ML Optimized + ATS Patched)
+echo  Version: 5.5.0 (Job Mode Scoring ^& Architecture)
 echo ================================================================
 echo.
 
@@ -197,10 +197,15 @@ echo      Running database migrations...
 "%PYTHON_EXEC%" migrate_placement_engine.py 2>nul
 "%PYTHON_EXEC%" scratch/migrate_provisioning.py 2>nul
 "%PYTHON_EXEC%" migrate_validation_gateway.py 2>nul
+"%PYTHON_EXEC%" scripts/migrate_profile_strength.py 2>nul
+"%PYTHON_EXEC%" scripts/cleanup_db.py 2>nul
+"%PYTHON_EXEC%" migrate_skills_architecture.py 2>nul
+"%PYTHON_EXEC%" scripts/migrate_db_structures.py 2>nul
+"%PYTHON_EXEC%" scripts/migrate_json_to_relational.py 2>nul
 if errorlevel 1 (
     echo [WARN] Some DB migrations failed - check logs
 ) else (
-    echo [OK] Database schema fully updated - placement engine, provisioning, and validation gateway ready
+    echo [OK] Database schema fully updated - placement engine, provisioning, validation gateway, profile strength, and job mode scoring ready
 )
 
 echo.
@@ -325,7 +330,7 @@ timeout /t 6 /nobreak >nul
 
 echo.
 echo ================================================================
-echo  [OK] Startup Sequence Complete - v5.2.0 (ML Enhanced)
+echo  [OK] Startup Sequence Complete - v5.5.0 (ML Enhanced)
 echo ================================================================
 echo.
 echo  Application URLs:
@@ -333,6 +338,7 @@ echo    Frontend App      :  http://localhost:5173
 echo    Analytics Panel   :  http://localhost:5173/admin
 echo    Student Dashboard :  http://localhost:5173/student
 echo    PR Dashboard      :  http://localhost:5173/pr
+echo    Placement Admin   :  http://localhost:5173/admin/placement-engine
 echo    API Docs (Swagger):  http://localhost:8000/docs
 echo    API Health Check  :  http://localhost:8000/health
 echo.

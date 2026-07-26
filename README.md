@@ -26,3 +26,11 @@ This platform connects students, teachers, and placement officers with an AI-dri
 - **Member 1 (Frontend)**: UI/UX, Student/Teacher Portals.
 - **Member 2 (Backend)**: API Development, Database Management.
 - **Member 3 (AI/ML)**: Intelligence Layer, NLP, Predictive Models.
+
+## Future Work (Acknowledged)
+- **Monitoring Dashboards**: Dedicated operational dashboards to track system health and telemetry.
+- **Load Testing**: Formal load and stress testing pipelines.
+- **Infrastructure as Code**: Terraform or CloudFormation scripts for automated deployment and scaling.
+
+## Known Limitations
+- **Profile Strength Index**: The platform features a "Profile Strength Index" (formerly Placement Readiness Score). It is important to note that this score is a **heuristic composite of resume signal strength**, not a validated predictor of real-world placement outcomes. Currently, it is trained on synthetic heuristics. Once the database accumulates a statistically significant volume of real ground-truth placement outcomes (`placement_outcomes`), the model will be retrained on actual data to predict true placement probability.

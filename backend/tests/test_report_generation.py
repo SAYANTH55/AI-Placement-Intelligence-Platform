@@ -113,7 +113,7 @@ def test_generate_dossier_builder_with_db_record(db: Session, test_user: User):
         extracted_skills=["Python", "React", "SQL"],
         experience_years=1,
         placement_probability=0.8,
-        placement_readiness="High",
+        profile_strength_label="High",
         top_matching_role="Software Engineer",
         top_role_match_percent=80,
         role_matches=[

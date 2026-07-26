@@ -1,7 +1,7 @@
 """
 ats_scoring.py
 --------------
-Engine 1: Standalone ATS Benchmark
+Engine 1: Standalone JOB MODE Benchmark
 
 Evaluates the resume WITHOUT any job description.
 Scores across 8 weighted dimensions, each with deterministic rule logic.
@@ -23,34 +23,34 @@ import re
 from typing import Dict, Any, List, Tuple
 from .ats_models import ATSDimension, ATSBreakdown
 
-# ── ATS Keyword Bank (1200+ common ATS-indexed keywords) ──────────────────
-# Core subset — expanded from industry standards
+# ── ATS Keyword Bank (200+ common ATS-indexed keywords) ──────────────────
 _ATS_KEYWORDS = {
     # Programming Languages
     "python", "java", "javascript", "typescript", "c++", "c#", "golang", "rust",
-    "kotlin", "swift", "ruby", "php", "scala", "r", "matlab", "dart",
+    "kotlin", "swift", "ruby", "php", "scala", "r", "matlab", "dart", "bash", "shell", "powershell",
     # Web / Frontend
-    "react", "nextjs", "vuejs", "angular", "html", "css", "tailwind", "webpack",
-    "vite", "redux", "graphql", "rest api", "responsive design", "accessibility",
-    # Backend
+    "react", "nextjs", "vuejs", "angular", "html", "html5", "css", "css3", "tailwind", "tailwind css",
+    "webpack", "vite", "redux", "redux toolkit", "graphql", "rest api", "restful api",
+    "responsive design", "accessibility", "a11y", "bootstrap", "sass", "less", "websockets",
+    # Backend & Microservices
     "fastapi", "django", "flask", "spring boot", "nodejs", "express", "nestjs",
-    "sqlalchemy", "prisma", "hibernate", "microservices", "grpc",
-    # Databases
+    "sqlalchemy", "prisma", "hibernate", "microservices", "grpc", "celery", "rabbitmq", "activemq",
+    # Databases & Caching
     "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "dynamodb",
-    "sqlite", "cassandra", "firebase", "supabase", "snowflake", "bigquery",
-    # Cloud & DevOps
+    "sqlite", "cassandra", "firebase", "supabase", "snowflake", "bigquery", "memcached", "neo4j",
+    # Cloud & DevOps & CI/CD
     "aws", "azure", "gcp", "docker", "kubernetes", "terraform", "ansible",
-    "jenkins", "github actions", "ci/cd", "helm", "argocd", "prometheus", "grafana",
-    # ML / Data
+    "jenkins", "github actions", "ci/cd", "helm", "argocd", "prometheus", "grafana", "linux", "cloudformation",
+    # ML / Data Science / MLOps
     "machine learning", "deep learning", "tensorflow", "pytorch", "scikit-learn",
     "pandas", "numpy", "xgboost", "nlp", "computer vision", "mlops", "airflow",
-    "spark", "kafka", "dbt", "tableau", "power bi",
-    # Soft & General
-    "agile", "scrum", "jira", "git", "github", "unit testing", "tdd", "code review",
-    "system design", "distributed systems", "algorithms", "data structures",
-    # Certifications
-    "aws certified", "azure certified", "gcp certified", "pmp", "cissp",
-    "comptia", "tensorflow certified", "databricks certified",
+    "spark", "pyspark", "kafka", "dbt", "tableau", "power bi", "hugging face", "bert", "llm", "opencv",
+    # Software Engineering & QA
+    "agile", "scrum", "jira", "git", "github", "gitlab", "unit testing", "tdd", "bdd", "code review",
+    "system design", "distributed systems", "algorithms", "data structures", "jest", "pytest", "cypress", "playwright",
+    # Certifications & Security
+    "aws certified", "azure certified", "gcp certified", "pmp", "cissp", "ceh",
+    "comptia", "tensorflow certified", "databricks certified", "ckad", "cka", "security+",
 }
 
 # Strong action verbs
@@ -60,12 +60,14 @@ _ACTION_VERBS = {
     "deployed", "launched", "created", "automated", "integrated", "migrated",
     "scaled", "delivered", "achieved", "established", "streamlined", "contributed",
     "published", "researched", "mentored", "trained", "collaborated", "authored",
+    "spearheaded", "formulated", "overhauled", "championed", "orchestrated",
 }
 
 # Passive / weak verbs to penalise
 _PASSIVE_VERBS = {
     "responsible for", "worked on", "helped with", "assisted", "participated in",
     "involved in", "tasked with", "was part of", "contributed to general",
+    "helped in", "tried to", "attempted", "assigned to",
 }
 
 
@@ -519,7 +521,7 @@ def score_resume(parsed_data: Dict[str, Any], raw_text: str) -> ATSBreakdown:
 
 
 def compute_total(breakdown: ATSBreakdown) -> int:
-    """Sum all dimension scores into the final ATS benchmark score."""
+    """Sum all dimension scores into the final JOB MODE benchmark score."""
     return sum([
         breakdown.structure.score,
         breakdown.skill_density.score,
@@ -533,11 +535,11 @@ def compute_total(breakdown: ATSBreakdown) -> int:
 
 
 def score_to_grade(score: int) -> tuple:
-    """Convert numeric ATS score to (grade, description) tuple."""
+    """Convert numeric JOB MODE score to (grade, description) tuple."""
     if score >= 82:
-        return "Excellent", "Your resume is highly optimised for ATS systems. Most recruiters will see it."
+        return "Excellent", "Your resume is highly optimised for parsing systems. Most recruiters will see it."
     if score >= 65:
-        return "Good", "Your resume passes most ATS filters. A few targeted improvements will boost visibility."
+        return "Good", "Your resume passes most filters. A few targeted improvements will boost visibility."
     if score >= 45:
-        return "Fair", "Your resume may be filtered by ATS. Address the key issues below to improve ranking."
-    return "Poor", "Your resume is likely being filtered by ATS. Significant improvements are needed."
+        return "Fair", "Your resume may be filtered out. Address the key issues below to improve ranking."
+    return "Poor", "Your resume is likely being filtered. Significant improvements are needed."

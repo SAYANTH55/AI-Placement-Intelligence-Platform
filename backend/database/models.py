@@ -47,8 +47,8 @@ class ResumeAnalysis(Base):
     extracted_text = Column(Text)  # First 2000 chars
     
     # Analysis results
-    placement_probability = Column(Float)  # 0.0-1.0
-    placement_readiness = Column(String)  # High/Medium/Low
+    profile_strength_score = Column(Float)  # 0.0-1.0
+    profile_strength_label = Column(String)  # High/Medium/Low
     top_matching_role = Column(String)
     top_role_match_percent = Column(Integer)
     
@@ -183,12 +183,15 @@ class Drive(Base):
     description = Column(String)
     job_description = Column(Text, nullable=True)  # Full JD text for AI matching
     eligibility_criteria = Column(String)
-    ctc = Column(String, nullable=True)  # CTC / salary info
-    course = Column(String, default="ALL")  # MCA, MSAIM, ALL — controls visibility
+    structured_eligibility = Column(JSON, nullable=True) # {min_cgpa: Float, max_active_backlogs: Int, allowed_courses: List[str]}
+    ctc = Column(String, nullable=True)  # Original free-text CTC
+    ctc_min = Column(Float, nullable=True)
+    ctc_max = Column(Float, nullable=True)
+    course = Column(String, default="ALL", index=True)  # MCA, MSAIM, ALL — controls visibility
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
     created_by = Column(Integer, ForeignKey("users.id"))
     deadline = Column(DateTime(timezone=True))
-    status = Column(String, default="open") # open / closed / archived
+    status = Column(String, default="open", index=True) # open / closed / archived
     application_form_fields = Column(JSON, nullable=True) # list of field keys to collect
     
     creator = relationship("User")
@@ -215,8 +218,8 @@ class Application(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     application_uuid = Column(String, unique=True, index=True, default=lambda: str(uuid.uuid4()))
-    student_id = Column(Integer, ForeignKey("placement_students.id"))
-    drive_id = Column(Integer, ForeignKey("placement_drives.id"))
+    student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
+    drive_id = Column(Integer, ForeignKey("placement_drives.id"), index=True)
     resume_path = Column(String)
     ai_match_score = Column(Float, nullable=True)  # AI match score against drive JD (0-100)
     status = Column(String, default="Applied")  # Applied / In Progress / Rejected / Placed
@@ -415,8 +418,8 @@ class ResumePrediction(Base):
     analysis_id = Column(Integer, ForeignKey("resume_analyses.id"), index=True)
     predicted_role = Column(String, index=True)
     role_confidence = Column(Float, nullable=True)
-    placement_probability = Column(Float, nullable=True)
-    readiness_score = Column(String, nullable=True)
+    profile_strength_score = Column(Float, nullable=True)
+    profile_strength_label = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     analysis = relationship("ResumeAnalysis", backref="normalized_predictions")
@@ -498,16 +501,16 @@ class SkillRelationship(Base):
 
 # ── Phase 8: Placement Outcome Intelligence ──
 
-class PlacementPredictionSnapshot(Base):
-    __tablename__ = "placement_prediction_snapshots"
+class ProfileStrengthSnapshot(Base):
+    __tablename__ = "profile_strength_snapshots"
     
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
-    predicted_probability = Column(Float, nullable=True)
+    profile_strength_score = Column(Float, nullable=True)
     actual_outcome = Column(Boolean, nullable=True)
-    prediction_date = Column(DateTime(timezone=True), server_default=func.now(), index=True)
+    snapshot_date = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     
-    student = relationship("Student", backref="prediction_snapshots")
+    student = relationship("Student", backref="strength_snapshots")
 
 
 # ── Phase 11: Taxonomy Intelligence Layer ──
@@ -561,7 +564,7 @@ class TrainingDatasetSnapshot(Base):
     student_id = Column(Integer, ForeignKey("placement_students.id"), index=True)
     snapshot_date = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     ats_score = Column(Float, nullable=True)
-    readiness_score = Column(String, nullable=True)
+    profile_strength_label = Column(String, nullable=True)
     role_match_score = Column(Float, nullable=True)
     skills_snapshot = Column(JSON, nullable=True)
     domain = Column(String, nullable=True)

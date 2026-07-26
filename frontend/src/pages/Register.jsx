@@ -271,7 +271,7 @@ export default function Register() {
                     </button>
 
                     {isCountryOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-100 rounded-3xl shadow-2xl z-[60] py-4 animate-scale-in origin-top-left overflow-hidden">
+                      <div className="absolute top-full left-0 mt-2 w-[240px] sm:w-72 bg-white border border-gray-100 rounded-3xl shadow-2xl z-[60] py-4 animate-scale-in origin-top-left overflow-hidden">
                         <div className="px-4 mb-3 border-none relative">
                           <SearchIcon className="absolute left-7 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
                           <input

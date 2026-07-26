@@ -120,7 +120,7 @@ CANDIDATE DATA (use these exact figures):
 - Domain: {student.primary_domain}
 - Top Predicted Role: {top_role}
 - Placement Readiness: {readiness.readiness_label} ({readiness.placement_score:.1f}%)
-- Placement Probability: {prob.placement_probability:.1f}%
+- Profile Strength Score: {prob.profile_strength_score:.1f}%
 - Top Role Match: {prob.top_role_match_percent}%
 - Key Strengths: {skills_list}
 - Critical Gaps: {gaps_list}
@@ -133,10 +133,9 @@ INSTRUCTIONS:
 """
     fallback_text = (
         f"{student.name} demonstrates a {readiness.readiness_label.lower()} readiness profile "
-        f"within the {student.primary_domain} domain, with a composite placement score of "
-        f"{readiness.placement_score:.1f}% and a {prob.placement_probability:.1f}% predicted "
-        f"placement probability. Core technical strengths in {skills_list} establish a solid "
-        f"foundation for {top_role} roles. Closing identified gaps in {gaps_list} represents "
+        f"within the {student.primary_domain} domain, with a composite profile strength score of "
+        f"{score:.1f}% and a {prob.profile_strength_score:.1f}% predicted profile strength. Core technical strengths in {skills_list} establish a solid "
+        f"foundation for roles such as {primary_role}. Closing identified gaps in {gaps_list} represents "
         f"the clearest path to elevating market competitiveness and role eligibility."
     )
     fallback = {
@@ -145,7 +144,7 @@ INSTRUCTIONS:
             "executive_overview": fallback_text,
             "technical_capability": f"Core technical strengths in {skills_list}.",
             "resume_quality": "Resume parsed successfully.",
-            "placement_outlook": f"Placement probability is {prob.placement_probability:.1f}%.",
+            "placement_outlook": f"Profile strength is {prob.profile_strength_score:.1f}%.",
             "recruiter_verdict": f"Targeting {top_role} roles."
         }
     }
@@ -301,7 +300,7 @@ Candidate Profile:
 - Target Role: {top_role}
 - Current Strengths: {", ".join(skills)}
 - Critical Gaps to Close: {", ".join(gaps) or "general skill improvement"}
-- Placement Score: {payload.readiness.placement_score:.1f}%
+- Profile Strength Score: {payload.readiness.placement_score:.1f}%
 
 Generate a PRACTICAL 90-day plan split into 3 months. Each month must have:
 - A title (5-8 words)
@@ -374,8 +373,8 @@ CANDIDATE DATA (reference these explicitly):
 - Name: {student.name}
 - Domain: {student.primary_domain}
 - Target Role: {top_role}
-- Placement Score: {score:.1f}%
-- Placement Probability: {prob.placement_probability:.1f}%
+- Profile Strength Index: {score:.1f}%
+- Profile Strength Score: {prob.profile_strength_score:.1f}%
 - Strengths: {skills}
 - Gaps: {gaps}
 - Overall Rating: {payload.advisor_verdict.overall_rating}
@@ -392,7 +391,7 @@ INSTRUCTIONS:
     fallback = (
         f"{student.name} presents a {payload.advisor_verdict.overall_rating.lower()} profile "
         f"in the {student.primary_domain} domain, with a composite intelligence score of "
-        f"{score:.1f}% and a {prob.placement_probability:.1f}% predicted placement probability. "
+        f"{score:.1f}% and a {prob.profile_strength_score:.1f}% predicted profile strength. "
         f"The demonstrated proficiency in {skills} positions this candidate competitively for "
         f"{top_role} roles. The primary investment should focus on closing the gaps in {gaps}, "
         f"which represent the highest-leverage path to improving market readiness. "

@@ -23,6 +23,7 @@ trigger_training_pipeline() is designed to run as a Celery task:
 All other methods are synchronous and stateless — safe for concurrent calls.
 """
 
+import json
 import logging
 from datetime import datetime, timezone
 from typing import Optional
@@ -106,8 +107,15 @@ class LearningService:
                 "experience": outcome_data.get("experience_bucket", "0-2")
             }
         )
-        
-        platform_logger.info(f"LOGGING GROUND TRUTH | user={user_id} | outcome={got_placed} | predicted={predicted_score}")
+        # Structured logging for failure-prone integration point
+        platform_logger.info(json.dumps({
+            "event": "log_outcome_triggered",
+            "user_id": user_id,
+            "outcome": got_placed,
+            "predicted_score": predicted_score,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "status": "success"
+        }))
         
         event = {
             "user_id": user_id,

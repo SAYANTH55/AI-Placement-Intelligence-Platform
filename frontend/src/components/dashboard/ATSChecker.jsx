@@ -12,7 +12,7 @@ function ScoreDonut({ value, label, color, size = 80 }) {
       <div className="relative flex items-center justify-center">
         <svg width={size} height={size}>
           <circle cx={size / 2} cy={size / 2} r={R} fill="none"
-            stroke="rgba(255,255,255,0.06)" strokeWidth={8} />
+            stroke="rgba(27,42,74,0.10)" strokeWidth={8} />
           <motion.circle
             cx={size / 2} cy={size / 2} r={R} fill="none"
             stroke={color} strokeWidth={8} strokeLinecap="round"
@@ -109,19 +109,19 @@ export default function ATSChecker({ data, onCheckComplete }) {
       </div>
 
       {/* JD Input */}
-      <div className="rounded-2xl p-5" style={{ background: '#0e0e10', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <p className="text-[11px] text-[#1B2A4A]/40 mb-3">
-          Paste a job description to compute semantic & keyword ATS compatibility against your resume.
+      <div className="rounded-2xl p-5" style={{ background: '#FFFFFF', border: '1px solid #E4DED0' }}>
+        <p className="text-[11px] text-[#6B6B63] mb-3">
+          Paste a job description to compute semantic & keyword JOB MODE compatibility against your resume.
         </p>
         <textarea
-          className="w-full rounded-xl p-4 text-sm text-[#1B2A4A] placeholder-white/20 outline-none resize-none transition-all"
+          className="w-full rounded-xl p-4 text-sm text-[#1B2A4A] outline-none resize-none transition-all"
           style={{
-            background: '#FFFFFF',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: '#F4EFE4',
+            border: '1px solid #C9C2AF',
             minHeight: '120px',
           }}
-          onFocus={e => e.target.style.borderColor = '#818CF8'}
-          onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+          onFocus={e => e.target.style.borderColor = '#1B2A4A'}
+          onBlur={e => e.target.style.borderColor = '#C9C2AF'}
           placeholder="Paste the full job description here..."
           value={jd}
           onChange={e => setJd(e.target.value)}
@@ -129,18 +129,18 @@ export default function ATSChecker({ data, onCheckComplete }) {
         />
 
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-[10px] text-[#1B2A4A]/20">{jd.trim().split(/\s+/).filter(Boolean).length} words</span>
+          <span className="text-[10px] text-[#6B6B63]">{jd.trim().split(/\s+/).filter(Boolean).length} words</span>
           <button
             onClick={handleAnalyze}
             disabled={loading || !jd.trim()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs text-[#1B2A4A] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-xs text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             style={{
-              background: 'linear-gradient(135deg, #6366F1, #818CF8)',
-              boxShadow: '0 0 20px rgba(129,140,248,0.3)',
+              background: 'linear-gradient(135deg, #1B2A4A, #0C447C)',
+              boxShadow: '0 4px 14px rgba(27,42,74,0.25)',
             }}
           >
             {loading
-              ? <div className="w-4 h-4 border-2 border-[#1B2A4A]/30 border-t-white rounded-full animate-spin" />
+              ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               : <Search className="w-4 h-4" />}
             {loading ? 'Analyzing...' : 'Match JD'}
           </button>
@@ -180,7 +180,7 @@ export default function ATSChecker({ data, onCheckComplete }) {
                     style={{ color: result.final_ats >= 70 ? '#10B981' : result.final_ats >= 45 ? '#F59E0B' : '#EF4444' }}>
                     {Math.round(result.final_ats)}%
                   </div>
-                  <div className="text-[9px] uppercase tracking-widest text-[#1B2A4A]/30 font-black">Final ATS Score</div>
+                  <div className="text-[9px] uppercase tracking-widest text-[#1B2A4A]/30 font-black">JOB MODE Score</div>
                   {result.inferred_jd_role && (
                     <div className="mt-1 px-2 py-1 rounded-full text-[9px] font-black"
                       style={{ background: 'rgba(129,140,248,0.10)', border: '1px solid rgba(129,140,248,0.25)', color: '#818CF8' }}>
@@ -251,18 +251,18 @@ export default function ATSChecker({ data, onCheckComplete }) {
 
             {/* Recommendations */}
             {result.recommendations?.length > 0 && (
-              <div className="rounded-2xl p-4" style={{ background: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="text-[10px] font-black uppercase tracking-wider text-[#818CF8] mb-3 flex items-center gap-1.5">
+              <div className="rounded-2xl p-4" style={{ background: '#FFFFFF', border: '1px solid #E4DED0' }}>
+                <p className="text-[10px] font-black uppercase tracking-wider text-[#1B2A4A] mb-3 flex items-center gap-1.5">
                   <Zap className="w-3 h-3" /> Recommendations
                 </p>
                 <div className="space-y-2">
                   {result.recommendations.map((rec, i) => (
                     <div key={i} className="flex items-start gap-2">
                       <span className="text-[9px] font-black w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center mt-0.5"
-                        style={{ background: 'rgba(129,140,248,0.15)', color: '#818CF8' }}>
+                        style={{ background: 'rgba(27,42,74,0.10)', color: '#1B2A4A' }}>
                         {i + 1}
                       </span>
-                      <p className="text-[11px] text-[#1B2A4A]/50 leading-relaxed">{rec}</p>
+                      <p className="text-[11px] text-[#6B6B63] leading-relaxed">{rec}</p>
                     </div>
                   ))}
                 </div>

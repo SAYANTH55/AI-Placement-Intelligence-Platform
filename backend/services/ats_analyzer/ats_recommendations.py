@@ -21,24 +21,24 @@ from .ats_models import ATSBreakdown, ResumeFix, ATSDimension
 
 def _rule_no_quantified_achievements(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix | None:
     """RULE: Missing measurable achievements."""
-    if bd.achievements.score >= 7:
+    if bd.achievements.score >= 5:
         return None
     quant_pattern = re.compile(
-        r'(\d+\s*%|\$\s*\d+|\d+\s*[kKmM]\+?|\d+x|\b\d+\s+(?:users|clients|projects|systems|teams))',
+        r'(\d+\s*%|\$\s*\d+|\d+\s*[kKmM]\+?|\d+x|\b\d+\s+(?:users|clients|projects|systems|teams|requests|queries|seconds|minutes|hours|days|months)|(?:reduced|increased|improved|decreased|optimized)\s+(?:by|to)?\s*\d+)',
         re.IGNORECASE
     )
     found = quant_pattern.findall(raw)
     n = len(found)
-    if n >= 5:
+    if n >= 2:
         return None
 
     return ResumeFix(
         title="Weak Achievement Statements",
         category="Achievements",
         evidence=f"Only {n} measurable data point(s) found in resume text.",
-        why_it_matters="Recruiters spend 7 seconds on a resume. Quantified results (e.g. '40% faster', '10k users') are the primary differentiator ATS scores and human reviewers both reward.",
+        why_it_matters="Recruiters spend 7 seconds on a resume. Quantified results (e.g. '40% faster', '10k users') are the primary differentiator scoring systems and human reviewers both reward.",
         recommended_fix="Add at least one measurable result to every role bullet point. Use numbers, percentages, dollar amounts, or user/team counts. E.g. 'Improved API response time by 35%' or 'Served 12,000+ monthly users'.",
-        estimated_improvement="+8 ATS",
+        estimated_improvement="+8 JOB MODE",
         priority="HIGH",
     )
 
@@ -57,19 +57,19 @@ def _rule_passive_language(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFi
         title="Passive Language Detected",
         category="Language & Style",
         evidence=f"Passive phrase(s) found: {', '.join(repr(f) for f in found[:3])}.",
-        why_it_matters="Passive voice makes contributions sound vague and low-impact. ATS systems rank resumes with strong action verbs higher, and recruiters skip bullet points that don't open with an active verb.",
+        why_it_matters="Passive voice makes contributions sound vague and low-impact. Systems rank resumes with strong action verbs higher, and recruiters skip bullet points that don't open with an active verb.",
         recommended_fix=f"Replace '{found[0]}' with a strong action verb: Built, Engineered, Led, Designed, Implemented, Optimised, Delivered, Automated, Architected.",
-        estimated_improvement="+5 ATS",
+        estimated_improvement="+5 JOB MODE",
         priority="HIGH",
     )
 
 
 def _rule_missing_github(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix | None:
     """RULE: No GitHub/Portfolio link found."""
-    if bd.project_quality.score >= 12:
+    if bd.project_quality.score >= 8:
         return None
     raw_lower = raw.lower()
-    if "github.com" in raw_lower or "gitlab.com" in raw_lower or "portfolio" in raw_lower:
+    if "github.com" in raw_lower or "gitlab.com" in raw_lower or "portfolio" in raw_lower or "bitbucket" in raw_lower:
         return None
 
     return ResumeFix(
@@ -78,7 +78,7 @@ def _rule_missing_github(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix 
         evidence="No github.com or portfolio URL detected in the resume.",
         why_it_matters="For technical roles, a GitHub profile is used by 78% of hiring managers to validate skills. Resumes without a portfolio link are often deprioritised even with strong skills listed.",
         recommended_fix="Add your GitHub profile URL (github.com/yourusername) in the header and reference specific repositories in your project descriptions with direct links.",
-        estimated_improvement="+6 ATS",
+        estimated_improvement="+6 JOB MODE",
         priority="HIGH",
     )
 
@@ -98,9 +98,12 @@ def _rule_missing_summary(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix
         "summary" in raw_sections
         or "objective" in raw_sections
         or "profile" in raw_sections
-        or "professional summary" in raw_lower[:500]
-        or "career objective" in raw_lower[:500]
-        or "summary" in raw_lower[:500]
+        or "professional summary" in raw_lower[:600]
+        or "career objective" in raw_lower[:600]
+        or "summary" in raw_lower[:600]
+        or "about me" in raw_lower[:600]
+        or "overview" in raw_lower[:600]
+        or "profile" in raw_lower[:600]
     )
     if has_summary:
         return None
@@ -109,9 +112,9 @@ def _rule_missing_summary(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix
         title="Professional Summary Missing",
         category="Structure",
         evidence="No Summary, Objective, or Profile section detected at the top of the resume.",
-        why_it_matters="A 2-4 sentence professional summary at the top is the first thing both ATS and recruiters read. It establishes role fit, seniority, and key value proposition immediately.",
+        why_it_matters="A 2-4 sentence professional summary at the top is the first thing both algorithms and recruiters read. It establishes role fit, seniority, and key value proposition immediately.",
         recommended_fix="Add a 2-3 sentence professional summary below your contact info. Include your current role/title, years of experience, top 2-3 skills, and your value proposition. Keep it keyword-dense.",
-        estimated_improvement="+5 ATS",
+        estimated_improvement="+5 JOB MODE",
         priority="MEDIUM",
     )
 
@@ -130,9 +133,9 @@ def _rule_missing_certifications(parsed: Dict, raw: str, bd: ATSBreakdown) -> Re
         title="No Certifications Listed",
         category="Certifications",
         evidence="No certification or credential keywords detected in the resume.",
-        why_it_matters="Certifications are a high-signal, objective quality indicator that ATS systems rank strongly. Many JD filters require specific certifications, and unmatched resumes are automatically excluded.",
+        why_it_matters="Certifications are a high-signal, objective quality indicator that algorithms rank strongly. Many JD filters require specific certifications, and unmatched resumes are automatically excluded.",
         recommended_fix="Add at least 1 relevant certification to a dedicated 'Certifications' section. Free options: Google Cloud (coursera), AWS Cloud Practitioner, Microsoft Azure Fundamentals, HackerRank certifications.",
-        estimated_improvement="+4 ATS",
+        estimated_improvement="+4 JOB MODE",
         priority="MEDIUM",
     )
 
@@ -151,40 +154,38 @@ def _rule_missing_leadership(parsed: Dict, raw: str, bd: ATSBreakdown) -> Resume
         evidence="No leadership or management keywords found (led, managed, mentored, coordinated).",
         why_it_matters="Leadership signals are critical for mid-to-senior roles. Even junior roles benefit from highlighting ownership — team leads and hiring managers specifically scan for this.",
         recommended_fix="Highlight any instances where you took ownership: team lead on a project, mentored an intern, coordinated a deployment, or led code reviews. Even informal leadership counts.",
-        estimated_improvement="+4 ATS",
+        estimated_improvement="+4 JOB MODE",
         priority="MEDIUM",
     )
 
 
 def _rule_no_projects(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix | None:
     """RULE: Projects section missing or very weak."""
-    if bd.project_quality.score >= 8:
+    if bd.project_quality.score >= 6:
         return None
     projects = parsed.get("projects", [])
     n = len(projects) if isinstance(projects, list) else 0
     
-    if n == 0 and "project" in raw.lower():
-        n = raw.lower().count("project") // 2
-        if n == 0: 
-            n = 1
+    if n == 0 and any(kw in raw.lower() for kw in ["project", "portfolio", "personal work", "open source"]):
+        n = 1
             
-    if n >= 2:
+    if n >= 1:
         return None
 
     return ResumeFix(
         title="Projects Section Missing or Thin",
         category="Projects",
         evidence=f"Only {n} project(s) detected. Recommended: 3-5 well-described projects.",
-        why_it_matters="For early-career candidates, projects are the primary way to demonstrate practical skills. Resumes without a projects section score significantly lower in ATS systems for technical roles.",
+        why_it_matters="For early-career candidates, projects are the primary way to demonstrate practical skills. Resumes without a projects section score significantly lower in parsing systems for technical roles.",
         recommended_fix="Add 3-5 projects with: a clear title, tech stack used (as keywords), a 1-2 sentence outcome, and a GitHub/live URL. Even academic or personal projects count — focus on impact.",
-        estimated_improvement="+7 ATS",
+        estimated_improvement="+7 JOB MODE",
         priority="HIGH",
     )
 
 
-def _rule_skill_gap_backend(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix | None:
-    """RULE: Skill density too low / generic role gap."""
-    if bd.skill_density.score >= 14:
+def _rule_low_skill_density(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix | None:
+    """RULE: Skill density too low."""
+    if bd.skill_density.score >= 11:
         return None
     
     raw_skills = parsed.get("skills", [])
@@ -197,16 +198,22 @@ def _rule_skill_gap_backend(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeF
                 skills.append(s.lower())
     
     skills = set(skills)
-    if len(skills) >= 10:
+    
+    # If the text is long but we found very few skills, it's likely a parsing error, don't penalize.
+    word_count = len(raw.split())
+    if word_count > 400 and len(skills) < 4:
+        return None
+        
+    if len(skills) >= 6:
         return None
 
     return ResumeFix(
         title="Skills Section Needs Expansion",
         category="Skills",
-        evidence=f"Only {len(skills)} distinct skills detected. ATS systems index the skills section heavily.",
-        why_it_matters="ATS systems parse the skills section first and score resumes based on keyword matches. A thin skills section means your resume may not reach a recruiter even if you're qualified.",
-        recommended_fix="Add all tools, languages, frameworks, and platforms you have used — even briefly. Organise into sub-categories: Programming Languages, Frameworks, Databases, Cloud & DevOps, Tools. Aim for 15-20 skills.",
-        estimated_improvement="+8 ATS",
+        evidence=f"Only {len(skills)} distinct skills detected. Scoring systems index the skills section heavily.",
+        why_it_matters="Systems parse the skills section first and score resumes based on keyword matches. A thin skills section means your resume may not reach a recruiter even if you're qualified.",
+        recommended_fix="Add all tools, languages, frameworks, and platforms you have used — even briefly. Organise into sub-categories: Programming Languages, Frameworks, Databases, Cloud & DevOps, Tools. Aim for 10-20 skills.",
+        estimated_improvement="+8 JOB MODE",
         priority="HIGH",
     )
 
@@ -225,7 +232,7 @@ def _rule_no_deployment_evidence(parsed: Dict, raw: str, bd: ATSBreakdown) -> Re
         evidence="Projects mentioned but no deployment, hosting, or production signals detected.",
         why_it_matters="Side projects that are 'just on my laptop' carry significantly less weight than deployed apps. Live, accessible projects demonstrate production readiness — a top hiring signal.",
         recommended_fix="Deploy at least 1-2 projects. Free platforms: Vercel (frontend), Railway/Render (backend), Hugging Face Spaces (ML). Add the live URL to each project description.",
-        estimated_improvement="+4 ATS",
+        estimated_improvement="+4 JOB MODE",
         priority="MEDIUM",
     )
 
@@ -250,9 +257,9 @@ def _rule_missing_contact(parsed: Dict, raw: str, bd: ATSBreakdown) -> ResumeFix
         title="Incomplete Contact Information",
         category="Structure",
         evidence=f"Missing: {', '.join(fixes_needed)}.",
-        why_it_matters="ATS systems extract and validate contact information. Missing email or LinkedIn causes parsing failures, and recruiters cannot follow up without contact details.",
+        why_it_matters="Systems extract and validate contact information. Missing email or LinkedIn causes parsing failures, and recruiters cannot follow up without contact details.",
         recommended_fix=f"Add your {' and '.join(fixes_needed)} to the resume header. Format LinkedIn as: linkedin.com/in/yourname. Ensure the email is professional (avoid nicknames).",
-        estimated_improvement="+3 ATS",
+        estimated_improvement="+3 JOB MODE",
         priority="MEDIUM",
     )
 
@@ -268,10 +275,10 @@ def _rule_formatting_too_short(parsed: Dict, raw: str, bd: ATSBreakdown) -> Resu
     return ResumeFix(
         title="Resume Content Is Too Sparse",
         category="Formatting",
-        evidence=f"Resume contains only ~{word_count} words. ATS systems expect 300-800 words.",
-        why_it_matters="Very short resumes give ATS systems insufficient data to score correctly. They also signal a lack of experience depth to recruiters.",
+        evidence=f"Resume contains only ~{word_count} words. Systems typically expect 300-800 words.",
+        why_it_matters="Very short resumes give parsing systems insufficient data to score correctly. They also signal a lack of experience depth to recruiters.",
         recommended_fix="Expand each role with 3-5 bullet points. Describe what you did, the technology used, and the measurable outcome. Add sections you may have skipped: Projects, Certifications, Extra-curricular.",
-        estimated_improvement="+5 ATS",
+        estimated_improvement="+5 JOB MODE",
         priority="HIGH",
     )
 
@@ -279,7 +286,7 @@ def _rule_formatting_too_short(parsed: Dict, raw: str, bd: ATSBreakdown) -> Resu
 # ── Master rule list ──────────────────────────────────────────────────────
 _RULES = [
     _rule_no_quantified_achievements,
-    _rule_skill_gap_backend,
+    _rule_low_skill_density,
     _rule_no_projects,
     _rule_missing_github,
     _rule_passive_language,

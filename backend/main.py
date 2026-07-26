@@ -29,6 +29,10 @@ from api import endpoints, auth, resume_routes, engine_routes, learning_routes, 
 from database.db import engine
 from database import models
 
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from api.limiter import limiter
+
 # Create All Unified Database Tables
 models.Base.metadata.create_all(bind=engine)
 
@@ -64,6 +68,8 @@ app = FastAPI(
     description="AI-powered placement prediction and skill matching",
     version="4.0.0"
 )
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Allow all origins for development (restrict in production)
 app.add_middleware(

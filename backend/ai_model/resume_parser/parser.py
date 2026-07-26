@@ -6,6 +6,11 @@ import re
 from ai_model.data.skills_data import ALL_SKILLS, SKILLS_DICTIONARY
 from ai_model.utils.skill_normalizer import normalize_skill, fuzzy_match_skill
 from utils.debug_logger import dump_checkpoint
+import json
+import logging
+from datetime import datetime, timezone
+
+logger = logging.getLogger(__name__)
 
 
 def extract_text_from_pdf(file_path):
@@ -17,7 +22,13 @@ def extract_text_from_pdf(file_path):
                 if page_text:
                     text += page_text + "\n"
     except Exception as e:
-        print(f"Error reading PDF {file_path}: {e}")
+        logger.error(json.dumps({
+            "event": "pdf_parsing_failed",
+            "file_path": file_path,
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
     return text
 
 def extract_text_from_docx(file_path):
@@ -27,7 +38,13 @@ def extract_text_from_docx(file_path):
         for para in doc.paragraphs:
             text += para.text + "\n"
     except Exception as e:
-        print(f"Error reading DOCX {file_path}: {e}")
+        logger.error(json.dumps({
+            "event": "docx_parsing_failed",
+            "file_path": file_path,
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
     return text
 
 SECTIONS_KEYWORDS = {

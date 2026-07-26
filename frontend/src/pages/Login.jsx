@@ -120,7 +120,7 @@ export default function Login() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 autoComplete="off"
-                className="w-full bg-[#0F0F0F] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
+                className="w-full bg-[#F9F6F0] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
               />
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function Login() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 autoComplete="new-password"
-                className="w-full bg-[#0F0F0F] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
+                className="w-full bg-[#F9F6F0] border border-[#C9C2AF] text-[#1B2A4A] placeholder:text-[#888888] rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-[#1B2A4A]/50 focus:bg-[#FFFFFF] transition-all text-sm font-medium"
               />
             </div>
           </div>
@@ -173,17 +173,17 @@ export default function Login() {
         </form>
 
         {/* Demo credentials */}
-        <div className="mt-5 bg-[#0F0F0F] border border-[#C9C2AF] rounded-xl p-4">
+        <div className="mt-5 bg-[#F9F6F0] border border-[#C9C2AF] rounded-xl p-4">
           <p className="text-xs font-bold text-[#1B2A4A] uppercase tracking-wider mb-1.5">Demo Access Credentials</p>
-          <div className="text-xs text-[#888888555] font-mono bg-[#FFFFFF] p-2 rounded-lg border border-[#C9C2AF] space-y-1">
-            <div className="flex justify-between">
-              <span>{DEMO_EMAIL}</span> <span className="text-[#333]">|</span> <span>{DEMO_PASSWORD}</span>
+          <div className="text-xs text-[#888888] font-mono bg-[#FFFFFF] p-2 rounded-lg border border-[#C9C2AF] space-y-1">
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center">
+              <span>{DEMO_EMAIL}</span> <span className="hidden sm:inline text-[#333]">|</span> <span>{DEMO_PASSWORD}</span>
             </div>
-            <div className="flex justify-between">
-              <span>pr1@university.edu</span> <span className="text-[#333]">|</span> <span>prpassword</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center">
+              <span>pr1@university.edu</span> <span className="hidden sm:inline text-[#333]">|</span> <span>prpassword</span>
             </div>
-            <div className="flex justify-between">
-              <span>admin@university.edu</span> <span className="text-[#333]">|</span> <span>adminpassword</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center">
+              <span>admin@university.edu</span> <span className="hidden sm:inline text-[#333]">|</span> <span>adminpassword</span>
             </div>
           </div>
         </div>

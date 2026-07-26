@@ -60,7 +60,7 @@ export default function ATSScoreCard({ score = 0, grade = 'Fair', description = 
       <div className="flex items-center gap-2 self-start">
         <div className="w-1 h-4 rounded-full" style={{ background: color, boxShadow: `0 0 8px ${glow}` }} />
         <span className="text-[10px] font-black uppercase tracking-widest text-[#1B2A4A]/40">
-          Engine 1 — Standalone ATS Benchmark
+          Engine 1 — Standalone JOB MODE Benchmark
         </span>
       </div>
 

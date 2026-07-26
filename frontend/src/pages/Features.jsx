@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const features = [
   { id: 1, icon: <Brain />, title: 'Resume Parsing', desc: 'State-of-the-art NLP extracts skills, experience, and achievements from any format instantly.' },
   { id: 2, icon: <Target />, title: 'Skill Detection', desc: 'Automatically identifies missing competencies against thousands of real job requirements.' },
-  { id: 3, icon: <BarChart3 />, title: 'Placement Score', desc: 'A dynamic readiness score updated in real-time as your profile and the job market shifts.' },
+  { id: 3, icon: <BarChart3 />, title: 'Profile Strength Index', desc: 'A dynamic readiness score updated in real-time as your profile and the job market shifts.' },
   { id: 4, icon: <Map />, title: 'Career Roadmap', desc: 'Get a personalized, step-by-step learning path to bridge gaps and accelerate your journey.' },
   { id: 5, icon: <Zap />, title: 'Instant Analysis', desc: 'Results in seconds — no waiting. Our pipeline processes and cross-references 50,000+ data points.' },
   { id: 6, icon: <Shield />, title: 'Private & Secure', desc: 'Your data never leaves. Full privacy-first architecture protecting your data from day one.' }

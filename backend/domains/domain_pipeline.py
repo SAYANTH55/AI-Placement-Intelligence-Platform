@@ -112,8 +112,8 @@ def run_domain_pipeline(text: str, domain: str, target_role: Optional[str] = Non
         "flags": []
     }
 
-    # 5. Domain-Specific Placement Probability & Readiness Calibration
-    # Calculate a proxy placement probability based on skill score & diversity
+    # 5. Domain-Specific Profile Strength & Readiness Calibration
+    # Calculate a proxy profile strength score based on skill score & diversity
     base_prob = (skill_score * 0.7 + diversity_score * 0.3) / 100.0
     placement_probability = min(0.95, max(0.20, base_prob))
     

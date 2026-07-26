@@ -23,11 +23,13 @@ import numpy as np
 import pandas as pd
 import joblib
 
+import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, mean_absolute_error, mean_squared_error, r2_score
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +61,24 @@ except ImportError:
 # ══════════════════════════════════════════════════════════════════════════════
 # UTILITY
 # ══════════════════════════════════════════════════════════════════════════════
+
+MODEL_REPORT = {}
+
+def _check_class_imbalance(y, label_encoder, task_name):
+    from collections import Counter
+    counts = Counter(y)
+    print(f"\n  [Class Imbalance Check for {task_name}]")
+    for cls_idx, count in sorted(counts.items()):
+        cls_name = label_encoder.inverse_transform([cls_idx])[0]
+        print(f"    - {cls_name}: {count} samples")
+        if count < 15:
+            print(f"      [!] WARNING: '{cls_name}' has < 15 samples. Suggest using class_weight balancing or treat as low-confidence. Data collection is a manual task; do not generate synthetic resumes.")
+
+def _save_model_report():
+    report_path = os.path.join(MODELS_DIR, "model_report.json")
+    with open(report_path, "w") as f:
+        json.dump(MODEL_REPORT, f, indent=4)
+    print(f"\n  [OK] Saved evaluation metrics to {report_path}")
 
 def _make_classifier(**kwargs):
     if _USE_XGB:
@@ -113,14 +133,32 @@ def train_domain_classifier():
     )
     X = vec.fit_transform(texts)
 
-    clf = _make_classifier()
-    clf.fit(X, y)
+    _check_class_imbalance(y, le, "Domain Classifier")
 
-    # Cross-val score
-    from sklearn.ensemble import RandomForestClassifier
-    cv_clf = RandomForestClassifier(n_estimators=50, random_state=42)
-    scores = cross_val_score(cv_clf, X, y, cv=3, scoring="accuracy")
-    print(f"  Domain Classifier CV Accuracy: {scores.mean():.2%} (±{scores.std():.2%})")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+    clf = _make_classifier()
+    clf.fit(X_train, y_train)
+
+    # Test set evaluation
+    y_pred = clf.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    macro_f1 = f1_score(y_test, y_pred, average="macro")
+    cm = confusion_matrix(y_test, y_pred)
+
+    print(f"  Test Accuracy: {acc:.2%}")
+    print(f"  Test Macro F1: {macro_f1:.2f}")
+
+    MODEL_REPORT["Domain_Classifier"] = {
+        "accuracy": acc,
+        "macro_f1": macro_f1,
+        "confusion_matrix": cm.tolist()
+    }
+
+    # Cross-val score (5-Fold specifically for Domain Classifier)
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(clf, X, y, cv=skf, scoring="accuracy")
+    print(f"  Domain Classifier 5-Fold CV Accuracy: {cv_scores.mean():.2%} (±{cv_scores.std():.2%})")
     print(f"  Domains: {list(le.classes_)}")
 
     joblib.dump(clf, os.path.join(MODELS_DIR, "domain_classifier.pkl"))
@@ -158,14 +196,32 @@ def train_role_predictor():
     )
     X = vec.fit_transform(texts)
 
-    clf = _make_classifier()
-    clf.fit(X, y)
+    _check_class_imbalance(y, le, "Role Predictor")
 
-    # Cross-val
-    from sklearn.ensemble import RandomForestClassifier
-    cv_clf = RandomForestClassifier(n_estimators=50, random_state=42)
-    scores = cross_val_score(cv_clf, X, y, cv=5, scoring="accuracy")
-    print(f"  Role Predictor CV Accuracy: {scores.mean():.2%} (±{scores.std():.2%})")
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+    clf = _make_classifier()
+    clf.fit(X_train, y_train)
+
+    # Test set evaluation
+    y_pred = clf.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    macro_f1 = f1_score(y_test, y_pred, average="macro")
+    cm = confusion_matrix(y_test, y_pred)
+
+    print(f"  Test Accuracy: {acc:.2%}")
+    print(f"  Test Macro F1: {macro_f1:.2f}")
+
+    MODEL_REPORT["Role_Predictor"] = {
+        "accuracy": acc,
+        "macro_f1": macro_f1,
+        "confusion_matrix": cm.tolist()
+    }
+
+    # Cross-val (5-Fold specifically for Role Predictor)
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(clf, X, y, cv=skf, scoring="accuracy")
+    print(f"  Role Predictor 5-Fold CV Accuracy: {cv_scores.mean():.2%} (±{cv_scores.std():.2%})")
     print(f"  Roles: {list(le.classes_)}")
 
     joblib.dump(clf, os.path.join(RA_DIR, "role_model.pkl"))
@@ -178,7 +234,7 @@ def train_role_predictor():
 # 3. PLACEMENT READINESS PREDICTOR
 # ══════════════════════════════════════════════════════════════════════════════
 
-def train_placement_readiness():
+def train_profile_strength():
     """
     Train XGBoost Regressor for Placement Readiness Score (0-100).
     Uses structured feature inputs: skills_count, experience_years, projects, certifications, ats_score, role_match.
@@ -188,7 +244,7 @@ def train_placement_readiness():
     print("\n[3/3] Training Placement Readiness Predictor (XGBoost Regressor)...")
 
     np.random.seed(42)
-    n = 2000
+    n = 2500
 
     # Feature distributions based on realistic candidate profiles
     skills_count      = np.random.randint(3, 25, n)
@@ -202,19 +258,21 @@ def train_placement_readiness():
     github_projects   = np.random.randint(0, 20, n)
     has_portfolio     = np.random.choice([0, 1], n, p=[0.4, 0.6])
 
-    # Realistic readiness score formula (domain knowledge-informed weights)
+    # Realistic readiness score formula with non-linear feature interaction terms
     readiness = (
-        skills_count      * 1.5
-        + experience_years  * 5.0
-        + projects          * 2.0
-        + certifications    * 4.0
-        + ats_score         * 0.3
+        skills_count      * 1.2
+        + experience_years  * 4.5
+        + projects          * 1.8
+        + certifications    * 3.5
+        + ats_score         * 0.25
         + role_match_pct    * 0.25
-        + education_level   * 10.0
-        + internships       * 6.0
-        + github_projects   * 0.8
-        + has_portfolio     * 5.0
-        + np.random.normal(0, 3, n)  # noise
+        + education_level   * 8.0
+        + internships       * 5.0
+        + github_projects   * 0.6
+        + has_portfolio     * 4.0
+        + (ats_score * role_match_pct / 100.0) * 0.15   # Engineered heuristic feature
+        + (skills_count * experience_years) * 0.10      # Engineered heuristic feature
+        + np.random.normal(0, 2.5, n)                   # Gaussian noise
     )
 
     # Clip to 0-100 range
@@ -241,10 +299,20 @@ def train_placement_readiness():
     reg = _make_regressor()
     reg.fit(X_train, y_train)
 
-    from sklearn.metrics import mean_absolute_error
     y_pred = reg.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
-    print(f"  Placement Readiness MAE: {mae:.2f} points")
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+
+    print(f"  Placement Readiness MAE:  {mae:.2f}")
+    print(f"  Placement Readiness RMSE: {rmse:.2f}")
+    print(f"  Placement Readiness R²:   {r2:.2f}")
+
+    MODEL_REPORT["Profile_Strength"] = {
+        "mae": mae,
+        "rmse": rmse,
+        "r2": r2
+    }
 
     # Save feature names alongside the model
     feature_names = list(df.columns)
@@ -372,9 +440,10 @@ def ensure_models_exist() -> bool:
     try:
         train_domain_classifier()
         train_role_predictor()
-        train_placement_readiness()
+        train_profile_strength()
         train_skill_matcher()
         train_resume_analyzer_models()
+        _save_model_report()
         logger.info("[ModelBootstrap] All models generated successfully.")
         return True
     except Exception as exc:
@@ -401,9 +470,11 @@ if __name__ == "__main__":
 
     train_domain_classifier()
     train_role_predictor()
-    train_placement_readiness()
+    train_profile_strength()
     train_skill_matcher()
     train_resume_analyzer_models()
+    
+    _save_model_report()
 
     print("\n" + "=" * 60)
     print("  [OK]  All models trained and saved successfully.")

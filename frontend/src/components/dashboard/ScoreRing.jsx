@@ -67,16 +67,17 @@ export default function ScoreRing({ score = 0, size = 120, strokeWidth = 10, con
             <div className="flex flex-col items-center gap-1">
                 <span className="text-xs font-black uppercase tracking-tighter" style={{ color: labelColor }}>{label}</span>
                 
-                {/* Honesty Metrics */}
-                <div className="flex items-center gap-2 mt-1 px-3 py-1 bg-[#F4EFE4] rounded-full border border-[#C9C2AF]">
+        {/* Honesty Metrics */}
+                <div className="flex items-center gap-2 mt-1 px-3 py-1 bg-[#F4EFE4] rounded-full border border-[#C9C2AF]"
+                  style={{ fontSize: Math.max(size * 0.1, 8) }}>
                     <div className="flex items-center gap-1">
-                        <span className="text-[13px] text-[#6B6B63] font-bold uppercase">Confidence:</span>
-                        <span className="text-[13px] text-[#1B2A4A] font-black">{Math.round(confidence * 100)}%</span>
+                        <span className="font-bold text-[#6B6B63] uppercase">Confidence:</span>
+                        <span className="text-[#1B2A4A] font-black">{Math.round(confidence * 100)}%</span>
                     </div>
                     <div className="w-[1px] h-3 bg-[#C9C2AF]"></div>
                     <div className="flex items-center gap-1">
-                        <span className="text-[13px] text-[#6B6B63] font-bold uppercase">Uncertainty:</span>
-                        <span className="text-[13px] font-black uppercase" style={{ color: uncertaintyColors[uncertainty] }}>{uncertainty}</span>
+                        <span className="font-bold text-[#6B6B63] uppercase">Uncertainty:</span>
+                        <span className="font-black uppercase" style={{ color: uncertaintyColors[uncertainty?.toLowerCase()] || '#854F0B' }}>{uncertainty}</span>
                     </div>
                 </div>
             </div>

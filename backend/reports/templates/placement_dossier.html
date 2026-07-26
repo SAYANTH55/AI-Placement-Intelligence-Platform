@@ -348,12 +348,12 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
 /* ═══════════════════════════════════════════════════════════════
    METRIC CARDS ROW
 ═══════════════════════════════════════════════════════════════ */
-.metric-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; margin-bottom: 3.5mm; flex-shrink: 0; }
+.metric-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2mm; margin-bottom: 3.5mm; flex-shrink: 0; }
 .metric-card {
   background: #FFFFFF;
   border: 1px solid #E4DED0;
   border-radius: 6pt;
-  padding: 3mm 2.5mm;
+  padding: 2.5mm 2mm;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -484,7 +484,7 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
   {% set cip = executive_assessment.candidate_intelligence_profile if executive_assessment.candidate_intelligence_profile else None %}
   <div class="card p4 mb3" style="background:#FFFFFF;border:1px solid #E4DED0;">
     {% if cip and cip.get('candidate') %}
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3mm;padding-bottom:2mm;border-bottom:1px solid #E4DED0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2mm;padding-bottom:1.5mm;border-bottom:1px solid #E4DED0;">
       <div style="font-size:7pt;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:0.1em;">Candidate Intelligence Profile</div>
       <div style="display:flex;align-items:center;gap:4pt;">
         <span class="badge" style="background:#F4EFE4;border:1px solid #C9C2AF;color:#1B2A4A;">{{ cip.get('candidate', {}).get('stage', 'Emerging') }}</span>
@@ -497,9 +497,9 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
     {% if executive_assessment.sections %}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin-bottom:2.5mm;">
       {% for key, text in executive_assessment.sections.items() %}
-        <div style="background:#F4EFE4;border:1px solid #E4DED0;border-radius:5pt;padding:2.5mm;{% if key in ['executive_overview', 'recruiter_verdict'] %}grid-column:span 2;{% endif %}">
+        <div style="background:#F4EFE4;border:1px solid #E4DED0;border-radius:5pt;padding:2mm;{% if key in ['executive_overview', 'recruiter_verdict'] %}grid-column:span 2;{% endif %}">
           <div style="font-size:6pt;font-weight:800;color:#1B2A4A;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1mm;">{{ key.replace('_', ' ') }}</div>
-          <div style="font-size:7pt;color:#444441;line-height:1.5;font-weight:500;">{{ text }}</div>
+          <div style="font-size:7pt;color:#444441;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">{{ text }}</div>
         </div>
       {% endfor %}
     </div>
@@ -508,38 +508,38 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
     {% endif %}
 
     {% if cip %}
-    <div style="display:grid;grid-template-columns:repeat(8, 1fr);gap:2pt;padding-top:2mm;border-top:1px solid #E4DED0;">
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#27500A;">{{ cip.get('resume', {}).get('ats_quality', '—') }}</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">ATS Score</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3pt;padding-top:3mm;border-top:1px solid #E4DED0;margin-top:2mm;">
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#854F0B;line-height:1.1;">{{ cip.get('resume', {}).get('ats_quality', '—') }}</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">JOB MODE</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#1B2A4A;">{{ cip.get('role', {}).get('primary_match_pct', '—') }}%</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Role Match</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#1B2A4A;line-height:1.1;">{{ cip.get('role', {}).get('primary_match_pct', '—') }}%</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Role Match</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#0C447C;">{{ cip.get('technical', {}).get('depth_pct', 0) | round }}%</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Tech Depth</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#0C447C;line-height:1.1;">{{ cip.get('technical', {}).get('depth_pct', 0) | round }}%</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Tech Depth</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#854F0B;">{{ cip.get('skills', {}).get('breadth', '—') }}</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Breadth</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#1B2A4A;line-height:1.1;">{{ cip.get('skills', {}).get('breadth', '—') }}</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Skill Breadth</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#27500A;">{{ cip.get('skills', {}).get('utilization_pct', '—') }}%</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Utilization</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#27500A;line-height:1.1;">{{ cip.get('skills', {}).get('utilization_pct', '—') }}%</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Utilization</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#0C447C;">{{ cip.get('technical', {}).get('interview_readiness_pct', '—') }}%</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Interview</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#0C447C;line-height:1.1;">{{ cip.get('technical', {}).get('interview_readiness_pct', '—') }}%</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Interview</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#791F1F;">{{ cip.get('gaps', {}).get('total_count', '—') }}</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Gaps</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#791F1F;line-height:1.1;">{{ cip.get('gaps', {}).get('total_count', '—') }}</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Skill Gaps</div>
       </div>
-      <div style="text-align:center;background:#F4EFE4;padding:2pt;border-radius:4pt;">
-        <div style="font-size:8pt;font-weight:900;color:#1B2A4A;">{{ cip.get('portfolio', {}).get('strength', '—') }}</div>
-        <div style="font-size:4.5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;">Portfolio</div>
+      <div style="text-align:center;background:#F4EFE4;padding:3pt 2pt;border-radius:5pt;border:1px solid #E4DED0;">
+        <div style="font-size:9.5pt;font-weight:900;color:#1B2A4A;line-height:1.1;">{{ cip.get('portfolio', {}).get('strength', '—') }}</div>
+        <div style="font-size:5pt;font-weight:800;color:#6B6B63;text-transform:uppercase;letter-spacing:0.06em;margin-top:2pt;">Portfolio</div>
       </div>
     </div>
     {% endif %}
@@ -554,21 +554,21 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
   <div class="metric-row">
     <div class="metric-card">
       <div class="label-xs mb1">Placement Score</div>
-      <div style="font-size:16pt;font-weight:900;color:#1B2A4A;line-height:1;">{{ "%.0f"|format(readiness.placement_score) }}%</div>
+      <div style="font-size:13pt;font-weight:900;color:#1B2A4A;line-height:1;">{{ "%.0f"|format(readiness.placement_score) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
         <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.placement_score) }}%;background:#1B2A4A;"></div>
       </div>
     </div>
     <div class="metric-card">
       <div class="label-xs mb1">Probability</div>
-      <div style="font-size:16pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(probability.placement_probability) }}%</div>
+      <div style="font-size:13pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(probability.placement_probability) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
         <div class="progress-fill" style="width:{{ "%.0f"|format(probability.placement_probability) }}%;background:#27500A;"></div>
       </div>
     </div>
     <div class="metric-card">
       <div class="label-xs mb1">Confidence</div>
-      <div style="font-size:16pt;font-weight:900;color:#0C447C;line-height:1;">{{ "%.0f"|format(readiness.confidence) }}%</div>
+      <div style="font-size:13pt;font-weight:900;color:#0C447C;line-height:1;">{{ "%.0f"|format(readiness.confidence) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
         <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.confidence) }}%;background:#0C447C;"></div>
       </div>
@@ -579,7 +579,7 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
     </div>
     <div class="metric-card">
       <div class="label-xs mb1">Industry Avg</div>
-      <div style="font-size:16pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(readiness.industry_benchmark) }}%</div>
+      <div style="font-size:13pt;font-weight:900;color:#27500A;line-height:1;">{{ "%.0f"|format(readiness.industry_benchmark) }}%</div>
       <div class="progress-track thin" style="margin-top:2mm;">
         <div class="progress-fill" style="width:{{ "%.0f"|format(readiness.industry_benchmark) }}%;background:#27500A;"></div>
       </div>
@@ -594,18 +594,15 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
         <div class="section-line secondary"></div>
         <span class="section-label secondary">Key Strengths</span>
       </div>
-      {% for s in strengths[:4] %}
+      {% for s in strengths[:3] %}
       <div class="strength-item">
         <div class="row center g2 mb1">
           <span style="font-size:7.5pt;font-weight:700;color:#1B2A4A;flex:1;">{{ s.skill_name }}</span>
           <span style="font-size:7pt;font-weight:900;color:#27500A;">{{ "%.0f"|format(s.strength_score) }}%</span>
         </div>
-        <div class="progress-track" style="margin-bottom:1.5mm;">
+        <div class="progress-track">
           <div class="progress-fill" style="width:{{ "%.0f"|format(s.strength_score) }}%;background:#27500A;"></div>
         </div>
-        {% if s.reason %}
-        <div style="font-size:6pt;color:#6B6B63;line-height:1.4;">{{ s.reason }}</div>
-        {% endif %}
       </div>
       {% endfor %}
     </div>
@@ -616,18 +613,18 @@ html, body { width: 210mm; background: #F4EFE4; font-family: 'Inter', 'Plus Jaka
         <div class="section-line" style="background:#791F1F;"></div>
         <span class="section-label" style="color:#791F1F;">Critical Gaps</span>
       </div>
-      {% for g in gaps[:4] %}
-      <div class="gap-item">
+      {% for g in gaps[:2] %}
+      <div class="gap-item" style="overflow:hidden;">
         <div class="row center g2 mb1">
           <span style="font-size:7.5pt;font-weight:700;color:#1B2A4A;flex:1;">{{ g.gap_name }}</span>
           <span class="badge badge-{{ g.priority | lower }}">{{ g.priority }}</span>
         </div>
-        <div class="row center g2" style="margin-bottom:1.5mm;">
+        <div class="row center g2" style="margin-bottom:1mm;">
           <span class="label-xs">Impact</span>
           <span style="font-size:6pt;font-weight:700;color:#791F1F;">{{ g.estimated_impact }}</span>
         </div>
         {% if g.explanation %}
-        <div style="font-size:6pt;color:#6B6B63;line-height:1.4;">{{ g.explanation }}</div>
+        <div style="font-size:5.5pt;color:#6B6B63;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ g.explanation }}</div>
         {% endif %}
       </div>
       {% endfor %}

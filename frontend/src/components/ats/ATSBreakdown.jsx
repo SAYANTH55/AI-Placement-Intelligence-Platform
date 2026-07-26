@@ -121,10 +121,10 @@ export default function ATSBreakdown({ breakdown }) {
   return (
     <div className="rounded-2xl p-5" style={{ background: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)' }}>
       {/* Header */}
-      <div className="flex items-center gap-2 mb-5">
-        <div className="w-1 h-4 rounded-full bg-[#818CF8]" style={{ boxShadow: '0 0 8px rgba(129,140,248,0.4)' }} />
+      <div className="flex items-center gap-2 mb-6">
+        <div className="w-1 h-4 rounded-full bg-[#1B2A4A]" />
         <span className="text-[10px] font-black uppercase tracking-widest text-[#1B2A4A]/40">
-          ATS Score Breakdown — 8 Dimensions
+          JOB MODE Score Breakdown — 8 Dimensions
         </span>
       </div>
 

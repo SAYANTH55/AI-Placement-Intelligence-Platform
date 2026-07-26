@@ -20,7 +20,7 @@ import ATSChecker from '../dashboard/ATSChecker';
  *       OR
  *   intelligenceData = pre-fetched ResumeIntelligenceResponse (skip API call)
  */
-export default function StandaloneATSAnalyzer({ data, intelligenceData: preloaded }) {
+export default function StandaloneATSAnalyzer({ data, intelligenceData: preloaded, onIntelReady }) {
   const [intel, setIntel] = useState(preloaded || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -52,6 +52,8 @@ export default function StandaloneATSAnalyzer({ data, intelligenceData: preloade
       if (!res.ok) throw new Error(`API error ${res.status}: ${await res.text()}`);
       const result = await res.json();
       setIntel(result);
+      // Notify parent so atsResultData stays in sync with what's shown on screen
+      if (onIntelReady) onIntelReady(result);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -80,7 +82,7 @@ export default function StandaloneATSAnalyzer({ data, intelligenceData: preloade
           <p className="text-xs text-[#1B2A4A]/30 mt-1">4 engines processing in sequence...</p>
         </div>
         <div className="flex gap-2 mt-2">
-          {['ATS Benchmark', 'Role Alignment', 'Actionable Fixes', 'Preparing...'].map((label, i) => (
+          {['JOB MODE Benchmark', 'Role Alignment', 'Actionable Fixes', 'Preparing...'].map((label, i) => (
             <motion.div
               key={i}
               className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[9px] font-black"
@@ -122,7 +124,7 @@ export default function StandaloneATSAnalyzer({ data, intelligenceData: preloade
 
   // ── TABS ───────────────────────────────────────────────────────────────
   const tabs = [
-    { id: 'overview', label: 'ATS Score' },
+    { id: 'overview', label: 'JOB MODE Score' },
     { id: 'roles', label: 'Role Alignment' },
     { id: 'fixes', label: `Fixes (${intel.total_fixes || 0})` },
     { id: 'jd', label: 'JD Matcher' },

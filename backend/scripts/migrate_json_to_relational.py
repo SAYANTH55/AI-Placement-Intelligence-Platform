@@ -66,8 +66,8 @@ def migrate_data():
                             analysis_id=analysis.id,
                             predicted_role=match.get("role", "Unknown"),
                             role_confidence=match.get("match_percent", 0.0) / 100.0,
-                            placement_probability=analysis.placement_probability,
-                            readiness_score=analysis.placement_readiness
+                            profile_strength_score=analysis.profile_strength_score,
+                            profile_strength_label=analysis.profile_strength_label
                         )
                         db.add(rp)
             

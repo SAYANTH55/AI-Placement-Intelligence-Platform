@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -11,6 +11,13 @@ from placement.application_service import ApplicationService
 from placement.auth_depends import get_current_user, require_role
 from database.models import User, Student, Application, RoundResult, Drive
 from ai_model.job_matcher.matcher import calculate_jd_match
+
+try:
+    from api.limiter import limiter
+except ImportError:
+    from slowapi import Limiter
+    from slowapi.util import get_remote_address
+    limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter(prefix="/application", tags=["Application System"])
 
@@ -66,13 +73,14 @@ async def get_match_score(drive_id: int, db: Session = Depends(get_db), current_
 
 
 @router.post("/apply")
-async def apply_to_drive(request: ApplyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+@limiter.limit("10/minute")
+async def apply_to_drive(request: Request, apply_req: ApplyRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
         student_profile = current_user.student_profile
         if not student_profile:
              raise HTTPException(status_code=400, detail="User has no student profile")
              
-        app = ApplicationService.apply_to_drive(db, student_profile.id, request.drive_id, request.resume_path, ai_match_score=request.ai_match_score, form_responses=request.form_responses)
+        app = ApplicationService.apply_to_drive(db, student_profile.id, apply_req.drive_id, apply_req.resume_path, ai_match_score=apply_req.ai_match_score, form_responses=apply_req.form_responses)
         return {"status": "success", "application_id": app.id}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -193,6 +201,10 @@ async def export_drive_applications(drive_id: int, db: Session = Depends(get_db)
 @router.get("/student/{student_id}")
 async def get_student_application_profile(student_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr", "student"]))):
     try:
+        if current_user.role == "student":
+            if not current_user.student_profile or current_user.student_profile.id != student_id:
+                raise HTTPException(status_code=403, detail="Forbidden: Cannot view application profiles of other students")
+                
         student = db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
@@ -235,6 +247,16 @@ async def get_student_application_profile(student_id: int, db: Session = Depends
 async def update_round(request: UpdateRoundRequest, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr"]))):
     try:
         from placement.round_service import RoundService
+        
+        # Enforce PR batch scoping
+        if current_user.role == "pr":
+            app = db.query(Application).filter(Application.id == request.application_id).first()
+            if not app:
+                raise HTTPException(status_code=404, detail="Application not found")
+            pr_profile = current_user.pr_profile
+            if not pr_profile or app.student.pr_id != pr_profile.id:
+                raise HTTPException(status_code=403, detail="Forbidden: You are not scoped to manage this student's rounds.")
+
         result = RoundService.update_round(
             db,
             request.application_id,
@@ -253,6 +275,18 @@ async def update_round(request: UpdateRoundRequest, db: Session = Depends(get_db
 async def bulk_update_rounds(request: BulkRoundUpdateRequest, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr"]))):
     try:
         from placement.round_service import RoundService
+        
+        # Enforce PR batch scoping
+        valid_app_ids = set(request.application_ids)
+        if current_user.role == "pr":
+            pr_profile = current_user.pr_profile
+            if not pr_profile:
+                raise HTTPException(status_code=403, detail="Forbidden: No PR profile found.")
+            apps = db.query(Application).filter(Application.id.in_(request.application_ids)).all()
+            for app in apps:
+                if app.student.pr_id != pr_profile.id:
+                    raise HTTPException(status_code=403, detail=f"Forbidden: You are not scoped to manage application {app.id}.")
+
         updated = 0
         for application_id in request.application_ids:
             RoundService.update_round(

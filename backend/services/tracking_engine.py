@@ -4,7 +4,7 @@ Tracking Engine
 Persists user practice sessions and enables a closed feedback loop:
   record_session → stored in UserProgress table
   get_progress   → history with score_evolution for charting
-  compute_feedback → re-runs matcher with updated skills → new placement score
+  compute_feedback → re-runs matcher with updated skills → new profile strength score
 
 Strategy: 100% Deterministic — no LLM calls.
 """
@@ -130,7 +130,7 @@ def get_progress(db, user_id: int) -> dict:
 def compute_feedback(user_skills: list, new_skills: list, top_role: str = None) -> dict:
     """
     Feedback loop: merge new skills with existing skills and re-run the matcher
-    to compute an updated placement score.
+    to compute an updated profile strength score.
 
     Args:
         user_skills: Current known skills list.
@@ -140,7 +140,7 @@ def compute_feedback(user_skills: list, new_skills: list, top_role: str = None) 
     Returns:
         dict with:
           - updated_skills: merged skill list
-          - new_score: updated placement probability (0-100)
+          - new_score: updated profile strength score (0-100)
           - score_delta: change from a recalculated baseline
           - top_role: best matched role after update
           - message: human-readable feedback
@@ -186,7 +186,7 @@ def compute_feedback(user_skills: list, new_skills: list, top_role: str = None) 
         detected_role = best_match["role"] if best_match else "Unknown"
 
         if score_delta > 0:
-            message = f"Adding {len(newly_added)} skill(s) improved your placement score by +{score_delta}% for {detected_role}."
+            message = f"Adding {len(newly_added)} skill(s) improved your profile strength score by +{score_delta}% for {detected_role}."
         elif score_delta == 0:
             message = f"Skills merged. Your score remains at {new_score}% — focus on core skill gaps next."
         else:

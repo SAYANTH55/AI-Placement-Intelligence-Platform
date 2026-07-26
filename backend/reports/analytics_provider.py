@@ -82,14 +82,14 @@ def _compute_hash(analysis_id: int) -> str:
 
 
 def _improvement_simulation(base_score: float, gaps: list) -> list[ImprovementStep]:
-    """Simulate placement probability gains as student closes skill gaps."""
+    """Simulate profile strength gains as student closes skill gaps."""
     steps = []
     score = round(base_score)
 
     steps.append(ImprovementStep(
         label="Current State",
         score=score,
-        action="Baseline placement probability",
+        action="Baseline profile strength",
         is_current=True,
     ))
 
@@ -253,11 +253,11 @@ def _build_from_db(
         top_pred = db_preds[0]
         placement_prob = round((top_pred.placement_probability or analysis.placement_probability or 0.5) * 100, 1)
         top_role_name = top_pred.predicted_role or analysis.top_matching_role or "Software Engineer"
-        readiness_label = top_pred.readiness_score or analysis.placement_readiness or "Medium"
+        readiness_label = top_pred.profile_strength_label or analysis.profile_strength_label or "Medium"
     else:
         placement_prob = round((analysis.placement_probability or 0.5) * 100, 1)
         top_role_name = analysis.top_matching_role or "Software Engineer"
-        readiness_label = analysis.placement_readiness or "Medium"
+        readiness_label = analysis.profile_strength_label or "Medium"
 
     # ── Role Matches (JSON column) ────────────────────────────────────────────
     raw_roles = analysis.role_matches or []
@@ -536,20 +536,21 @@ def _build_from_live(
     # --- Parse ATS & JD Data ---
     from reports.report_schema import ATSScores, JDInsights
     ats_obj = None
-    ats_raw = live.get("ats_data") or live.get("atsResult") or live.get("ats_result")
+    ats_raw = live.get("ats_report") or live.get("ats_data") or live.get("atsResult") or live.get("ats_result")
     if ats_raw:
         ad = ats_raw
+        breakdown = ad.get("breakdown", {})
         ats_obj = ATSScores(
-            overall_score=ad.get("ats_score", ad.get("overall_score", 75)),
-            structure_score=ad.get("structure_score", 75),
-            skills_score=ad.get("skills_score", 70),
-            experience_score=ad.get("experience_score", 70),
-            projects_score=ad.get("projects_score", 75),
-            education_score=ad.get("education_score", 85),
-            achievements_score=ad.get("achievement_score", ad.get("achievements_score", 70)),
-            formatting_score=ad.get("formatting_score", 80),
-            keyword_score=ad.get("keywords_score", ad.get("keyword_score", 75)),
-            feedback=ad.get("llm_explanation", ad.get("feedback", "Your resume has been parsed successfully against enterprise ATS rules.")),
+            overall_score=ad.get("overall_ats_score", ad.get("overall_score", 75)),
+            structure_score=breakdown.get("structure", {}).get("score", 75) if breakdown else ad.get("structure_score", 75),
+            skills_score=breakdown.get("skill_density", {}).get("score", 70) if breakdown else ad.get("skills_score", 70),
+            experience_score=breakdown.get("experience_depth", {}).get("score", 70) if breakdown else ad.get("experience_score", 70),
+            projects_score=breakdown.get("project_quality", {}).get("score", 75) if breakdown else ad.get("projects_score", 75),
+            education_score=breakdown.get("education_quality", {}).get("score", 85) if breakdown else ad.get("education_score", 85),
+            achievements_score=breakdown.get("achievements", {}).get("score", 70) if breakdown else ad.get("achievements_score", 70),
+            formatting_score=breakdown.get("formatting", {}).get("score", 80) if breakdown else ad.get("formatting_score", 80),
+            keyword_score=breakdown.get("keyword_optimization", {}).get("score", 75) if breakdown else ad.get("keyword_score", 75),
+            feedback=ad.get("grade_description", ad.get("feedback", "Your resume has been parsed successfully against enterprise ATS rules.")),
             missing_core_skills=ad.get("missing_skills", ad.get("missing_core_skills", []))
         )
     else:
@@ -591,7 +592,7 @@ def _build_from_live(
 
     return DossierPayload(
         student=StudentInfo(
-            name=user.name or "Unknown Student",
+            name=live.get("studentName") or user.name or "Unknown Student",
             email=user.email or "",
             department=department_name or user.course or "Technology",
             batch=batch,

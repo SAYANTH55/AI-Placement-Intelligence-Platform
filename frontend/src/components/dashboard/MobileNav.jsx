@@ -8,7 +8,7 @@ const menuItems = [
     { name: 'Resume Analysis', path: '/dashboard/analysis', icon: <FileText size={18} /> },
     { name: 'ATS Checker', path: '/dashboard/ats-checker', icon: <CheckCircle size={18} /> },
     { name: 'Skill Gap', path: '/dashboard/skills', icon: <Target size={18} /> },
-    { name: 'Placement Score', path: '/dashboard/score', icon: <Activity size={18} /> },
+    { name: 'Profile Strength', path: '/dashboard/score', icon: <Activity size={18} /> },
     { name: 'Recommendations', path: '/dashboard/recommendations', icon: <Briefcase size={18} /> }
 ];
 

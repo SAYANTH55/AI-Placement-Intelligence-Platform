@@ -52,6 +52,10 @@
     box-sizing: border-box;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -233,7 +237,7 @@
   .border-primary-accent { border-color: var(--color-text-primary); }
 
   /* Muted text layers */
-  .text-secondary-muted { color: #888888555; }
+  .text-secondary-muted { color: #555555; }
   .text-tertiary-muted  { color: #888888; }
 
   /* Neon glow for orange elements */

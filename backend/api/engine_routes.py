@@ -127,7 +127,7 @@ async def get_user_progress(user_id: int, db: Session = Depends(get_db)):
 async def compute_feedback_loop(data: FeedbackRequest, db: Session = Depends(get_db)):
     """
     Feedback loop endpoint: merges new acquired skills into the user's profile,
-    re-runs the matcher + ML predictor, and returns the updated placement score.
+    re-runs the matcher + ML predictor, and returns the updated profile strength score.
     """
     try:
         result = tracking_engine.compute_feedback(

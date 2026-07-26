@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from database.models import Application, Student, Drive, RoundResult, User
 from placement.event_bus import EventBus, EVENT_APPLICATION_CREATED
+from placement.drive_service import DriveService
 
 class ApplicationService:
     @staticmethod
@@ -25,6 +26,10 @@ class ApplicationService:
             raise ValueError("Drive not found")
         if len(drive.rounds) == 0:
             raise ValueError("Drive must have at least one round to accept applications")
+            
+        is_eligible, reason = DriveService.student_meets_eligibility(student, drive)
+        if not is_eligible:
+            raise ValueError(reason)
             
         existing = db.query(Application).filter(Application.student_id == student_id, Application.drive_id == drive_id).first()
         if existing:

@@ -26,7 +26,7 @@ export default function Results() {
           <p className="page-subtitle">AI-driven insights for your career trajectory.</p>
         </div>
         <div className="probability-badge">
-           Placement Probability: <span>{result.placement_probability}%</span>
+           Profile Strength Score: <span>{result.profile_strength_score}%</span>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export default function Results() {
            <div className="side-column">
               <CompanyList companies={result.companies} />
               
-              {/* Placement Probability Detailed Card */}
+              {/* Profile Strength Score Detailed Card */}
               <Card title="Market Readiness" className="mt-24">
                  <div className="readiness-visualizer flex-center">
                     <div className="progress-circle" style={{ '--prob': `${result.placement_probability}%` }}>

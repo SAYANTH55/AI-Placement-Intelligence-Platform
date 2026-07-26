@@ -93,6 +93,27 @@ class ModelTrainer:
 
             metrics = self._evaluate(estimator, X_train, y_train, X_val, y_val)
 
+            # Prevent auto-deploying a regressed model
+            registry = self.list_versions()
+            if registry:
+                latest = registry[-1]
+                old_metrics = latest.get("metrics", {})
+                
+                if self.mode == "classification":
+                    new_score = metrics.get("val_f1", metrics.get("val_score", 0))
+                    old_score = old_metrics.get("val_f1", old_metrics.get("val_score", 0))
+                    if new_score < old_score:
+                        msg = f"Model regressed (new_score: {new_score:.4f} < old_score: {old_score:.4f}). Aborting."
+                        logger.warning(msg)
+                        return {"status": "aborted", "reason": msg, "model_path": None}
+                else:
+                    new_mae = metrics.get("val_mae", float('inf'))
+                    old_mae = old_metrics.get("val_mae", float('inf'))
+                    if new_mae > old_mae:
+                        msg = f"Model regressed (new_mae: {new_mae:.4f} > old_mae: {old_mae:.4f}). Aborting."
+                        logger.warning(msg)
+                        return {"status": "aborted", "reason": msg, "model_path": None}
+
             # Persist versioned artifact
             version_tag = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
             versioned_path = os.path.join(MODELS_DIR, f"model_{version_tag}.pkl")

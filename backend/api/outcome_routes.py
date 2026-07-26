@@ -8,6 +8,7 @@ from database.db import get_db
 from database.models import PlacementOutcome, User
 from utils.logger import platform_logger
 from learning_layer.learning_service import learning_service
+from placement.auth_depends import get_current_user, require_role
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ class OutcomeResponse(OutcomeCreate):
         from_attributes = True
 
 @router.post("/outcomes", response_model=OutcomeResponse)
-async def record_outcome(outcome: OutcomeCreate, db: Session = Depends(get_db)):
+async def record_outcome(outcome: OutcomeCreate, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr"]))):
     """
     Record a placement outcome for a user.
     This serves as the ground truth for ML model validation.
@@ -52,13 +53,16 @@ async def record_outcome(outcome: OutcomeCreate, db: Session = Depends(get_db)):
     return db_outcome
 
 @router.get("/outcomes/{user_id}", response_model=List[OutcomeResponse])
-async def get_user_outcomes(user_id: int, db: Session = Depends(get_db)):
+async def get_user_outcomes(user_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr", "student"]))):
     """Retrieve all recorded outcomes for a specific user."""
+    if current_user.role == "student" and current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden: Cannot view outcomes of other users")
+        
     outcomes = db.query(PlacementOutcome).filter(PlacementOutcome.user_id == user_id).all()
     return outcomes
 
 @router.get("/analytics/outcomes")
-async def get_all_outcomes(db: Session = Depends(get_db)):
+async def get_all_outcomes(db: Session = Depends(get_db), current_user: User = Depends(require_role(["admin", "pr", "dept_admin"]))):
     """
     Get aggregated outcome analytics for the placement cell dashboard.
     """

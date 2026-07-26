@@ -72,7 +72,7 @@ def build_candidate_intelligence_profile(
         domain_name = getattr(domain_result, "domain", "IT")
         domain_confidence = getattr(domain_result, "confidence", 0.9)
 
-    # Placement score
+    # Profile Strength Index
     prob = prediction.get("placement_probability", prediction.get("current_score", 0.5))
     placement_score_pct = int(prob * 100) if prob <= 1.0 else int(prob)
 

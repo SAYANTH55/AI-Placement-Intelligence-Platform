@@ -22,7 +22,7 @@ class ResumeHistoryResponse(BaseModel):
     created_at: datetime
     top_matching_role: str
     top_role_match_percent: int
-    placement_readiness: str
+    profile_strength_label: str
     diversity_score: int
     
     class Config:
@@ -260,7 +260,7 @@ async def export_analysis_as_pdf(
             ["Metric", "Value"],
             ["Top Matching Role", analysis.top_matching_role or "N/A"],
             ["Match Score", f"{analysis.top_role_match_percent}%"],
-            ["Placement Readiness", analysis.placement_readiness or "N/A"],
+            ["Profile Strength Index", analysis.profile_strength_label or "N/A"],
             ["Skill Diversity", f"{analysis.diversity_score}%"],
             ["Experience", f"{analysis.experience_years} years"],
         ]

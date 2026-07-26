@@ -86,15 +86,30 @@ function PageHeader({ title, subtitle }) {
 function AtsCheckerPage({ data, setAtsResultData, setJdResultData }) {
   if (!data) return (
     <div>
-      <PageHeader title="Resume Intelligence" subtitle="4-engine AI analysis: ATS Benchmark, Role Alignment, Actionable Fixes & JD Matcher" />
+      <PageHeader title="Resume Intelligence" subtitle="4-engine AI analysis: JOB MODE Benchmark, Role Alignment, Actionable Fixes & JD Matcher" />
       <EmptyState icon={FileText} title="No Analysis Yet" message="Go to Overview and upload your resume first." />
     </div>
   );
 
   return (
     <div className="space-y-5">
-      <PageHeader title="Resume Intelligence" subtitle="4-engine AI analysis: ATS Benchmark • Role Alignment • Actionable Fixes • JD Matcher" />
-      <StandaloneATSAnalyzer data={data} />
+      <PageHeader title="Resume Intelligence" subtitle="4-engine AI analysis: JOB MODE Benchmark • Role Alignment • Actionable Fixes • JD Matcher" />
+      <StandaloneATSAnalyzer
+        data={data}
+        onIntelReady={(intel) => {
+          if (intel && setAtsResultData) {
+            setAtsResultData({
+              overall_ats_score: intel.overall_ats_score,
+              overall_score:     intel.overall_ats_score,
+              grade:             intel.grade,
+              grade_description: intel.grade_description,
+              breakdown:         intel.breakdown,
+              missing_skills:    intel.missing_skills || [],
+              feedback:          intel.grade_description,
+            });
+          }
+        }}
+      />
     </div>
   );
 }
@@ -316,7 +331,7 @@ function ArcGauge({ value = 0, color = '#1B2A4A', size = 140 }) {
           style={{ filter: `drop-shadow(0 0 6px ${color}80)` }} />
       )}
       <text x={cx} y={cy - 5} textAnchor="middle" fontSize="32" fontWeight="900" fill="#1B2A4A">{value}%</text>
-      <text x={cx} y={cy + 18} textAnchor="middle" fontSize="10" fontWeight="800" fill="#666" style={{ letterSpacing: '0.05em' }}>PLACEMENT SCORE</text>
+      <text x={cx} y={cy + 18} textAnchor="middle" fontSize="10" fontWeight="800" fill="#666" style={{ letterSpacing: '0.05em' }}>PROFILE STRENGTH</text>
     </svg>
   );
 }
@@ -344,7 +359,7 @@ function BarRow({ label, value, color = '#1B2A4A', max = 100 }) {
 function ScorePage({ data }) {
   if (!data) return (
     <div>
-      <PageHeader title="Placement Score" subtitle="Upload your resume to get your personalized readiness score." />
+      <PageHeader title="Profile Strength Index" subtitle="Upload your resume to get your personalized readiness score." />
       <EmptyState icon={TrendingUp} title="No Score Yet" message="Upload your resume on Overview first." />
     </div>
   );
@@ -358,7 +373,7 @@ function ScorePage({ data }) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Placement Score" subtitle="Your career readiness metrics across multiple dimensions." />
+      <PageHeader title="Profile Strength Index" subtitle="Your career readiness metrics across multiple dimensions." />
 
       {/* TOP ROW — Responsive Grid (1 col on mobile, 2 on tablet, 3 on desktop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -721,7 +736,7 @@ function RecommendationsView({ data }) {
                         {cip && (
                           <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 pt-5 border-t border-[#1B2A4A]/10">
                             {[
-                              { label: 'ATS Score',      value: `${cip.resume?.ats_quality ?? '—'}`,                 color: '#27500A' },
+                              { label: 'JOB MODE Score',      value: `${cip.resume?.ats_quality ?? '—'}`,                 color: '#27500A' },
                               { label: 'Role Match',     value: `${cip.role?.primary_match_pct ?? '—'}%`,            color: '#1B2A4A' },
                               { label: 'Tech Depth',     value: `${Math.round(cip.technical?.depth_pct ?? 0)}%`,     color: '#0C447C' },
                               { label: 'Skill Breadth',  value: `${cip.skills?.breadth ?? '—'}`,                    color: '#854F0B' },
@@ -748,7 +763,7 @@ function RecommendationsView({ data }) {
                         {cip && (
                           <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-[#1B2A4A]/5">
                             {[
-                              { label: 'ATS Score',  value: `${cip.resume?.ats_quality ?? '—'}`,             color: '#34D399' },
+                              { label: 'JOB MODE Score',  value: `${cip.resume?.ats_quality ?? '—'}`,             color: '#34D399' },
                               { label: 'Role Match', value: `${cip.role?.primary_match_pct ?? '—'}%`,        color: '#1B2A4A' },
                               { label: 'Tech Depth', value: `${Math.round(cip.technical?.depth_pct ?? 0)}%`, color: '#818CF8' },
                               { label: 'Gaps',       value: `${cip.gaps?.total_count ?? '—'}`,               color: '#F87171' },
@@ -882,7 +897,7 @@ function ModulesHub() {
     {
       id: 'profile',
       title: 'Profile Intelligence',
-      desc: 'Understand your market fit. Resume parsing, skill extraction, and placement probability.',
+      desc: 'Understand your market fit. Resume parsing, skill extraction, and profile strength scoring.',
       icon: Target,
       color: '#1B2A4A',
       path: '/dashboard/profile',
@@ -1377,7 +1392,7 @@ function TrackingModule() {
   if (noData) return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <PageHeader title="Tracking Engine" subtitle="Your placement score and skill growth over time." />
+        <PageHeader title="Tracking Engine" subtitle="Your profile strength and skill growth over time." />
         <button onClick={refreshProgress} className="text-xs text-[#1B2A4A] hover:text-[#1B2A4A] flex items-center gap-2 px-3 py-2 bg-[#1B2A4A]/10 rounded-xl border border-[#1B2A4A]/20">
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
         </button>
@@ -1540,20 +1555,37 @@ export default function Dashboard() {
     if (data?.preparation_plan) setPreparationData(data.preparation_plan);
     if (data?.practice_set) setPracticeData(data.practice_set);
 
-    // Automatically fetch ATS data so the Dossier has it without visiting the ATS tab
+    // Automatically fetch ATS data with the correct payload so the dossier
+    // shows the same JOB MODE score as StandaloneATSAnalyzer
     try {
-      const requestBody = {
-        skills: data.allDetected || [],
-        student_profile: data.raw_profile || {}
+      const payload = {
+        parsed_data: {
+          skills:     data.allDetected || data.skills || [],
+          sections:   data.raw_profile?.sections || [],
+          education:  data.raw_profile?.education || {},
+          experience: data.raw_profile?.experience || {},
+          projects:   data.raw_profile?.projects || [],
+          contact:    data.raw_profile?.contact || {},
+        },
+        raw_text: data.extractedText || data.raw_text || '',
       };
       const response = await fetch('http://localhost:8000/api/ats/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(payload)
       });
       if (response.ok) {
-        const resData = await response.json();
-        setAtsResultData(resData);
+        const intel = await response.json();
+        // Store in the same structure analytics_provider expects
+        setAtsResultData({
+          overall_ats_score: intel.overall_ats_score,
+          overall_score:     intel.overall_ats_score,
+          grade:             intel.grade,
+          grade_description: intel.grade_description,
+          breakdown:         intel.breakdown,
+          missing_skills:    intel.missing_skills || [],
+          feedback:          intel.grade_description,
+        });
       }
     } catch (err) {
       console.error("Auto-fetch ATS Error:", err);
@@ -1734,7 +1766,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { icon: <Target size={20} />, title: 'Skill Gap Analysis', desc: 'Instantly identify missing skills', color: '#1B2A4A' },
-              { icon: <TrendingUp size={20} />, title: 'Placement Score', desc: 'Know your readiness percentile', color: '#818CF8' },
+              { icon: <TrendingUp size={20} />, title: 'Profile Strength Index', desc: 'Know your readiness percentile', color: '#818CF8' },
               { icon: <Sparkles size={20} />, title: 'Career Roadmap', desc: 'Get a personalized learning path', color: '#34D399' },
             ].map((tip, i) => (
               <DarkCard key={i} delay={0.2 + i * 0.08}>
@@ -1822,7 +1854,7 @@ export default function Dashboard() {
             <span className="text-sm font-semibold">Menu</span>
           </button>
           <div className="text-sm font-black text-[#888888555]">
-            {greeting}, <span className="text-[#1B2A4A]">{user?.name || 'User'}</span>
+            {greeting}, <span className="text-[#1B2A4A]">{analyzedData?.studentName || user?.name || 'User'}</span>
           </div>
         </div>
 
@@ -1874,11 +1906,11 @@ export default function Dashboard() {
             )}
             <div className="flex items-center gap-4 border-l border-[#1B2A4A]/5 pl-6">
               <div className="text-right">
-                <p className="text-sm font-black text-[#1B2A4A] leading-tight">{user?.name || 'User'}</p>
+                <p className="text-sm font-black text-[#1B2A4A] leading-tight">{analyzedData?.studentName || user?.name || 'User'}</p>
                 <p className="text-[10px] font-bold text-[#888888]">{user?.email || 'student@email.com'}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-[#1B2A4A]/10 border border-[#1B2A4A]/20 flex items-center justify-center text-[#1B2A4A] font-black text-xs shadow-neon-glow">
-                {user?.name?.[0] || 'U'}
+                {(analyzedData?.studentName?.[0] || user?.name?.[0] || 'U').toUpperCase()}
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@ import json
 import logging
 import google.generativeai as genai
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +105,12 @@ def analyze_with_llm(parsed_data: dict) -> dict:
                 
         return result
     except Exception as e:
-        logger.error(f"LLM analyze_with_llm primary failure: {str(e)}", exc_info=True)
+        logger.error(json.dumps({
+            "event": "llm_analyze_primary_failed",
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
         if configure_fallback():
             try:
                 model = get_gemini_model()
@@ -115,14 +121,22 @@ def analyze_with_llm(parsed_data: dict) -> dict:
                         result[key] = safe_fallback[key]
                 return result
             except Exception as inner_e:
-                logger.error(f"LLM analyze_with_llm fallback failure: {str(inner_e)}", exc_info=True)
+                logger.error(json.dumps({
+                    "event": "llm_analyze_fallback_failed",
+                    "error_type": type(inner_e).__name__,
+                    "error_message": str(inner_e),
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }))
         return safe_fallback
 
 
 def generate_career_insights(structured_data: dict) -> dict:
     """
     Post-process LLM Insight Layer. Generates dynamic career advice based on the 
-    determined missing skills, final roles, and ML placement score.
+    determined missing skills, final roles, and ML profile strength score.
+
+    The executive summary should evaluate the candidate's profile strength relative 
+    to typical successful candidates, rather than predicting placement probability.
     """
     safe_fallback = {
         "learning_path": [],
@@ -178,7 +192,12 @@ def generate_career_insights(structured_data: dict) -> dict:
                 
         return result
     except Exception as e:
-        logger.error(f"LLM generate_career_insights primary failure: {str(e)}", exc_info=True)
+        logger.error(json.dumps({
+            "event": "llm_insights_primary_failed",
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
         if configure_fallback():
             try:
                 model = get_gemini_model()
@@ -189,7 +208,12 @@ def generate_career_insights(structured_data: dict) -> dict:
                         result[key] = safe_fallback[key]
                 return result
             except Exception as inner_e:
-                logger.error(f"LLM generate_career_insights fallback failure: {str(inner_e)}", exc_info=True)
+                logger.error(json.dumps({
+                    "event": "llm_insights_fallback_failed",
+                    "error_type": type(inner_e).__name__,
+                    "error_message": str(inner_e),
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }))
         return safe_fallback
 
 
@@ -235,7 +259,7 @@ Career Focus: {exec_inputs.get('career_focus', 'N/A')}
 Primary Career Track: {exec_inputs.get('primary_career_track', 'N/A')}
 
 --- Placement Intelligence ---
-Placement Score: {exec_inputs.get('placement_score_pct', 0)}%
+Profile Strength Index: {exec_inputs.get('placement_score_pct', 0)}%
 Placement Outlook: {exec_inputs.get('placement_outlook', 'N/A')}
 Improvement Potential: {exec_inputs.get('improvement_potential', 'N/A')}
 
@@ -312,7 +336,12 @@ Return ONLY JSON. No preamble. No markdown. No explanation outside the JSON.
         return {"assessment": full_text, "sections": result, "source": "llm"}
 
     except Exception as e:
-        logger.error(f"LLM generate_executive_assessment primary failure: {e}", exc_info=True)
+        logger.error(json.dumps({
+            "event": "llm_executive_primary_failed",
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
         if configure_fallback():
             try:
                 model = get_gemini_model()
@@ -327,7 +356,12 @@ Return ONLY JSON. No preamble. No markdown. No explanation outside the JSON.
                 ]).strip()
                 return {"assessment": full_text, "sections": result, "source": "llm"}
             except Exception as inner_e:
-                logger.error(f"LLM generate_executive_assessment fallback failure: {inner_e}", exc_info=True)
+                logger.error(json.dumps({
+                    "event": "llm_executive_fallback_failed",
+                    "error_type": type(inner_e).__name__,
+                    "error_message": str(inner_e),
+                    "timestamp": datetime.now(timezone.utc).isoformat()
+                }))
         return safe_fallback
 
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import Optional
 import shutil
@@ -20,6 +20,14 @@ from database.student_service import StudentService
 
 from utils.debug_logger import dump_checkpoint
 from ai_model.resume_parser.analyzer import analyze_resume
+from placement.auth_depends import get_current_user, require_role
+
+try:
+    from api.limiter import limiter
+except ImportError:
+    from slowapi import Limiter
+    from slowapi.util import get_remote_address
+    limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter()
 
@@ -27,7 +35,8 @@ class JDInput(BaseModel):
     description: str
 
 @router.post("/upload_resume")
-async def upload_resume(file: UploadFile = File(...), target_role: Optional[str] = Form(None)):
+@limiter.limit("10/minute")
+async def upload_resume(request: Request, file: UploadFile = File(...), target_role: Optional[str] = Form(None), current_user: User = Depends(get_current_user)):
     """
     ✅ IMPROVED: Enhanced resume processing with better skill matching
     
@@ -42,6 +51,20 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
     file_path = os.path.join(temp_dir, file.filename)
     
     try:
+        # Check Magic Bytes
+        magic_bytes = await file.read(2048)
+        await file.seek(0) # Reset pointer
+        
+        is_pdf = magic_bytes.startswith(b'%PDF')
+        is_docx = magic_bytes.startswith(b'PK\x03\x04')
+        
+        if not (is_pdf or is_docx):
+            return {
+                "success": False,
+                "is_resume": False,
+                "message": "Invalid file type. Only PDF and DOCX files are supported."
+            }
+            
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
@@ -323,12 +346,12 @@ async def upload_resume(file: UploadFile = File(...), target_role: Optional[str]
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/analyze_jd")
-async def analyze_jd(data: JDInput):
+async def analyze_jd(data: JDInput, current_user: User = Depends(require_role(["admin", "dept_admin", "pr"]))):
     # For now, return mock JD insights, but connected to backend
     return {"status": "JD Analyzed", "insights": ["Python", "Management"]}
 
 @router.get("/get_dashboard")
-async def get_dashboard():
+async def get_dashboard(current_user: User = Depends(get_current_user)):
     # Placeholder for user-specific stats from DB
     return {"stats": {"total_users": 1, "placements": 0}}
 
@@ -359,7 +382,7 @@ async def health_check():
     }
 
 @router.get("/analyze_user")
-async def analyze_user(data: AnalyzeUserInput, db: SessionLocal = Depends(get_session)):
+async def analyze_user(data: AnalyzeUserInput, db: SessionLocal = Depends(get_session), current_user: User = Depends(require_role(["admin", "pr"]))):
     """
     Transforms static student profile into dynamic intelligence vector map.
     Includes trace_id and readiness disclaimer (ISSUE 5 & 7).
@@ -395,13 +418,22 @@ class SkillUpdateInput(BaseModel):
     updates: list[SkillUpdateItem]
 
 @router.post("/update_skills")
-async def update_skills(data: SkillUpdateInput, db: SessionLocal = Depends(get_session)):
+async def update_skills(data: SkillUpdateInput, db: SessionLocal = Depends(get_session), current_user: User = Depends(require_role(["admin", "pr", "student"]))):
     """
     ✅ ENHANCED (PHASE 10): Manual user correction layer.
     Allows users to refine their profile intelligence if parsing was imprecise.
     """
     from ai_model.utils.skill_normalizer import normalize_skill
     
+    if current_user.role == "student":
+        # Validate that the student is updating their own profile
+        if "@" in data.student_id:
+            if current_user.email != data.student_id:
+                raise HTTPException(status_code=403, detail="Forbidden: You can only update your own skills")
+        else:
+            if current_user.student_profile and current_user.student_profile.id != int(data.student_id):
+                raise HTTPException(status_code=403, detail="Forbidden: You can only update your own skills")
+
     # Locate profile
     profile = StudentService.get_student_profile_by_email(db, data.student_id) if "@" in data.student_id else None
     if not profile:

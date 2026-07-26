@@ -15,6 +15,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
   const [status, setStatus] = useState('idle');
   const [progress, setProgress] = useState(0);
   const [selectedRole, setSelectedRole] = useState('');
+  const [studentName, setStudentName] = useState('');
   const [invalidDocData, setInvalidDocData] = useState(null);
 
   const onDrop = useCallback(acceptedFiles => {
@@ -99,6 +100,7 @@ export default function UploadBox({ onAnalyzeComplete }) {
         skills: raw.skills.slice(0, 8), // Show up to 8 strong matches
         missing: dynamicMissing.slice(0, 5), // Show top 5 gaps from the best matched role
         allDetected: raw.skills,
+        studentName: studentName || 'Student',
         extractedText: raw.extractedText,
         prediction: raw.prediction,
         raw_profile: raw.student_profile, // Added so ATS Analyzer can read structure
@@ -298,6 +300,19 @@ export default function UploadBox({ onAnalyzeComplete }) {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div className="mt-4 mb-2">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="text-xs font-black text-[#1B2A4A] uppercase tracking-widest">Your Name (Optional)</h4>
+                  </div>
+                  <input
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    className="w-full bg-[#FFFFFF] border border-[#C9C2AF] text-[#1B2A4A] text-sm font-bold px-4 py-3 rounded-xl focus:outline-none focus:border-[#1B2A4A] focus:ring-1 focus:ring-[#1B2A4A] transition-all"
+                  />
                 </div>
 
                 <motion.button

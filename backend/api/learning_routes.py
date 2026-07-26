@@ -88,7 +88,7 @@ class RecommendRequest(BaseModel):
 # ──────────────────────────────────────────────────────────────────────────────
 
 @router.post("/predict")
-async def predict_placement_readiness(req: PredictRequest):
+async def predict_profile_strength(req: PredictRequest):
     """
     End-to-end ML/heuristic prediction for a user's placement readiness.
 

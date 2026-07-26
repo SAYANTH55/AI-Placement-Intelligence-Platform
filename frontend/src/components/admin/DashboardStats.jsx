@@ -89,8 +89,8 @@ const SegmentedGauge = ({ growth }) => {
                     />
                     <defs>
                         <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#FF4D26" />
-                            <stop offset="100%" stopColor="#FF764D" />
+                            <stop offset="0%" stopColor="#1B2A4A" />
+                            <stop offset="100%" stopColor="#9ECCFA" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -125,7 +125,7 @@ export default function DashboardStats() {
 
     if (loading) return (
         <div className="flex items-center justify-center py-20 h-full">
-            <div className="w-8 h-8 border-2 border-[#FF4D26] border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[#1B2A4A] border-t-transparent rounded-full animate-spin" />
         </div>
     );
 
