@@ -2,40 +2,52 @@
 __pycache__/
 *.py[cod]
 *$py.class
-venv/
+*.so
+.Python
 env/
-.env
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Uploads & Reports Cache
-backend/uploads/
-backend/logs/
-backend/e2e_test.log
+# Virtual environments
+venv/
+ENV/
 
-# Node.js
+# Node
 node_modules/
 dist/
 build/
-.next/
+.vite/
+npm-debug.log*
 
-# OS
-.DS_Store
-Thumbs.db
+# Models & Data
+backend/ai_model/models/**/*.pkl
+backend/ai_model/models/**/*.safetensors
+backend/ai_placement.db
+*.sqlite3
 
-# VS Code
-.vscode/
-
-# Project Specific
-dataset/*.csv
-dataset/*.json
-!dataset/sample.csv
-models/*.h5
-*.pkl
-*.xgb
-*.joblib
-*.db
-.env
-__pycache__/
-*.py[cod]
-
-# Logs
+# Logs & temp
 *.log
+feedback_logs.jsonl
+scratch/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Env
+.env
+.env.local
