@@ -10,38 +10,54 @@ logger = logging.getLogger(__name__)
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-# Set environment keys
-PRIMARY_KEY = os.environ.get("GEMINI_API_KEY", "")
-FALLBACK_KEY = os.environ.get("FALLBACK_GEMINI_API_KEY", "")
-
-# Attempt primary configuration
-if PRIMARY_KEY:
-    genai.configure(api_key=PRIMARY_KEY)
-
-def configure_fallback():
-    if FALLBACK_KEY:
-        logger.warning("Primary API Key failed, swapping to fallback key architecture.")
-        genai.configure(api_key=FALLBACK_KEY)
-        return True
-    return False
-
-def get_gemini_model():
-    # Dynamically load to catch key updates without server restart
+def get_all_keys():
     load_dotenv(override=True)
-    pk = os.environ.get("GEMINI_API_KEY", "")
-    fk = os.environ.get("FALLBACK_GEMINI_API_KEY", "")
+    keys = []
+    pk = os.environ.get("GEMINI_API_KEY")
     if pk:
-        genai.configure(api_key=pk)
-    elif fk:
-        genai.configure(api_key=fk)
+        keys.append(pk)
+    
+    fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
+    if fk_str:
+        keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
+    
+    fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
+    if fk_old and fk_old not in keys:
+        keys.append(fk_old)
         
-    return genai.GenerativeModel(
-        'gemini-1.5-flash',
-        generation_config={
-            "response_mime_type": "application/json",
-            "temperature": 0.2
-        }
-    )
+    return keys
+
+# Initialize first key at startup if possible
+_startup_keys = get_all_keys()
+if _startup_keys:
+    genai.configure(api_key=_startup_keys[0])
+
+def generate_content_with_fallback(prompt):
+    keys = get_all_keys()
+    if not keys:
+        raise Exception("No API keys configured")
+    
+    last_error = None
+    for idx, key in enumerate(keys):
+        try:
+            genai.configure(api_key=key)
+            model = genai.GenerativeModel(
+                'gemini-1.5-flash',
+                generation_config={
+                    "response_mime_type": "application/json",
+                    "temperature": 0.2
+                }
+            )
+            response = model.generate_content(prompt)
+            if idx > 0:
+                logger.warning(f"Succeeded using fallback key #{idx}")
+            return response
+        except Exception as e:
+            logger.warning(f"API Key {idx} failed: {e}")
+            last_error = e
+    
+    logger.error("All API keys failed.")
+    raise last_error
 
 def clean_json(text: str) -> dict:
     text = text.strip()
@@ -67,7 +83,8 @@ def analyze_with_llm(parsed_data: dict) -> dict:
         "weaknesses": []
     }
     
-    if not (PRIMARY_KEY or FALLBACK_KEY):
+    keys = get_all_keys()
+    if not keys:
         return safe_fallback
 
     prompt = f"""
@@ -94,8 +111,7 @@ def analyze_with_llm(parsed_data: dict) -> dict:
     """
 
     try:
-        model = get_gemini_model()
-        response = model.generate_content(prompt)
+        response = generate_content_with_fallback(prompt)
         result = clean_json(response.text)
         
         # Ensure contract is met
@@ -106,27 +122,11 @@ def analyze_with_llm(parsed_data: dict) -> dict:
         return result
     except Exception as e:
         logger.error(json.dumps({
-            "event": "llm_analyze_primary_failed",
+            "event": "llm_analyze_failed",
             "error_type": type(e).__name__,
             "error_message": str(e),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }))
-        if configure_fallback():
-            try:
-                model = get_gemini_model()
-                response = model.generate_content(prompt)
-                result = clean_json(response.text)
-                for key in safe_fallback.keys():
-                    if key not in result:
-                        result[key] = safe_fallback[key]
-                return result
-            except Exception as inner_e:
-                logger.error(json.dumps({
-                    "event": "llm_analyze_fallback_failed",
-                    "error_type": type(inner_e).__name__,
-                    "error_message": str(inner_e),
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }))
         return safe_fallback
 
 
@@ -144,7 +144,8 @@ def generate_career_insights(structured_data: dict) -> dict:
         "explanation": ""
     }
 
-    if not (PRIMARY_KEY or FALLBACK_KEY):
+    keys = get_all_keys()
+    if not keys:
         return safe_fallback
 
     prompt = f"""
@@ -181,8 +182,7 @@ def generate_career_insights(structured_data: dict) -> dict:
     """
 
     try:
-        model = get_gemini_model()
-        response = model.generate_content(prompt)
+        response = generate_content_with_fallback(prompt)
         result = clean_json(response.text)
         
         # Ensure contract is met
@@ -193,27 +193,11 @@ def generate_career_insights(structured_data: dict) -> dict:
         return result
     except Exception as e:
         logger.error(json.dumps({
-            "event": "llm_insights_primary_failed",
+            "event": "llm_insights_failed",
             "error_type": type(e).__name__,
             "error_message": str(e),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }))
-        if configure_fallback():
-            try:
-                model = get_gemini_model()
-                response = model.generate_content(prompt)
-                result = clean_json(response.text)
-                for key in safe_fallback.keys():
-                    if key not in result:
-                        result[key] = safe_fallback[key]
-                return result
-            except Exception as inner_e:
-                logger.error(json.dumps({
-                    "event": "llm_insights_fallback_failed",
-                    "error_type": type(inner_e).__name__,
-                    "error_message": str(inner_e),
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }))
         return safe_fallback
 
 
@@ -235,7 +219,8 @@ def generate_executive_assessment(candidate_intelligence_profile: dict) -> dict:
     """
     safe_fallback = _build_deterministic_assessment(candidate_intelligence_profile)
 
-    if not (PRIMARY_KEY or FALLBACK_KEY):
+    keys = get_all_keys()
+    if not keys:
         return safe_fallback
 
     exec_inputs = candidate_intelligence_profile.get("meta", {}).get("executive_summary_inputs", {})
@@ -315,8 +300,7 @@ Return ONLY JSON. No preamble. No markdown. No explanation outside the JSON.
 """
 
     try:
-        model = get_gemini_model()
-        response = model.generate_content(prompt)
+        response = generate_content_with_fallback(prompt)
         result = clean_json(response.text)
 
         required_keys = ["executive_overview", "technical_capability",
@@ -337,31 +321,11 @@ Return ONLY JSON. No preamble. No markdown. No explanation outside the JSON.
 
     except Exception as e:
         logger.error(json.dumps({
-            "event": "llm_executive_primary_failed",
+            "event": "llm_executive_failed",
             "error_type": type(e).__name__,
             "error_message": str(e),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }))
-        if configure_fallback():
-            try:
-                model = get_gemini_model()
-                response = model.generate_content(prompt)
-                result = clean_json(response.text)
-                full_text = " ".join([
-                    result.get("executive_overview", ""),
-                    result.get("technical_capability", ""),
-                    result.get("resume_quality", ""),
-                    result.get("placement_outlook", ""),
-                    result.get("recruiter_verdict", ""),
-                ]).strip()
-                return {"assessment": full_text, "sections": result, "source": "llm"}
-            except Exception as inner_e:
-                logger.error(json.dumps({
-                    "event": "llm_executive_fallback_failed",
-                    "error_type": type(inner_e).__name__,
-                    "error_message": str(inner_e),
-                    "timestamp": datetime.now(timezone.utc).isoformat()
-                }))
         return safe_fallback
 
 

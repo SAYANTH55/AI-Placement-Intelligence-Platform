@@ -4,7 +4,7 @@
  * Matches the FastAPI routes defined in engine_routes.py.
  */
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',

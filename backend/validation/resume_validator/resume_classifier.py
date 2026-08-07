@@ -69,13 +69,17 @@ class ResumeClassifier:
         import google.generativeai as genai
         import logging
         
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
+        keys = []
+        pk = os.environ.get("GEMINI_API_KEY")
+        if pk: keys.append(pk)
+        fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
+        if fk_str: keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
+        fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
+        if fk_old and fk_old not in keys: keys.append(fk_old)
+        
+        if not keys:
             return True, 0.6
             
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        
         prompt = f"""
         Analyze the following document text and determine if it is a professional Resume/CV.
         Reply ONLY in JSON format: {{"is_resume": true/false, "confidence": 0.0-1.0}}
@@ -84,15 +88,20 @@ class ResumeClassifier:
         {text[:2000]}
         """
         
-        try:
-            response = await model.generate_content_async(prompt)
-            resp_text = response.text.strip().replace('```json', '').replace('```', '')
-            import json
-            data = json.loads(resp_text)
-            return data.get("is_resume", True), data.get("confidence", 0.6)
-        except Exception as e:
-            logging.error(f"Gemini fallback validation failed: {e}")
-            return True, 0.6
+        for idx, key in enumerate(keys):
+            try:
+                genai.configure(api_key=key)
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                response = await model.generate_content_async(prompt)
+                resp_text = response.text.strip().replace('```json', '').replace('```', '')
+                import json
+                data = json.loads(resp_text)
+                return data.get("is_resume", True), data.get("confidence", 0.6)
+            except Exception as e:
+                logging.warning(f"Gemini fallback key {idx} failed: {e}")
+                
+        logging.error("All Gemini fallback keys failed.")
+        return True, 0.6
 
     async def classify(self, text: str) -> Dict[str, Any]:
         """Layer 5: Final Confidence Calculation"""

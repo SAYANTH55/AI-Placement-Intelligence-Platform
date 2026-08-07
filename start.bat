@@ -304,13 +304,13 @@ if not defined FALLBACK_GEMINI_API_KEY (
 
 REM ── Start Backend ───────────────────────────────────────────────
 echo.
-echo [->] Checking if port 8000 is available...
-netstat -ano | findstr ":8000 " >nul 2>&1
+echo [->] Checking if port 8001 is available...
+netstat -ano | findstr ":8001 " >nul 2>&1
 if errorlevel 0 if not errorlevel 1 (
-    echo [WARN] Port 8000 may already be in use - trying anyway...
+    echo [WARN] Port 8001 may already be in use - trying anyway...
 )
-echo [->] Launching FastAPI Backend (v4.0.0) on port 8000...
-start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
+echo [->] Launching FastAPI Backend (v4.0.0) on port 8001...
+start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8001 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
 
 REM Give backend 4 seconds to initialize DB tables and engines
 timeout /t 4 /nobreak >nul
@@ -339,8 +339,8 @@ echo    Analytics Panel   :  http://localhost:5173/admin
 echo    Student Dashboard :  http://localhost:5173/student
 echo    PR Dashboard      :  http://localhost:5173/pr
 echo    Placement Admin   :  http://localhost:5173/admin/placement-engine
-echo    API Docs (Swagger):  http://localhost:8000/docs
-echo    API Health Check  :  http://localhost:8000/health
+echo    API Docs (Swagger):  http://localhost:8001/docs
+echo    API Health Check  :  http://localhost:8001/health
 echo.
 echo  Core Intelligence Endpoints (v4.0.0):
 echo    POST /outcomes                - Record real-world SUCCESS (Ground Truth)

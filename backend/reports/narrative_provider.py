@@ -23,11 +23,24 @@ import json
 
 logger = logging.getLogger(__name__)
 
-PRIMARY_KEY  = os.environ.get("GEMINI_API_KEY", "")
-FALLBACK_KEY = os.environ.get("FALLBACK_GEMINI_API_KEY", "")
+def get_all_keys():
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+    keys = []
+    pk = os.environ.get("GEMINI_API_KEY")
+    if pk:
+        keys.append(pk)
+    fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
+    if fk_str:
+        keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
+    fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
+    if fk_old and fk_old not in keys:
+        keys.append(fk_old)
+    return keys
 
-if PRIMARY_KEY:
-    genai.configure(api_key=PRIMARY_KEY)
+_startup_keys = get_all_keys()
+if _startup_keys:
+    genai.configure(api_key=_startup_keys[0])
 
 
 def _model():
@@ -42,47 +55,51 @@ def _model():
 
 def _call_gemini(prompt: str, fallback: str) -> str:
     """Call Gemini; return plain text. Falls back gracefully on any error."""
-    if not (PRIMARY_KEY or FALLBACK_KEY):
+    keys = get_all_keys()
+    if not keys:
         return fallback
-    try:
-        resp = _model().generate_content(prompt)
-        return resp.text.strip()
-    except Exception as e:
-        logger.warning(f"[narrative_provider] Primary Gemini call failed: {e}")
-        if FALLBACK_KEY:
-            try:
-                genai.configure(api_key=FALLBACK_KEY)
-                resp = _model().generate_content(prompt)
-                genai.configure(api_key=PRIMARY_KEY)
-                return resp.text.strip()
-            except Exception as e2:
-                logger.error(f"[narrative_provider] Fallback also failed: {e2}")
-        return fallback
+    for idx, key in enumerate(keys):
+        try:
+            genai.configure(api_key=key)
+            resp = _model().generate_content(prompt)
+            if idx > 0:
+                logger.warning(f"Succeeded using fallback key #{idx}")
+            return resp.text.strip()
+        except Exception as e:
+            logger.warning(f"[narrative_provider] API Key {idx} failed: {e}")
+    logger.error("[narrative_provider] All API keys failed.")
+    return fallback
 
 
 def _json_call(prompt: str, fallback: dict | list) -> dict | list:
     """Call Gemini expecting JSON response."""
-    if not (PRIMARY_KEY or FALLBACK_KEY):
+    keys = get_all_keys()
+    if not keys:
         return fallback
-    try:
-        model = genai.GenerativeModel(
-            "gemini-1.5-flash",
-            generation_config={
-                "temperature": 0.3,
-                "response_mime_type": "application/json",
-                "max_output_tokens": 2048,
-            },
-        )
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
-        if text.startswith("```"):
-            text = text.split("```")[1]
-            if text.startswith("json"):
-                text = text[4:]
-        return json.loads(text.strip())
-    except Exception as e:
-        logger.warning(f"[narrative_provider] JSON call failed: {e}")
-        return fallback
+    for idx, key in enumerate(keys):
+        try:
+            genai.configure(api_key=key)
+            model = genai.GenerativeModel(
+                "gemini-1.5-flash",
+                generation_config={
+                    "temperature": 0.3,
+                    "response_mime_type": "application/json",
+                    "max_output_tokens": 2048,
+                },
+            )
+            resp = model.generate_content(prompt)
+            text = resp.text.strip()
+            if text.startswith("```"):
+                text = text.split("```")[1]
+                if text.startswith("json"):
+                    text = text[4:]
+            if idx > 0:
+                logger.warning(f"Succeeded using fallback key #{idx}")
+            return json.loads(text.strip())
+        except Exception as e:
+            logger.warning(f"[narrative_provider] JSON call with key {idx} failed: {e}")
+    logger.error("[narrative_provider] All API keys failed.")
+    return fallback
 
 
 # ── 1. Executive Assessment (200-250 words) ──────────────────────────────────
