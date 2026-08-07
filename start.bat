@@ -310,7 +310,7 @@ if errorlevel 0 if not errorlevel 1 (
     echo [WARN] Port 8001 may already be in use - trying anyway...
 )
 echo [->] Launching FastAPI Backend (v4.0.0) on port 8001...
-start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8001 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
+start "Backend - AI Placement Intelligence v4" cmd /k "cd /d ""%CD%\backend"" && call ..\venv\Scripts\activate.bat && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8001 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
 
 REM Give backend 4 seconds to initialize DB tables and engines
 timeout /t 4 /nobreak >nul

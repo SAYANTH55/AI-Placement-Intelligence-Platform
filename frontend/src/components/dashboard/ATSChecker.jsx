@@ -51,8 +51,8 @@ export default function ATSChecker({ data, onCheckComplete }) {
     try {
       // Try the new Engine 4 endpoint first
       const payload = {
-        resume_skills: data?.skills || data?.allDetected || [],
-        resume_text: data?.raw_text || '',
+        resume_skills: data?.allDetected || data?.skills || [],
+        resume_text: data?.extractedText || data?.raw_text || '',
         jd_text: jd,
       };
 

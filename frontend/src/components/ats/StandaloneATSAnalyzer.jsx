@@ -33,7 +33,7 @@ export default function StandaloneATSAnalyzer({ data, intelligenceData: preloade
     try {
       const payload = {
         parsed_data: {
-          skills:     resumeData.skills || resumeData.allDetected || [],
+          skills:     resumeData.allDetected || resumeData.skills || [],
           sections:   resumeData.raw_profile?.sections || resumeData.sections || [],
           education:  resumeData.raw_profile?.education || resumeData.education || {},
           experience: resumeData.raw_profile?.experience || resumeData.experience || {},
