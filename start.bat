@@ -305,9 +305,11 @@ if not defined FALLBACK_GEMINI_API_KEY (
 REM ── Start Backend ───────────────────────────────────────────────
 echo.
 echo [->] Checking if port 8001 is available...
-netstat -ano | findstr ":8001 " >nul 2>&1
-if errorlevel 0 if not errorlevel 1 (
-    echo [WARN] Port 8001 may already be in use - trying anyway...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":8001 "') do (
+    if "%%a" neq "0" (
+        echo [INFO] Freeing port 8001 ^(Killing PID %%a^)...
+        taskkill /F /PID %%a >nul 2>&1
+    )
 )
 echo [->] Launching FastAPI Backend (v4.0.0) on port 8001...
 start "Backend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && call venv\Scripts\activate.bat && "%PYTHON_EXEC%" -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8001 || (echo. && echo [ERROR] BACKEND FAILED - SEE ABOVE && pause)"
@@ -318,9 +320,11 @@ timeout /t 4 /nobreak >nul
 REM ── Start Frontend ──────────────────────────────────────────────
 echo.
 echo [->] Checking if port 5173 is available...
-netstat -ano | findstr ":5173 " >nul 2>&1
-if errorlevel 0 if not errorlevel 1 (
-    echo [WARN] Port 5173 may already be in use - trying anyway...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr ":5173 "') do (
+    if "%%a" neq "0" (
+        echo [INFO] Freeing port 5173 ^(Killing PID %%a^)...
+        taskkill /F /PID %%a >nul 2>&1
+    )
 )
 echo [->] Launching React / Vite Frontend on port 5173...
 start "Frontend - AI Placement Intelligence v4" cmd /k "cd /d "%CD%" && cd frontend && npm run dev || (echo. && echo [ERROR] FRONTEND FAILED - SEE ABOVE && pause)"
