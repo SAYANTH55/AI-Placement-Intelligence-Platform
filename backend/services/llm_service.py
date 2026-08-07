@@ -406,3 +406,52 @@ def _build_deterministic_assessment(cip: dict) -> dict:
         },
         "source": "deterministic_fallback",
     }
+
+
+def extract_jd_details_with_llm(jd_text: str) -> dict:
+    """
+    Extracts the exact Job Title and core mandatory skills from a Job Description.
+    """
+    safe_fallback = {
+        "job_title": "Software Engineer",
+        "mandatory_skills": []
+    }
+
+    keys = get_all_keys()
+    if not keys:
+        return safe_fallback
+
+    prompt = f"""
+    Analyze the following Job Description (JD). 
+    Extract the exact Job Title and the top 5 to 10 mandatory technical skills or requirements.
+    Only extract hard technical skills or extremely specific domain requirements, not soft skills like "communication".
+    
+    Job Description:
+    {jd_text[:6000]}
+    
+    Expected JSON Schema:
+    {{
+        "job_title": "Exact Job Title from JD",
+        "mandatory_skills": ["Skill 1", "Skill 2"]
+    }}
+    Return ONLY JSON. No markdown other than the JSON block.
+    """
+
+    try:
+        response = generate_content_with_fallback(prompt)
+        result = clean_json(response.text)
+        
+        if "job_title" not in result or not result["job_title"]:
+            result["job_title"] = safe_fallback["job_title"]
+        if "mandatory_skills" not in result:
+            result["mandatory_skills"] = safe_fallback["mandatory_skills"]
+            
+        return result
+    except Exception as e:
+        logger.error(json.dumps({
+            "event": "llm_jd_extraction_failed",
+            "error_type": type(e).__name__,
+            "error_message": str(e),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }))
+        return safe_fallback

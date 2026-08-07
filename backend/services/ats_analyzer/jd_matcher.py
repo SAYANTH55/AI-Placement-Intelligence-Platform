@@ -254,8 +254,17 @@ def match_jd(
     Returns:
         JDMatchResult with semantic score, keyword score, matched/missing skills, and recommendations.
     """
+    import sys
+    from services.llm_service import extract_jd_details_with_llm
+
+    # 0. Extract True JD Title and mandatory skills via LLM
+    jd_details = extract_jd_details_with_llm(jd_text)
+    inferred_role = jd_details.get("job_title", "Software Engineer")
+    mandatory_skills = jd_details.get("mandatory_skills", [])
+
     # 1. Extract JD skills
-    jd_skills = _extract_jd_skills(jd_text)
+    heuristic_jd_skills = _extract_jd_skills(jd_text)
+    jd_skills = sorted(list(set(heuristic_jd_skills + mandatory_skills)))
     
     # 1.5 Extract additional skills directly from resume text as fallback
     direct_resume_skills = _extract_jd_skills(resume_text)
@@ -264,6 +273,7 @@ def match_jd(
     combined_resume_skills = resume_skills + direct_resume_skills
     resume_norm = _normalise_skills(combined_resume_skills)
     jd_norm     = _normalise_skills(jd_skills)
+    mandatory_norm = _normalise_skills(mandatory_skills)
 
     # 3. Match / Missing
     matched = [s for s in jd_skills if _normalise_skills([s]) & resume_norm]
@@ -277,16 +287,22 @@ def match_jd(
     jd_repr     = f"{jd_text[:4000]}"
     semantic_score = _semantic_similarity(resume_repr, jd_repr)
 
-    # 6. Weighted final ATS (semantic 55%, keyword 45%)
-    final_ats = round(semantic_score * 0.55 + keyword_score * 0.45, 1)
+    # 6. Tailored Final ATS Score
+    # Calculate how many of the *mandatory* skills were matched
+    mandatory_matched = [s for s in mandatory_skills if _normalise_skills([s]) & resume_norm]
+    mandatory_coverage = len(mandatory_matched) / max(len(mandatory_norm), 1) if mandatory_norm else 1.0
 
-    # 7. Infer JD role
-    inferred_role = _infer_jd_role(jd_text)
+    # Base weighted score
+    base_score = (semantic_score * 0.55) + (keyword_score * 0.45)
+    
+    # Apply Mandatory Skills Multiplier (Penalty if missing core skills, Boost if present)
+    multiplier = 0.7 + (0.4 * mandatory_coverage)  # Ranges from 0.7 (if 0% mandatory matched) to 1.1 (if 100%)
+    final_ats = round(min(base_score * multiplier, 100.0), 1)
 
-    # 8. Coverage stat
+    # 7. Coverage stat
     coverage = round(len(matched) / max(len(jd_norm), 1) * 100, 1)
 
-    # 9. Recommendations
+    # 8. Recommendations
     recommendations = _generate_recommendations(matched, missing, semantic_score, keyword_score)
 
     return JDMatchResult(
