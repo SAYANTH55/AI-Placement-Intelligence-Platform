@@ -211,20 +211,31 @@ def _generate_recommendations(
             "The semantic alignment between your resume and this JD is weak. Tailor your "
             "Professional Summary and Experience bullet points to reflect the JD's core requirements."
         )
+    elif semantic_score < 75:
+        recs.append(
+            "Your semantic match is decent, but could be improved. Try incorporating more "
+            "industry-specific terminology and context from the JD into your project descriptions."
+        )
 
-    if len(recs) < 3 and matched:
+    if len(recs) < 5 and matched:
         recs.append(
             f"Strengthen descriptions of your {matched[0]} experience with specific metrics and impact. "
             "Recruiters reviewing this JD will specifically validate these skills."
         )
 
-    if len(recs) < 3:
+    if len(recs) < 5:
         recs.append(
             "Consider adding a tailored cover letter referencing specific JD requirements — "
             "this boosts ATS scores in systems that combine both documents."
         )
+        
+    if len(recs) < 5 and len(matched) > 2:
+        recs.append(
+            f"You have a solid foundation with {matched[0]} and {matched[1]}. Ensure these "
+            "are prominently featured at the top of your resume to catch the recruiter's eye immediately."
+        )
 
-    return recs[:3]
+    return recs[:5]
 
 
 def match_jd(
@@ -245,9 +256,13 @@ def match_jd(
     """
     # 1. Extract JD skills
     jd_skills = _extract_jd_skills(jd_text)
+    
+    # 1.5 Extract additional skills directly from resume text as fallback
+    direct_resume_skills = _extract_jd_skills(resume_text)
 
-    # 2. Normalise both skill sets
-    resume_norm = _normalise_skills(resume_skills)
+    # 2. Normalise both skill sets (combining parsed + directly extracted)
+    combined_resume_skills = resume_skills + direct_resume_skills
+    resume_norm = _normalise_skills(combined_resume_skills)
     jd_norm     = _normalise_skills(jd_skills)
 
     # 3. Match / Missing
@@ -258,8 +273,8 @@ def match_jd(
     keyword_score = round(len(matched) / max(len(jd_norm), 1) * 100, 1) if jd_norm else 0.0
 
     # 5. Semantic similarity
-    resume_repr = f"{resume_text[:1500]} {' '.join(resume_skills)}"
-    jd_repr     = f"{jd_text[:1500]}"
+    resume_repr = f"{resume_text[:4000]} {' '.join(combined_resume_skills)}"
+    jd_repr     = f"{jd_text[:4000]}"
     semantic_score = _semantic_similarity(resume_repr, jd_repr)
 
     # 6. Weighted final ATS (semantic 55%, keyword 45%)
