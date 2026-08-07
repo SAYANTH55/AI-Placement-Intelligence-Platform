@@ -24,7 +24,7 @@ const OutcomeTracker = ({ userId }) => {
         setStatus('loading');
         
         try {
-            const response = await fetch('http://127.0.0.1:8000/outcomes', {
+            const response = await fetch('http://127.0.0.1:8001/outcomes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -43,7 +43,7 @@ export default function StandaloneATSAnalyzer({ data, intelligenceData: preloade
         raw_text: resumeData.extractedText || resumeData.raw_text || resumeData.text || '',
       };
 
-      const res = await fetch('http://127.0.0.1:8000/api/ats/analyze', {
+      const res = await fetch('http://127.0.0.1:8001/api/ats/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

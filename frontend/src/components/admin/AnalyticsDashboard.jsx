@@ -8,7 +8,7 @@ const AnalyticsDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/analytics/outcomes');
+                const response = await fetch('http://127.0.0.1:8001/analytics/outcomes');
                 const data = await response.json();
                 setStats(data);
                 setLoading(false);

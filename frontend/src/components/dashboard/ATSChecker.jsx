@@ -56,7 +56,7 @@ export default function ATSChecker({ data, onCheckComplete }) {
         jd_text: jd,
       };
 
-      let res = await fetch('http://127.0.0.1:8000/api/ats/match-jd', {
+      let res = await fetch('http://127.0.0.1:8001/api/ats/match-jd', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -64,7 +64,7 @@ export default function ATSChecker({ data, onCheckComplete }) {
 
       if (!res.ok) {
         // Fallback to legacy endpoint
-        res = await fetch('http://127.0.0.1:8000/api/compare-jd?user_id=1', {
+        res = await fetch('http://127.0.0.1:8001/api/compare-jd?user_id=1', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ job_description: jd, extracted_skills: data?.skills || [] }),
