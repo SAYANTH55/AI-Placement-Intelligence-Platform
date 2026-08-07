@@ -11,7 +11,16 @@ logger = logging.getLogger(__name__)
 load_dotenv(override=True)
 
 def get_all_keys():
-    load_dotenv(override=True)
+    from dotenv import load_dotenv
+    import os
+    
+    # Try finding .env in the parent directory (root) first
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
+    if os.path.exists(env_path):
+        load_dotenv(dotenv_path=env_path, override=True)
+    else:
+        load_dotenv(override=True)
+        
     keys = []
     pk = os.environ.get("GEMINI_API_KEY")
     if pk:
@@ -42,7 +51,7 @@ def generate_content_with_fallback(prompt):
         try:
             genai.configure(api_key=key)
             model = genai.GenerativeModel(
-                'gemini-1.5-flash',
+                'gemini-flash-latest',
                 generation_config={
                     "response_mime_type": "application/json",
                     "temperature": 0.2
