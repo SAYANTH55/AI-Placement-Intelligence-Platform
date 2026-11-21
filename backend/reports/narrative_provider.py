@@ -13,8 +13,6 @@ hallucination and generic output.
 import logging
 from typing import Optional
 
-import google.generativeai as genai
-
 from reports.report_schema import (
     DossierPayload, StrengthItem, GapItem, RoadmapMonth, AdvisorVerdict,
 )
@@ -23,83 +21,39 @@ import json
 
 logger = logging.getLogger(__name__)
 
-def get_all_keys():
-    from dotenv import load_dotenv
-    load_dotenv(override=True)
-    keys = []
-    pk = os.environ.get("GEMINI_API_KEY")
-    if pk:
-        keys.append(pk)
-    fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
-    if fk_str:
-        keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
-    fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
-    if fk_old and fk_old not in keys:
-        keys.append(fk_old)
-    return keys
-
-_startup_keys = get_all_keys()
-if _startup_keys:
-    genai.configure(api_key=_startup_keys[0])
-
-
-def _model():
-    return genai.GenerativeModel(
-        "gemini-2.0-flash",
-        generation_config={
-            "temperature": 0.4,
-            "max_output_tokens": 1024,
-        },
-    )
+from services.gemini_client import get_all_keys, generate_content as _gemini_generate
 
 
 def _call_gemini(prompt: str, fallback: str) -> str:
     """Call Gemini; return plain text. Falls back gracefully on any error."""
-    keys = get_all_keys()
-    if not keys:
+    if not get_all_keys():
         return fallback
-    for idx, key in enumerate(keys):
-        try:
-            genai.configure(api_key=key)
-            resp = _model().generate_content(prompt)
-            if idx > 0:
-                logger.warning(f"Succeeded using fallback key #{idx}")
-            return resp.text.strip()
-        except Exception as e:
-            logger.warning(f"[narrative_provider] API Key {idx} failed: {e}")
-    logger.error("[narrative_provider] All API keys failed.")
-    return fallback
+    try:
+        resp = _gemini_generate(prompt, {"temperature": 0.4, "maxOutputTokens": 1024})
+        return resp.text.strip() or fallback
+    except Exception as e:
+        logger.error(f"[narrative_provider] Gemini call failed: {e}")
+        return fallback
 
 
 def _json_call(prompt: str, fallback: dict | list) -> dict | list:
     """Call Gemini expecting JSON response."""
-    keys = get_all_keys()
-    if not keys:
+    if not get_all_keys():
         return fallback
-    for idx, key in enumerate(keys):
-        try:
-            genai.configure(api_key=key)
-            model = genai.GenerativeModel(
-                "gemini-flash-latest",
-                generation_config={
-                    "temperature": 0.3,
-                    "response_mime_type": "application/json",
-                    "max_output_tokens": 2048,
-                },
-            )
-            resp = model.generate_content(prompt)
-            text = resp.text.strip()
-            if text.startswith("```"):
-                text = text.split("```")[1]
-                if text.startswith("json"):
-                    text = text[4:]
-            if idx > 0:
-                logger.warning(f"Succeeded using fallback key #{idx}")
-            return json.loads(text.strip())
-        except Exception as e:
-            logger.warning(f"[narrative_provider] JSON call with key {idx} failed: {e}")
-    logger.error("[narrative_provider] All API keys failed.")
-    return fallback
+    try:
+        resp = _gemini_generate(
+            prompt,
+            {"temperature": 0.3, "responseMimeType": "application/json", "maxOutputTokens": 2048},
+        )
+        text = resp.text.strip()
+        if text.startswith("```"):
+            text = text.split("```")[1]
+            if text.startswith("json"):
+                text = text[4:]
+        return json.loads(text.strip())
+    except Exception as e:
+        logger.error(f"[narrative_provider] Gemini JSON call failed: {e}")
+        return fallback
 
 
 # ── 1. Executive Assessment (200-250 words) ──────────────────────────────────

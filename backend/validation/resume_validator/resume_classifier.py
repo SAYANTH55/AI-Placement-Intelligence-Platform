@@ -65,19 +65,10 @@ class ResumeClassifier:
 
     async def layer_4_gemini_fallback(self, text: str) -> Tuple[bool, float]:
         """Layer 4: Gemini Fallback (Tie-breaker for edge cases)"""
-        import os
-        import google.generativeai as genai
         import logging
-        
-        keys = []
-        pk = os.environ.get("GEMINI_API_KEY")
-        if pk: keys.append(pk)
-        fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
-        if fk_str: keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
-        fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
-        if fk_old and fk_old not in keys: keys.append(fk_old)
-        
-        if not keys:
+        from services.gemini_client import get_all_keys, generate_content_async
+
+        if not get_all_keys():
             return True, 0.6
             
         prompt = f"""
@@ -88,19 +79,15 @@ class ResumeClassifier:
         {text[:2000]}
         """
         
-        for idx, key in enumerate(keys):
-            try:
-                genai.configure(api_key=key)
-                model = genai.GenerativeModel("gemini-1.5-flash")
-                response = await model.generate_content_async(prompt)
-                resp_text = response.text.strip().replace('```json', '').replace('```', '')
-                import json
-                data = json.loads(resp_text)
-                return data.get("is_resume", True), data.get("confidence", 0.6)
-            except Exception as e:
-                logging.warning(f"Gemini fallback key {idx} failed: {e}")
-                
-        logging.error("All Gemini fallback keys failed.")
+        try:
+            response = await generate_content_async(prompt, {"responseMimeType": "application/json"})
+            resp_text = response.text.strip().replace('```json', '').replace('```', '')
+            import json
+            data = json.loads(resp_text)
+            return data.get("is_resume", True), data.get("confidence", 0.6)
+        except Exception as e:
+            logging.error(f"Gemini resume-validation fallback failed: {e}")
+
         return True, 0.6
 
     async def classify(self, text: str) -> Dict[str, Any]:

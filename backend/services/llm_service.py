@@ -1,7 +1,6 @@
 import os
 import json
 import logging
-import google.generativeai as genai
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 
@@ -10,63 +9,24 @@ logger = logging.getLogger(__name__)
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-def get_all_keys():
-    from dotenv import load_dotenv
-    import os
-    
-    # Try finding .env in the parent directory (root) first
-    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
-    if os.path.exists(env_path):
-        load_dotenv(dotenv_path=env_path, override=True)
-    else:
-        load_dotenv(override=True)
-        
-    keys = []
-    pk = os.environ.get("GEMINI_API_KEY")
-    if pk:
-        keys.append(pk)
-    
-    fk_str = os.environ.get("FALLBACK_GEMINI_API_KEYS", "")
-    if fk_str:
-        keys.extend([k.strip() for k in fk_str.split(",") if k.strip()])
-    
-    fk_old = os.environ.get("FALLBACK_GEMINI_API_KEY")
-    if fk_old and fk_old not in keys:
-        keys.append(fk_old)
-        
-    return keys
+from services.gemini_client import get_all_keys, generate_content as _gemini_generate
 
-# Initialize first key at startup if possible
-_startup_keys = get_all_keys()
-if _startup_keys:
-    genai.configure(api_key=_startup_keys[0])
 
-def generate_content_with_fallback(prompt):
-    keys = get_all_keys()
-    if not keys:
-        raise Exception("No API keys configured")
-    
-    last_error = None
-    for idx, key in enumerate(keys):
-        try:
-            genai.configure(api_key=key)
-            model = genai.GenerativeModel(
-                'gemini-flash-latest',
-                generation_config={
-                    "response_mime_type": "application/json",
-                    "temperature": 0.2
-                }
-            )
-            response = model.generate_content(prompt)
-            if idx > 0:
-                logger.warning(f"Succeeded using fallback key #{idx}")
-            return response
-        except Exception as e:
-            logger.warning(f"API Key {idx} failed: {e}")
-            last_error = e
-    
-    logger.error("All API keys failed.")
-    raise last_error
+def generate_content_with_fallback(prompt, generation_config=None):
+    """JSON-mode Gemini call with key rotation and model fallback (see services/gemini_client.py)."""
+    return _gemini_generate(
+        prompt,
+        generation_config or {"responseMimeType": "application/json", "temperature": 0.2},
+    )
+
+
+def get_gemini_model():
+    """Adapter for callers that expect a genai-style model with .generate_content(prompt)."""
+    class _Model:
+        def generate_content(self, prompt):
+            return generate_content_with_fallback(prompt)
+    return _Model()
+
 
 def clean_json(text: str) -> dict:
     text = text.strip()
