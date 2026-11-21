@@ -33,18 +33,22 @@ _ROOT_ENV = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path
 load_dotenv(_ROOT_ENV if os.path.exists(_ROOT_ENV) else None)
 
 _API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-_DEFAULT_MODELS = "gemini-flash-latest,gemini-flash-lite-latest"
-_TIMEOUT_S = 60
+_DEFAULT_MODELS = (
+    "gemini-flash-latest,gemini-3-flash-preview,"
+    "gemini-flash-lite-latest,gemini-3.1-flash-lite,gemini-2.5-flash-lite"
+)
+_TIMEOUT = (5, 25)                   # (connect, read) seconds
 _RATE_LIMIT_COOLDOWN_S = 60          # 429: per-minute limits usually recover quickly
 _DAILY_QUOTA_COOLDOWN_S = 6 * 3600   # 429 mentioning a per-day quota
 _INVALID_KEY_COOLDOWN_S = 24 * 3600  # 401/403/invalid key
-
-_MODEL_COOLDOWN_S = 120             # overloaded / timed-out model is skipped for a while
+_MODEL_DOWN_COOLDOWN_S = 90          # 5xx / timeout: model overloaded for everyone
+_MODEL_MISSING_COOLDOWN_S = 3600     # 404: model not available
 
 _lock = threading.Lock()
 _current_idx = 0
-_cooldown_until: dict[str, float] = {}
-_model_cooldown_until: dict[str, float] = {}
+_key_cooldown: dict[str, float] = {}                 # key -> until
+_key_model_cooldown: dict[tuple[str, str], float] = {}  # (key, model) -> until (quota)
+_model_cooldown: dict[str, float] = {}               # model -> until (overloaded/missing)
 
 
 class GeminiError(Exception):
@@ -76,35 +80,23 @@ def get_all_keys() -> list[str]:
     return keys
 
 
-def _models() -> list[str]:
+def _all_models() -> list[str]:
     raw = os.environ.get("GEMINI_MODELS", "") or _DEFAULT_MODELS
-    models = [m.strip() for m in raw.split(",") if m.strip()]
-    now = time.time()
-    ready = [m for m in models if _model_cooldown_until.get(m, 0) <= now]
-    # Keep cooling-down models at the end so they are still tried as a last resort.
-    return ready + [m for m in models if m not in ready]
+    return [m.strip() for m in raw.split(",") if m.strip()]
 
 
-def _cool_model(model: str) -> None:
+def _cool(table: dict, item, seconds: float) -> None:
     with _lock:
-        _model_cooldown_until[model] = time.time() + _MODEL_COOLDOWN_S
+        table[item] = time.time() + seconds
 
 
-def _key_order(keys: list[str]) -> list[int]:
-    """Indices starting at the current key, skipping keys on cooldown when possible."""
-    with _lock:
-        start = _current_idx % len(keys)
-    order = [(start + i) % len(keys) for i in range(len(keys))]
-    now = time.time()
-    ready = [i for i in order if _cooldown_until.get(keys[i], 0) <= now]
-    # If every key is cooling down, still try them all rather than fail outright.
-    return ready or order
+def _ready(table: dict, item, now: float) -> bool:
+    return table.get(item, 0) <= now
 
 
-def _mark_key_bad(keys: list[str], idx: int, seconds: float, reason: str) -> None:
+def _switch_from(keys: list[str], idx: int, reason: str) -> None:
     global _current_idx
     with _lock:
-        _cooldown_until[keys[idx]] = time.time() + seconds
         if _current_idx % len(keys) == idx:
             _current_idx = (idx + 1) % len(keys)
             logger.warning(f"[Gemini] Key #{idx + 1} {reason}; switching to key #{_current_idx + 1}")
@@ -127,7 +119,14 @@ def _extract_text(data: dict) -> str:
 
 def generate_content(prompt: str, generation_config: dict | None = None) -> GeminiResponse:
     """
-    Generate content, rotating keys and models as needed.
+    Generate content, rotating models and keys as needed.
+
+    Order: stay on the current key and walk the model chain; a model that hits
+    this key's quota (429) is skipped for this key only. When every model is
+    exhausted for the key, move on to the next key and make it current.
+    Overloaded/missing models are skipped for all keys for a short while.
+    If everything is cooling down, fail immediately so callers can use their
+    non-LLM fallbacks instead of waiting.
 
     generation_config uses REST names, e.g.
         {"temperature": 0.2, "responseMimeType": "application/json", "maxOutputTokens": 1024}
@@ -142,24 +141,34 @@ def generate_content(prompt: str, generation_config: dict | None = None) -> Gemi
     if cfg:
         body["generationConfig"] = cfg
 
-    models = _models()
+    models = _all_models()
+    with _lock:
+        start = _current_idx % len(keys)
     last_error: Exception | None = None
+    attempted = False
 
-    for idx in _key_order(keys):
+    for idx in [(start + i) % len(keys) for i in range(len(keys))]:
         key = keys[idx]
-        key_failed = False
+        now = time.time()
+        if not _ready(_key_cooldown, key, now):
+            continue
+        key_rejected = False
         for model in models:
+            now = time.time()
+            if not _ready(_model_cooldown, model, now) or not _ready(_key_model_cooldown, (key, model), now):
+                continue
+            attempted = True
             try:
                 r = requests.post(
                     _API_URL.format(model=model),
                     headers={"x-goog-api-key": key, "Content-Type": "application/json"},
                     json=body,
-                    timeout=_TIMEOUT_S,
+                    timeout=_TIMEOUT,
                 )
             except requests.RequestException as e:
                 last_error = e
-                _cool_model(model)
-                logger.warning(f"[Gemini] {model} with key #{idx + 1}: network error {type(e).__name__}; trying next model")
+                _cool(_model_cooldown, model, _MODEL_DOWN_COOLDOWN_S)
+                logger.warning(f"[Gemini] {model}: {type(e).__name__}; trying next model")
                 continue
 
             if r.status_code == 200:
@@ -172,26 +181,33 @@ def generate_content(prompt: str, generation_config: dict | None = None) -> Gemi
 
             if r.status_code == 429:
                 daily = "PerDay" in msg or "per day" in msg.lower()
-                _mark_key_bad(keys, idx, _DAILY_QUOTA_COOLDOWN_S if daily else _RATE_LIMIT_COOLDOWN_S,
-                              "hit its daily quota" if daily else "is rate-limited")
-                key_failed = True
-                break
+                _cool(_key_model_cooldown, (key, model),
+                      _DAILY_QUOTA_COOLDOWN_S if daily else _RATE_LIMIT_COOLDOWN_S)
+                logger.warning(f"[Gemini] Key #{idx + 1} out of quota for {model}"
+                               f"{' (daily)' if daily else ''}; trying next model")
+                continue
             if r.status_code in (401, 403) or "API_KEY_INVALID" in msg or "API key not valid" in msg:
-                _mark_key_bad(keys, idx, _INVALID_KEY_COOLDOWN_S, "was rejected")
-                key_failed = True
+                _cool(_key_cooldown, key, _INVALID_KEY_COOLDOWN_S)
+                key_rejected = True
                 break
-            if r.status_code in (404, 500, 502, 503, 504):
-                _cool_model(model)
-                logger.warning(f"[Gemini] {model} unavailable ({r.status_code}); trying next model")
+            if r.status_code == 404:
+                _cool(_model_cooldown, model, _MODEL_MISSING_COOLDOWN_S)
+                logger.warning(f"[Gemini] {model} not available (404); trying next model")
+                continue
+            if r.status_code >= 500:
+                _cool(_model_cooldown, model, _MODEL_DOWN_COOLDOWN_S)
+                logger.warning(f"[Gemini] {model} overloaded ({r.status_code}); trying next model")
                 continue
             # Other 4xx: the request itself is bad; other keys won't help.
             raise last_error
 
-        if not key_failed:
-            # Every model failed for a non-key reason with this key; another key
-            # won't fix an overloaded model, so stop here.
-            break
+        now = time.time()
+        exhausted = all(not _ready(_key_model_cooldown, (key, m), now) for m in models)
+        if key_rejected or exhausted:
+            _switch_from(keys, idx, "was rejected" if key_rejected else "has no quota left on any model")
 
+    if not attempted:
+        raise GeminiError("All Gemini keys/models are cooling down; skipping LLM call")
     logger.error(f"[Gemini] All keys/models failed: {last_error}")
     raise last_error or GeminiError("Gemini request failed")
 
